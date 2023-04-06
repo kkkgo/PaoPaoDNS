@@ -1,0 +1,76 @@
+log:
+    file: ""
+    level: error
+
+plugins:
+  - tag: cache
+    type: cache
+    args:
+      size: 0
+      lazy_cache_ttl: 0
+  - tag: local_unbound
+    type: forward
+    args:
+      upstreams:
+        - addr: "udp://127.0.0.1:5301"
+  - tag: forward_unbound
+    type: forward
+    args:
+      upstreams:
+        - addr: "udp://127.0.0.1:5304"
+  - tag: forward_dnscrypt
+    type: forward
+    args:
+      upstreams:
+        - addr: "udp://127.0.0.1:5302"
+
+  - tag: cnip
+    type: mmdb
+    args:
+      file: "/data/Country-only-cn-private.mmdb"
+
+  - tag: forward_fall
+    type: fallback
+    args:
+      primary: forward_unbound
+      secondary: forward_dnscrypt
+      threshold: 200
+      always_standby: false
+  
+  - tag: main_sequence
+    type: sequence
+    args:
+        - matches: qtype 65
+          exec: reject 5
+        - matches: 
+          - qname &/data/force_nocn_list.txt
+          - qtype 28
+          exec: reject 5
+        - matches: 
+          - "qtype 12"
+          exec: $local_unbound
+        - matches: has_wanted_ans
+          exec: accept
+        - matches: qname &/data/force_nocn_list.txt
+          exec: $forward_fall
+        - matches: has_wanted_ans
+          exec: accept
+        - matches: qname &/data/force_cn_list.txt
+          exec: $local_unbound
+        - matches: has_wanted_ans
+          exec: accept
+        - exec: $local_unbound
+        - matches: resp_ip_mmdb $cnip CN
+          exec: accept
+        - exec: drop_resp
+        - exec: prefer_ipv4
+        - exec: $forward_fall
+        - matches: has_wanted_ans
+          exec: accept
+        - exec: reject 5
+
+  - tag: udp_server
+    type: udp_server
+    args:
+      entry: main_sequence
+      listen: :53
