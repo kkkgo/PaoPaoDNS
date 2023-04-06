@@ -61,3 +61,19 @@ sleep 5
 mkdir -p /src/dnscrypt-resolvers
 mv /src/relays.m* /src/dnscrypt-resolvers/
 mv /src/public-resolvers.m* /src/dnscrypt-resolvers/
+
+# apk mirrors
+add_repo() {
+    mkdir -p /src/
+    touch /src/repositories
+    sed "s/dl-cdn.alpinelinux.org/$1/g" /etc/apk/repositories >>/src/repositories
+}
+add_repo mirrors.ustc.edu.cn
+add_repo mirrors.nju.edu.cn
+add_repo mirrors.aliyun.com
+add_repo mirrors.bfsu.edu.cn/alpine
+add_repo ftp.udx.icscoe.jp/Linux
+add_repo mirror.lzu.edu.cn
+add_repo mirrors.tuna.tsinghua.edu.cn
+add_repo mirrors.zju.edu.cn
+add_repo mirrors.sjtug.sjtu.edu.cn
