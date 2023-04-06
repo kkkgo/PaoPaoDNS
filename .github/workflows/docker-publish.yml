@@ -1,8 +1,6 @@
 name: Build and Push Docker
 
 on:
-    workflow_dispatch
-
   schedule:
     - cron: '5 07 * * 5'
   push:
