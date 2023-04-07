@@ -65,9 +65,7 @@ plugins:
         - exec: drop_resp
         - exec: prefer_ipv4
         - exec: $forward_fall
-        - matches: has_wanted_ans
-          exec: accept
-        - exec: reject 5
+        - exec: accept
 
   - tag: udp_server
     type: udp_server
