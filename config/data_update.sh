@@ -1,5 +1,5 @@
 #!/bin/sh
-# ulimit
+sleep $((1 + $RANDOM % 300))
 start_dns() {
     killname=$1
     if [ "$killname" = "unbound" ]; then

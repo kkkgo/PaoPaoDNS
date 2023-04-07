@@ -1,5 +1,4 @@
 #!/bin/sh
-sleep $((1 + $RANDOM % 300))
 mkdir -p /data
 rm /tmp/*.conf
 rm /tmp/*.toml
