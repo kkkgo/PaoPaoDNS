@@ -17,7 +17,7 @@ RUN cd /src/unbound* && make install && chmod +x /*.sh &&\
     rm -rf /src && apk del make && adduser -D unbound
 ENV TZ Asia/Shanghai
 ENV UPDATE weekly
-ENV DNS_SERVERNAME Bubbule_DNS,blog.03k.org
+ENV DNS_SERVERNAME PaoPaoDNS,blog.03k.org
 ENV DNSPORT 53
 ENV SOCKS5 ""
 ENV CNAUTO yes

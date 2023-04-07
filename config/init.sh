@@ -91,7 +91,7 @@ if [ -z "$ETHIP" ]; then
 fi
 sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
 if [ -z "$DNS_SERVERNAME" ]; then
-    DNS_SERVERNAME="Bubbule_DNS,blog.03k.org"
+    DNS_SERVERNAME="PaoPaoDNS,blog.03k.org"
 fi
 if [ -z "$DNSPORT" ]; then
     DNSPORT="53"
