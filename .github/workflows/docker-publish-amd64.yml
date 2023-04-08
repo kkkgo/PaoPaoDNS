@@ -1,7 +1,8 @@
 name: Push build AMD64
 on:
   push:
-
+    paths-ignore:
+      - 'README.md'
 jobs:
   build:
     runs-on: ubuntu-latest
