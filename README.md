@@ -1,6 +1,6 @@
 # PaoPao DNS docker
-![PaoPaoDNS](https://th.bing.com/th/id/OIG.0FtL40H4krRLeooEGFpu?w=95&h=95&c=6&r=0&o=5&pid=ImgGn)   
-![pull](https://img.shields.io/docker/pulls/sliamb/paopaodns.svg)   
+![PaoPaoDNS](https://th.bing.com/th/id/OIG.0FtL40H4krRLeooEGFpu?w=220&h=220&c=6&r=0&o=5&pid=ImgGn)    
+![pull](https://img.shields.io/docker/pulls/sliamb/paopaodns.svg) ![size](https://img.shields.io/docker/image-size/sliamb/paopaodns)   
 泡泡DNS是一个能一键部署递归DNS的docker镜像，它使用了unbound作为递归服务器程序，使用redis作为底层缓存，此外针对China大陆，还有智能根据CN分流加密查询的功能，也可以自定义分流列表，可以自动更新IP库，分流使用了mosdns程序，加密查询使用dnscrypt程序，针对IPv4/IPv6双栈用户也有优化处理。   
 泡泡DNS适合的使用场景：  
 - 场景一：仅作为一个纯粹的递归DNS服务器，作为你其他DNS服务程序的上游，替代114这种上游

@@ -4,6 +4,7 @@ on:
     paths-ignore:
       - 'README.md'
       - '.github/**'
+      - 'LICENSE'
   workflow_dispatch:
 jobs:
   build:
