@@ -57,7 +57,7 @@ whoami.ds.akahelp.net   text =
 CNAUTO|yes|yes,no|
 DNSPORT|53|端口值|
 DNS_SERVERNAME|PaoPaoDNS,blog.03k.org|不含空格的英文字符串|
-SOCKS5|空|如：10.10.10.8:7890|
+SOCKS5|空，非必须。|如：10.10.10.8:7890|
 TZ|Asia/Shanghai|tzdata时区值|
 UPDATE|weekly|`no`,`daily`,`weekly`,`monthly`|
 
@@ -65,7 +65,7 @@ UPDATE|weekly|`no`,`daily`,`weekly`,`monthly`|
 - CNAUTO：是否开启CN大陆智能分流,如果位于境外可配置为no
 - DNSPORT：设置DNS服务器端口，仅在CNAUTO=no时生效
 - DNS_SERVERNAME：DNS的服务器名称，你使用windows的nslookup的时候会看到它
-- SOCKS5：为分流非CN IP的域名优先使用SOCKS5查询，仅在CNAUTO=yes时生效
+- SOCKS5：为分流非CN IP的域名优先使用SOCKS5查询，但没有也能查，非必须项。仅在CNAUTO=yes时生效
 - TZ: 设置系统的运行时区，仅影响输出日志不影响程序运行
 - UPDATE: 检查更新根域数据和GEOIP数据的频率,no不检查,其中GEOIP更新仅在CNAUTO=yes时生效。注意：`daily`,`weekly`,`monthly`分别为alpine默认定义的每天凌晨2点、每周6凌晨3点、每月1号凌晨5点。更新数据后会瞬间完成重载。
 
