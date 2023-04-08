@@ -1,9 +1,8 @@
-name: Build and Push Docker
+name: Schedule Build Docker
 
 on:
   schedule:
     - cron: '5 07 * * 5'
-  push:
 
 jobs:
   build:
@@ -22,5 +21,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/386,linux/arm/v6,linux/arm/v7,linux/arm64
+          platforms: linux/386,linux/arm/v6,linux/arm/v7,linux/arm64,linux/amd64
           tags: sliamb/paopaodns:latest
