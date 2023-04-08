@@ -15,7 +15,7 @@ start_dns() {
 file_update() {
     date +"%Y-%m-%d %H:%M:%S %Z"
     oldsum=$($hashcmd $update_file | grep -Eo "$update_reg")
-    newsum=$(curl -s $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$newsum_url" | grep -Eo "$update_reg" | head -1)
+    newsum=$(curl -4 --connect-timeout 10 -s $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$newsum_url" | grep -Eo "$update_reg" | head -1)
     if echo "$newsum" | grep -qvE "$update_reg"; then
         echo "Network error."
         return 1
@@ -27,7 +27,7 @@ file_update() {
     echo $update_file "diff sha256sum, update..."
     echo newsum:"$newsum"
     echo oldsum:"$oldsum"
-    curl $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$down_url" -o $update_file_down
+    curl -4 --connect-timeout 10 $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$down_url" -o $update_file_down
     downsum=$($hashcmd "$update_file_down" | grep -Eo "$update_reg")
     if [ "$newsum" = "$downsum" ]; then
         echo "$update_file_down" "Download OK."

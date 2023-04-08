@@ -13,30 +13,18 @@ plugins:
     args:
       upstreams:
         - addr: "udp://127.0.0.1:5301"
+
   - tag: forward_unbound
     type: forward
     args:
       upstreams:
         - addr: "udp://127.0.0.1:5304"
-  - tag: forward_dnscrypt
-    type: forward
-    args:
-      upstreams:
-        - addr: "udp://127.0.0.1:5302"
 
   - tag: cnip
     type: mmdb
     args:
       file: "/data/Country-only-cn-private.mmdb"
 
-  - tag: forward_fall
-    type: fallback
-    args:
-      primary: forward_unbound
-      secondary: forward_dnscrypt
-      threshold: 200
-      always_standby: false
-  
   - tag: main_sequence
     type: sequence
     args:
@@ -52,7 +40,7 @@ plugins:
         - matches: has_wanted_ans
           exec: accept
         - matches: qname &/data/force_nocn_list.txt
-          exec: $forward_fall
+          exec: $forward_unbound
         - matches: has_wanted_ans
           exec: accept
         - matches: qname &/data/force_cn_list.txt
@@ -64,7 +52,7 @@ plugins:
           exec: accept
         - exec: drop_resp
         - exec: prefer_ipv4
-        - exec: $forward_fall
+        - exec: $forward_unbound
         - exec: accept
 
   - tag: udp_server
