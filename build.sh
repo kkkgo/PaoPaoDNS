@@ -68,11 +68,10 @@ add_repo() {
     touch /src/repositories
     sed "s/dl-cdn.alpinelinux.org/$1/g" /etc/apk/repositories >>/src/repositories
 }
+add_repo dl-cdn.alpinelinux.org
 add_repo mirrors.ustc.edu.cn
 add_repo mirrors.nju.edu.cn
 add_repo mirrors.aliyun.com
-add_repo mirrors.bfsu.edu.cn/alpine
-add_repo ftp.udx.icscoe.jp/Linux
 add_repo mirror.lzu.edu.cn
 add_repo mirrors.tuna.tsinghua.edu.cn
 add_repo mirrors.zju.edu.cn

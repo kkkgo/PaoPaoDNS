@@ -20,12 +20,12 @@ docker run -d \
 -p 53:53/udp \
 sliamb/paopaodns
 ```
-如果你需要容器运行在同一个局域网段而不是单独映射端口，除了一些NAS有现成的界面点点点，原生docker你可以考虑使用macvlan如下的配置(假设你的网络是192.168.1.1/24)：  
+如果你需要容器运行在同一个局域网段而不是单独映射端口，除了一些NAS有现成的界面点点点，原生docker你可以考虑使用macvlan如下的配置(假设你的网络是192.168.1.0/24)：  
 ```shell
 # 启用eth0网卡混杂模式
 ip link set eth0 promisc on
 # 创建macvlan网络
-docker network create -d macvlan --subnet=192.168.1.1/24 --gateway=192.168.1.1 -o parent=eth0 macvlan_eth0
+docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 macvlan_eth0
 # 运行容器并指定IP
 docker run -d \
 --name paopaodns \
@@ -86,15 +86,15 @@ UPDATE|weekly|`no`,`daily`,`weekly`,`monthly`|
 - `dnscrypt-resolvers`文件夹：储存dnscrypt服务器信息和签名，自动动态更新。
 - `Country-only-cn-private.mmdb`：CN IP数据库，自动更新将会覆盖此文件。
 - `dnscrypt.toml`是dnscrypt配置模板文件，修改它将会覆盖dnscrypt运行参数。除非你熟知自己在修改什么，一般不用修改它。
-- `force_cn_list.txt`是强制使用国内递归服务器查询的域名列表，一行一条，语法规则如下：  
+- `force_cn_list.txt`是强制使用本地递归服务器查询的域名列表，一行一条，语法规则如下：  
 以 domain: 开头域匹配: `domain:03k.org`会匹配自身`03k.org`，以及其子域名`www.03k.org`, `blog.03k.org`等。
-以 full: 开头，完整匹配。e.g: `full:03k.org` 只会匹配自身。完整匹配优先级更高。    
+以 full: 开头，完整匹配，`full:03k.org` 只会匹配自身。完整匹配优先级更高。    
 - `force_nocn_list.txt`是强制使用dnscrypt加密查询的域名列表，匹配规则同上。  
 - `mosdns.yaml`是mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
 ### 进阶自定义
 暂时没有什么高级的自定义需求，如果有的话欢迎写在[评论](https://github.com/kkkgo/blog.03k.org/discussions/23)里面，我会回复如何修改配置。   
 这里说一个在企业内可能需要的一个功能，就是需要和AD域整合，转发指定域名到AD域服务器的方法：
-打开编辑/data/unbound.conf，滚动到最后几行，已经帮你准备好了配置示例，你只需要取消注释即可：
+打开`/data/unbound.conf`编辑，滚动到最后几行，已经帮你准备好了配置示例，你只需要取消注释即可：
 ```yaml
 #Active Directory Forward Example
 # 在这个示例中，你公司的AD域名为company.local，有四台AD域DNS服务器。
