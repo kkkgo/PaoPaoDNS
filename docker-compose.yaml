@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  zero-ui:
+    image: sliamb/paopaodns:latest
+    container_name: PaoPaoDNS
+    restart: unless-stopped
+    volumes:
+      - /share/Container/paopaodns:/data
+    environment:
+      - TZ=Asia/Shanghai
+      - UPDATE=weekly
+      - DNS_SERVERNAME=PaoPaoDNS,blog.03k.org
+      - DNSPORT=53
+      - SOCKS5=no
+      - CNAUTO=yes
+      - IPV6=no
+    ports:
+      - "53:53/udp"

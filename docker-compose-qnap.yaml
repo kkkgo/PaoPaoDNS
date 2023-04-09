@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  zero-ui:
+    image: sliamb/paopaodns:latest
+    container_name: PaoPaoDNS
+    restart: unless-stopped
+    volumes:
+      - /share/Container/paopaodns:/data
+    environment:
+      - TZ=Asia/Shanghai
+      - UPDATE=weekly
+      - DNS_SERVERNAME=PaoPaoDNS,blog.03k.org
+      - DNSPORT=53
+      - SOCKS5=10.10.10.3:7890
+      - CNAUTO=yes
+      - IPV6=no
+    networks:
+      default:
+        ipv4_address: 10.10.10.6
+networks:
+  default:
+    external: true
+    name: qnet-static-eth0-ce61ba
+    # name from qnap ssh: docker network ls
