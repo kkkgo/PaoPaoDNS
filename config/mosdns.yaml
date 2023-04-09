@@ -8,6 +8,7 @@ plugins:
     args:
       size: 0
       lazy_cache_ttl: 0
+
   - tag: local_unbound
     type: forward
     args:
@@ -31,7 +32,7 @@ plugins:
         - matches: qtype 65
           exec: reject 5
         - matches: 
-          - qname &/data/force_nocn_list.txt
+#ipv6ok          - qname &/data/force_nocn_list.txt
           - qtype 28
           exec: reject 5
         - matches: 
@@ -51,7 +52,7 @@ plugins:
         - matches: resp_ip_mmdb $cnip CN
           exec: accept
         - exec: drop_resp
-        - exec: prefer_ipv4
+#ipv6ok        - exec: prefer_ipv4
         - exec: $forward_unbound
         - exec: accept
 

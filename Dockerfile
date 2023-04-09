@@ -21,6 +21,7 @@ ENV DNS_SERVERNAME PaoPaoDNS,blog.03k.org
 ENV DNSPORT 53
 ENV SOCKS5 "no"
 ENV CNAUTO yes
+ENV IPV6 "no"
 VOLUME /data
 EXPOSE 53/udp 5301/udp 5302/udp 5303/udp
 CMD /init.sh
