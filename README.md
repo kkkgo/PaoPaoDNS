@@ -8,7 +8,7 @@
 
 ## 构建说明
 `sliamb/paopaodns`Docker镜像由Github Actions自动构建本仓库代码构建推送，你可以在[Actions](https://github.com/kkkgo/PaoPaoDNS/actions)查看构建日志，或者自行下载源码进行构建，只需要执行docker build即可，或者可以fork仓库然后使用Actions进行自动构建。
-## [→详细说明/运行逻辑](https://blog.03k.org/post/paopaodns.html)
+## [→详细说明《为啥需要递归DNS》/运行逻辑](https://blog.03k.org/post/paopaodns.html)
 ## 使用方法
 简单来说，那么你可以运行：  
 ```shell
