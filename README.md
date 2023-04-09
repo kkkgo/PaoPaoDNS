@@ -93,6 +93,7 @@ IPV6|`no`|`no`,`yes`|
 以 domain: 开头域匹配: `domain:03k.org`会匹配自身`03k.org`，以及其子域名`www.03k.org`, `blog.03k.org`等。
 以 full: 开头，完整匹配，`full:03k.org` 只会匹配自身。完整匹配优先级更高。    
 - `force_nocn_list.txt`是强制使用dnscrypt加密查询的域名列表，匹配规则同上。  
+- 修改`force_cn_list.txt`和`force_nocn_list.txt`将会实时重载生效。
 - `mosdns.yaml`是mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
 ### 进阶自定义
 暂时没有什么高级的自定义需求，如果有的话欢迎写在[评论](https://github.com/kkkgo/blog.03k.org/discussions/23)里面，我会回复如何修改配置。   

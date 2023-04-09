@@ -1,17 +1,5 @@
 #!/bin/sh
 sleep $((1 + $RANDOM % 300))
-start_dns() {
-    killname=$1
-    if [ "$killname" = "unbound" ]; then
-        unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
-        if [ -f /tmp/unbound_forward.conf ]; then
-            unbound -c /tmp/unbound_forward.conf >/dev/null 2>&1 &
-        fi
-    fi
-    if [ "$killname" = "mosdns" ]; then
-        mosdns start -d /tmp -c mosdns.yaml
-    fi
-}
 file_update() {
     date +"%Y-%m-%d %H:%M:%S %Z"
     touch $update_file
@@ -32,13 +20,9 @@ file_update() {
     downsum=$($hashcmd "$update_file_down" | grep -Eo "$update_reg")
     if [ "$newsum" = "$downsum" ]; then
         echo "$update_file_down" "Download OK."
-        rm "$update_file"
-        mv "$update_file_down" "$update_file"
+        cat "$update_file_down" > "$update_file"
+        rm "$update_file_down"
         echo "$update_file" "Update OK."
-        killall "$killname"
-        start_dns "$killname"
-        sleep 1
-        ps -ef | grep -v "grep" | grep "$killname"
         return 0
     else
         echo "$update_file_down" "Download error."
@@ -71,7 +55,6 @@ update_reg="[0-9A-Za-z]{32}"
 hashcmd="md5sum"
 newsum_url=https://www.internic.net/domain/named.cache.md5
 down_url=https://www.internic.net/domain/named.cache
-killname="unbound"
 file_update_try
 redis-cli info | grep used_memory_human
 
@@ -82,7 +65,6 @@ if [ "$CNAUTO" != "no" ]; then
     hashcmd="sha256sum"
     newsum_url=https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country-only-cn-private.mmdb.sha256sum
     down_url=https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country-only-cn-private.mmdb
-    killname="mosdns"
     file_update_try
     if [ "$?" = "1" ]; then
         newsum_url=https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/Country-only-cn-private.mmdb.sha256sum

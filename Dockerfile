@@ -3,7 +3,7 @@ COPY *.sh /
 RUN chmod +x /*.sh && sh /build.sh
 FROM redis:alpine
 RUN apk update && \
-    apk add bind-tools dcron tzdata hiredis libevent make curl dnscrypt-proxy && \
+    apk add bind-tools dcron tzdata hiredis libevent make curl dnscrypt-proxy inotify-tools && \
     apk upgrade
 COPY --from=builder /src /src
 COPY config/* /

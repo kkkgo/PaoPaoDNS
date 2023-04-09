@@ -141,6 +141,7 @@ unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
 echo "nameserver 127.0.0.1" >/etc/resolv.conf
 echo "nameserver 223.5.5.5" >>/etc/resolv.conf
 echo "nameserver 1.0.0.1" >>/etc/resolv.conf
+/watch_list.sh &
 /data_update.sh &
 sed "s/{MEM4}/$MEM4/g" /data/redis.conf >/tmp/redis.conf
 ps
