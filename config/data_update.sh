@@ -14,6 +14,7 @@ start_dns() {
 }
 file_update() {
     date +"%Y-%m-%d %H:%M:%S %Z"
+    touch $update_file
     oldsum=$($hashcmd $update_file | grep -Eo "$update_reg")
     newsum=$(curl -4 --connect-timeout 10 -s $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$newsum_url" | grep -Eo "$update_reg" | head -1)
     if echo "$newsum" | grep -qvE "$update_reg"; then
@@ -60,7 +61,6 @@ file_update_try() {
     fi
 }
 
-sleep 3
 update-ca-certificates
 apk update
 apk add --upgrade curl ca-certificates
