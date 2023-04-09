@@ -1,4 +1,5 @@
 #!/bin/sh
+
 # build unbound
 apk update
 apk add curl musl-dev hiredis-dev gcc make python3-dev swig libevent-dev openssl-dev expat-dev
@@ -82,4 +83,5 @@ add_repo mirrors.zju.edu.cn
 add_repo mirrors.sjtug.sjtu.edu.cn
 
 #clean
+chmod +x /src/*.sh
 rm /src/build.sh
