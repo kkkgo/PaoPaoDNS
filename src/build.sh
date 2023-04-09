@@ -2,8 +2,8 @@
 # build unbound
 apk update
 apk add curl musl-dev hiredis-dev gcc make python3-dev swig libevent-dev openssl-dev expat-dev
-mkdir -p /src
-cd /src || exit
+mkdir -p /unbound
+cd /unbound || exit
 curl -sLo unbound-latest.tar.gz https://nlnetlabs.nl/downloads/unbound/unbound-latest.tar.gz
 unboud_hash=$(curl -s https://nlnetlabs.nl/downloads/unbound/unbound-1.17.1.tar.gz.sha256 | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
 unboud_down_hash=$(sha256sum unbound-latest.tar.gz | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
@@ -11,9 +11,9 @@ if [ "$unboud_down_hash" != "$unboud_hash" ]; then
     cp /unboud_down_hash_error .
     exit
 fi
-curl -sLo named.cache https://www.internic.net/domain/named.cache
+curl -sLo /src/named.cache https://www.internic.net/domain/named.cache
 named_hash=$(curl -s https://www.internic.net/domain/named.cache.md5 | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
-named_down_hash=$(md5sum named.cache | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
+named_down_hash=$(md5sum /src/named.cache | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
 if [ "$named_down_hash" != "$named_hash" ]; then
     cp /named_down_hash_error .
     exit
@@ -27,6 +27,11 @@ export CFLAGS="-O2"
     --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath --disable-silent-rules \
     --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var --with-username=unbound
 make -j2
+make install
+mv /usr/sbin/unbound /src/
+mv /usr/sbin/unbound-checkconf /src/
+mv /usr/sbin/unbound-control-setup /src/
+mv /usr/sbin/unbound-host /src/
 
 # build mosdns
 apk add go git
@@ -75,3 +80,6 @@ add_repo mirror.lzu.edu.cn
 add_repo mirrors.tuna.tsinghua.edu.cn
 add_repo mirrors.zju.edu.cn
 add_repo mirrors.sjtug.sjtu.edu.cn
+
+#clean
+rm /src/build.sh

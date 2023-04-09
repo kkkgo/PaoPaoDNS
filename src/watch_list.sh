@@ -21,13 +21,13 @@ reload_unbound() {
 watch_mosdns() {
     while true; do
         if [ ! -f /data/force_nocn_list.txt ]; then
-            cp /force_nocn_list.txt /data/
+            cp /usr/sbin/force_nocn_list.txt /data/
         fi
         if [ ! -f /data/force_cn_list.txt ]; then
-            cp /force_cn_list.txt /data/
+            cp /usr/sbin/force_cn_list.txt /data/
         fi
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
-            cp /Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
+            cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
         fi
         inotifywait -e modify /data/force_cn_list.txt /data/force_nocn_list.txt /data/Country-only-cn-private.mmdb && reload_mosdns
     done

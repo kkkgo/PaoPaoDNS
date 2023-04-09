@@ -3,17 +3,17 @@ mkdir -p /data
 rm /tmp/*.conf
 rm /tmp/*.toml
 if [ ! -f /data/unbound.conf ]; then
-    cp /unbound.conf /data/
+    cp /usr/sbin/unbound.conf /data/
 fi
 if [ ! -f /data/redis.conf ]; then
-    cp /redis.conf /data/
+    cp /usr/sbin/redis.conf /data/
 fi
 if [ "$UPDATE" != "no" ]; then
     crond
     if [ ! -f /etc/periodic/"$UPDATE" ]; then
         rm -rf /etc/periodic/*
         mkdir -p /etc/periodic/"$UPDATE"
-        cp /data_update.sh /etc/periodic/"$UPDATE"
+        cp /usr/sbin/data_update.sh /etc/periodic/"$UPDATE"
     fi
 fi
 CORES=$(grep -c ^processor /proc/cpuinfo)
@@ -99,23 +99,23 @@ fi
 if [ "$CNAUTO" != "no" ]; then
     DNSPORT="5301"
     if [ ! -f /data/mosdns.yaml ]; then
-        cp /mosdns.yaml /data/
+        cp /usr/sbin/mosdns.yaml /data/
     fi
     if [ ! -f /data/dnscrypt.toml ]; then
-        cp /dnscrypt.toml /data/
+        cp /usr/sbin/dnscrypt.toml /data/
     fi
     if [ ! -f /data/dnscrypt-resolvers/public-resolvers.md ]; then
         mkdir -p /data/dnscrypt-resolvers/
-        cp /dnscrypt-resolvers/* /data/dnscrypt-resolvers/
+        cp /usr/sbin/dnscrypt-resolvers/* /data/dnscrypt-resolvers/
     fi
     if [ ! -f /data/Country-only-cn-private.mmdb ]; then
-        cp /Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
+        cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
     fi
     if [ ! -f /data/force_nocn_list.txt ]; then
-        cp /force_nocn_list.txt /data/
+        cp /usr/sbin/force_nocn_list.txt /data/
     fi
     if [ ! -f /data/force_cn_list.txt ]; then
-        cp /force_cn_list.txt /data/
+        cp /usr/sbin/force_cn_list.txt /data/
     fi
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" >/data/dnscrypt-resolvers/dnscrypt_socks.yaml
@@ -141,8 +141,8 @@ unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
 echo "nameserver 127.0.0.1" >/etc/resolv.conf
 echo "nameserver 223.5.5.5" >>/etc/resolv.conf
 echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-/watch_list.sh &
-/data_update.sh &
+/usr/sbin/watch_list.sh &
+/usr/sbin/data_update.sh &
 sed "s/{MEM4}/$MEM4/g" /data/redis.conf >/tmp/redis.conf
 ps
 redis-server /tmp/redis.conf
