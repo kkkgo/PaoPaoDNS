@@ -65,10 +65,9 @@ mv /src/public-resolvers.m* /src/dnscrypt-resolvers/
 # apk mirrors
 add_repo() {
     mkdir -p /src/
-    touch /src/repositories
+    cp /etc/apk/repositories /src/repositories
     sed "s/dl-cdn.alpinelinux.org/$1/g" /etc/apk/repositories >>/src/repositories
 }
-add_repo dl-cdn.alpinelinux.org
 add_repo mirrors.ustc.edu.cn
 add_repo mirrors.nju.edu.cn
 add_repo mirrors.aliyun.com

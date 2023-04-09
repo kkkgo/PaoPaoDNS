@@ -117,7 +117,7 @@ if [ "$CNAUTO" != "no" ]; then
     if [ ! -f /data/force_cn_list.txt ]; then
         cp /force_cn_list.txt /data/
     fi
-    if [ -n "$SOCKS5" ]; then
+    if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         sed "s/#socksok//g" /data/mosdns.yaml >/tmp/mosdns.yaml
         sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" >/data/dnscrypt-resolvers/dnscrypt_socks.yaml
         dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.yaml >/dev/null 2>&1 &

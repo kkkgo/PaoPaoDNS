@@ -47,7 +47,7 @@ file_update() {
 }
 
 file_update_try() {
-    if [ -n "$SOCKS5" ]; then
+    if echo "$SOCKS5"|grep -Eoq ":[0-9]+"; then
         SOCKS5ON="yes"
     fi
     file_update
