@@ -13,8 +13,9 @@ RUN cd /src/unbound* && make install && chmod +x /*.sh &&\
     cp /src/Country-only-cn-private.mmdb /Country-only-cn-private.mmdb &&\
     cp /src/dnscrypt.toml /dnscrypt.toml &&\
     cp -r /src/dnscrypt-resolvers /dnscrypt-resolvers &&\
+    apk del make && adduser -D unbound &&\
     cp /src/repositories /etc/apk/repositories &&\
-    rm -rf /src && apk del make && adduser -D unbound
+    rm -rf /src
 ENV TZ Asia/Shanghai
 ENV UPDATE weekly
 ENV DNS_SERVERNAME PaoPaoDNS,blog.03k.org
