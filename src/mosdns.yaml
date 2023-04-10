@@ -21,6 +21,12 @@ plugins:
       upstreams:
         - addr: "udp://127.0.0.1:5304"
 
+  - tag: forward_dnscrypt
+    type: forward
+    args:
+      upstreams:
+        - addr: "udp://127.0.0.1:5302"
+
   - tag: cnip
     type: mmdb
     args:
@@ -54,6 +60,9 @@ plugins:
         - exec: drop_resp
 #ipv6ok        - exec: prefer_ipv4
         - exec: $forward_unbound
+        - matches: has_wanted_ans
+          exec: accept
+        - exec: $forward_dnscrypt
         - exec: accept
 
   - tag: udp_server
