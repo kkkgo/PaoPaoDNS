@@ -36,7 +36,7 @@ plugins:
           - qtype 28
           exec: reject 5
         - matches: 
-          - "qtype 12"
+          - "!qtype 1 2 5 28 15 16 33 6 99"
           exec: $local_unbound
         - matches: has_wanted_ans
           exec: accept
