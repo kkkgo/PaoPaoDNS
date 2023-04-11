@@ -66,7 +66,7 @@ UPDATE|`weekly`|`no`,`daily`,`weekly`,`monthly`|
 IPV6|`no`|`no`,`yes`|
 
 用途说明：
-- CNAUTO：是否开启CN大陆智能分流,如果位于境外可配置为no
+- CNAUTO：是否开启CN大陆智能分流，如果位于境外可配置为no
 - DNSPORT：设置DNS服务器端口，仅在CNAUTO=no时生效
 - DNS_SERVERNAME：DNS的服务器名称，你使用windows的nslookup的时候会看到它
 - SOCKS5：为分流非CN IP的域名优先使用SOCKS5查询，但没有也能查，非必须项。仅在CNAUTO=yes时生效
@@ -84,20 +84,20 @@ IPV6|`no`|`no`,`yes`|
 
 挂载共享文件夹`/data`目录文件说明：存放redis数据、IP库、各种配置文件，在该目录中修改配置文件会覆盖脚本参数，如果你不清楚配置项的作用，**请不要删除任何注释**。如果修改任何配置出现了异常，把配置文件删除，重启容器即可生成默认文件。  
 
-- `redis.conf`是redis服务器配置模板文件，修改它将会覆盖redis运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
-- `redis_dns.rdb`是redis的缓存文件，容器重启后靠它读取DNS缓存。刚开始使用的时候因为递归DNS有一个积累的过程，一开始查询会比较慢，等到这个文件体积起来了就很流畅了。   
+- `redis.conf`：redis服务器配置模板文件，修改它将会覆盖redis运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
+- `redis_dns.rdb`：redis的缓存文件，容器重启后靠它读取DNS缓存。刚开始使用的时候因为递归DNS有一个积累的过程，一开始查询会比较慢，等到这个文件体积起来了就很流畅了。   
 注意：redis_dns.rdb文件生成需要累积达到redis的最持久化要求，取决于`redis.conf`的配置，默认最低2小时后才会进行一次持久化操作。如果你升级容器的镜像，可以删除其他所有配置文件而保留这个rdb文件。         
-- `unbound.conf`是Unbound递归DNS的配置模板文件，除非你有高级的自定义需求，一般不需要修改它。  
+- `unbound.conf`：Unbound递归DNS的配置模板文件，除非你有高级的自定义需求，一般不需要修改它。  
 **以下文件仅在开启CNAUTO功能时出现：**  
 - `dnscrypt-resolvers`文件夹：储存dnscrypt服务器信息和签名，自动动态更新。
 - `Country-only-cn-private.mmdb`：CN IP数据库，自动更新将会覆盖此文件。
-- `dnscrypt.toml`是dnscrypt配置模板文件，修改它将会覆盖dnscrypt运行参数。除非你熟知自己在修改什么，一般不用修改它。
-- `force_cn_list.txt`是强制使用本地递归服务器查询的域名列表，一行一条，语法规则如下：  
+- `dnscrypt.toml`：dnscrypt配置模板文件，修改它将会覆盖dnscrypt运行参数。除非你熟知自己在修改什么，一般不用修改它。
+- `force_cn_list.txt`：强制使用本地递归服务器查询的域名列表，一行一条，语法规则如下：  
 以 domain: 开头域匹配: `domain:03k.org`会匹配自身`03k.org`，以及其子域名`www.03k.org`, `blog.03k.org`等。
 以 full: 开头，完整匹配，`full:03k.org` 只会匹配自身。完整匹配优先级更高。    
-- `force_nocn_list.txt`是强制使用dnscrypt加密查询的域名列表，匹配规则同上。  
+- `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。  
 - 修改`force_cn_list.txt`和`force_nocn_list.txt`将会实时重载生效。
-- `mosdns.yaml`是mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
+- `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
 ### 进阶自定义
 暂时没有什么高级的自定义需求，如果有的话欢迎写在[评论](https://github.com/kkkgo/blog.03k.org/discussions/23)里面，我会回复如何修改配置。   
 这里说一个在企业内可能需要的一个功能，就是需要和AD域整合，转发指定域名到AD域服务器的方法：
