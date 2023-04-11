@@ -36,11 +36,11 @@ docker run -d \
 --network macvlan_eth0 --ip 192.168.1.8 \
 sliamb/paopaodns
 ```
-验证你的递归DNS正常运行(假设你的容器IP是192.168.1.2)，可以执行以下命令：   
+验证你的递归DNS正常运行(假设你的容器IP是192.168.1.8)，可以执行以下命令：   
 ```cmd
->nslookup -type=TXT whoami.ds.akahelp.net 192.168.1.2
+>nslookup -type=TXT whoami.ds.akahelp.net 192.168.1.8
 服务器:  PaoPaoDNS,blog.03k.org
-Address:  192.168.1.2
+Address:  192.168.1.8
 
 非权威应答:
 whoami.ds.akahelp.net   text =
