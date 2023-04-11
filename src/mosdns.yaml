@@ -3,12 +3,6 @@ log:
     level: error
 
 plugins:
-  - tag: cache
-    type: cache
-    args:
-      size: 0
-      lazy_cache_ttl: 0
-
   - tag: local_unbound
     type: forward
     args:
