@@ -47,6 +47,8 @@ whoami.ds.akahelp.net   text =
 
         "ns"
         "116.31.123.234"  #连接权威DNS服务器的IP=你的宽带IP
+Linux可使用dig命令：  
+dig whoami.ds.akahelp.net @192.168.1.8 txt -p53
 ```  
 
 如果返回的IP和你宽带的出口IP一致的话，说明你的递归DNS服务正常运作了。 
