@@ -13,17 +13,8 @@ body:
       options:
         - label: "我已经尝试搜索过Issue和看过参数说明，但没有找到相关问题。"
           required: true
-        - label: "我正在使用最新的docker镜像版本（可以尝试`docker pull sliamb/paopaodns:latest`后重新创建容器）。"
+        - label: "我正在使用最新的docker镜像版本（可以尝试`docker pull sliamb/paopaodns:latest`后重新创建容器，如果不确定的话可以尝试使用`sliamb/paopaodns:dev`）。"
           required: true
-
-  - type: input
-    id: version
-    attributes:
-      label: 镜像版本ID
-      description: "执行命令：`docker images sliamb/paopaodns`可以查看"
-      placeholder: 6a5cd15294db
-    validations:
-      required: true
 
   - type: textarea
     id: config
@@ -35,6 +26,14 @@ body:
       required: true
 
   - type: textarea
+    id: log
+    attributes:
+      label: 脚本自检日志
+      description: "在容器内执行`debug.sh`，将输出结果粘贴到这里，如有敏感信息可以用x代替最后一位"
+      render: txt
+      required: true
+
+  - type: textarea
     id: what-happened
     attributes:
       label: 问题描述和复现步骤
@@ -43,8 +42,3 @@ body:
     validations:
       required: true
 
-  - type: textarea
-    id: log
-    attributes:
-      description: "在容器内执行`debug.sh`，将输出结果粘贴到这里，如有敏感信息可以用x代替最后一位"
-      render: txt
