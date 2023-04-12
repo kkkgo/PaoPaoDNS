@@ -3,7 +3,7 @@ COPY src/ /src/
 RUN sh /src/build.sh
 FROM redis:alpine
 COPY --from=builder /src/ /usr/sbin/
-RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools && \
+RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools && \
     apk upgrade --no-cache &&\
     mkdir -p /etc/unbound && \
     mv /usr/sbin/named.cache /etc/unbound/named.cache && \

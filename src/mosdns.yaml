@@ -12,8 +12,11 @@ plugins:
   - tag: forward_unbound
     type: forward
     args:
+      concurrent: 2
       upstreams:
         - addr: "udp://127.0.0.1:5304"
+#nosocks        - addr: "udp://127.0.0.1:5302"
+#socksok        - addr: "udp://127.0.0.1:5303"
 
   - tag: forward_dnscrypt
     type: forward

@@ -27,7 +27,6 @@ export CFLAGS="-O2"
     --enable-tfo-server --with-libhiredis --enable-cachedb --disable-rpath --without-pythonmodule --disable-documentation \
     --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath --disable-silent-rules \
     --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var --with-username=unbound
-make -j2
 make install
 mv /usr/sbin/unbound /src/
 mv /usr/sbin/unbound-checkconf /src/

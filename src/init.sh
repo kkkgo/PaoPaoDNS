@@ -121,14 +121,14 @@ if [ "$CNAUTO" != "no" ]; then
         sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" >/data/dnscrypt-resolvers/dnscrypt_socks.yaml
         dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.yaml >/dev/null 2>&1 &
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#socksok//g" >/tmp/unbound_forward.conf
+        sed "s/#socksok//g" /data/mosdns.yaml >/tmp/mosdns.yaml
         sleep 5
     else
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#nosocks//g" >/tmp/unbound_forward.conf
+        sed "s/#nosocks//g" /data/mosdns.yaml >/tmp/mosdns.yaml
     fi
     if [ "$IPV6" = "yes" ]; then
-        sed "s/#ipv6ok//g" /data/mosdns.yaml >/tmp/mosdns.yaml
-    else
-        cat /data/mosdns.yaml >/tmp/mosdns.yaml
+        sed -i "s/#ipv6ok//g" /tmp/mosdns.yaml
     fi
     cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
