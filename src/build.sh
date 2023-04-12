@@ -31,8 +31,6 @@ make -j2
 make install
 mv /usr/sbin/unbound /src/
 mv /usr/sbin/unbound-checkconf /src/
-mv /usr/sbin/unbound-control-setup /src/
-mv /usr/sbin/unbound-host /src/
 
 # build mosdns
 apk add go git
@@ -101,8 +99,6 @@ cp /src/redis.conf /tmp/
 cp /src/repositories /tmp/
 cp /src/unbound /tmp/
 cp /src/unbound-checkconf /tmp/
-cp /src/unbound-control-setup /tmp/
-cp /src/unbound-host /tmp/
 cp /src/unbound.conf /tmp/
 cp /src/watch_list.sh /tmp/
 
