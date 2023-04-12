@@ -1,4 +1,4 @@
-name: Push build AMD64
+name: Push build AMD64 latest
 on:
   workflow_dispatch:
 jobs:

@@ -1,4 +1,4 @@
-name: Push build AMD64
+name: Push build AMD64 dev
 on:
   push:
     paths-ignore:
