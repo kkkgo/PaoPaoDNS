@@ -19,4 +19,4 @@ jobs:
         with:
           push: true
           platforms: linux/amd64
-          tags: sliamb/paopaodns:dev
+          tags: sliamb/paopaodns:latest
