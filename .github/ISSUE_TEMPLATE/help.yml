@@ -31,6 +31,7 @@ body:
       label: 脚本自检日志
       description: "在容器内执行`debug.sh`，将输出结果粘贴到这里，如有敏感信息可以用x代替最后一位"
       render: txt
+    validations:
       required: true
 
   - type: textarea
