@@ -1,6 +1,7 @@
 name: "Help need"
 description: "[请求帮助] 参数有疑问？或者没有按照期望的效果？"
 title: "[Help] "
+labels: "help wanted"
 body:
   - type: markdown
     attributes:
