@@ -68,7 +68,7 @@ Aliases:  www.taobao.com
 可以把IP用这个网页ping看看是哪里的IP：
 https://ping.chinaz.com/
 ```   
-需要注意的是，如果你的网络有“自动分流IP”的功能，请把容器的IP加入不分流的名单，因为权威DNS需要准确的IP去判断，IP分流会影响权威DNS的判断。    
+需要注意的是，如果你的网络有“自动分流IP”的功能，请把容器的IP加入不分流的名单，因为权威DNS需要准确的IP去判断，IP分流会影响权威DNS的判断。此外，一些软路由存在劫持DNS请求的情况，解决办法参见[这个issue](https://github.com/kkkgo/PaoPaoDNS/issues/2#issuecomment-1504708367)。    
 
 ## 参数说明
 环境变量参数如下：  
