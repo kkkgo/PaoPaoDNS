@@ -39,7 +39,7 @@ body:
     attributes:
       label: 问题描述和复现步骤
       description: "描述越详细越有助于定位和解决问题。"
-      placeholder: ""
+      placeholder: "问题描述："
     validations:
       required: true
 
