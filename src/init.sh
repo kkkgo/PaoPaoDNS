@@ -37,52 +37,54 @@ if [ "$CORES" -gt 96 ]; then
     POWCORES=128
 fi
 MEMSIZE=$(free -m | grep Mem | grep -Eo "[0-9]+" | tail -1)
-# min:200m suggest:16G
-MEM1=25m
-MEM2=50m
-MEM3=500000
-MEM4=200mb
+# min:50m suggest:16G
+MEM1=4m
+MEM2=4m
+MEM3=10000
+MEM4=16mb
 if [ "$MEMSIZE" -gt 500 ]; then
-    MEM1=200m
-    MEM2=400m
-    MEM4=400mb
+    MEM1=50m
+    MEM2=100m
+    MEM4=100mb
 fi
 if [ "$MEMSIZE" -gt 2000 ]; then
     MEM1=200m
     MEM2=400m
-    MEM4=1500mb
+    MEM4=450mb
 fi
 if [ "$MEMSIZE" -gt 2500 ]; then
-    MEM1=300m
-    MEM2=600m
-    MEM4=2300mb
+    MEM1=230m
+    MEM2=450m
+    MEM3=500000
+    MEM4=750mb
 fi
 if [ "$MEMSIZE" -gt 4000 ]; then
-    MEM1=500m
+    MEM1=400m
+    MEM2=800m
+    MEM4=900mb
+fi
+if [ "$MEMSIZE" -gt 6000 ]; then
+    MEM1=600m
     MEM2=1000m
-    MEM4=3800mb
+    MEM4=1500mb
 fi
 if [ "$MEMSIZE" -gt 8000 ]; then
+    MEM1=800m
+    MEM2=1600m
+    MEM3=1000000
+    MEM4=1800mb
+fi
+if [ "$MEMSIZE" -gt 12000 ]; then
     MEM1=1000m
     MEM2=2000m
     MEM3=1000000
-    MEM4=7500mb
+    MEM4=3000mb
 fi
 if [ "$MEMSIZE" -gt 16000 ]; then
-    MEM1=2000m
-    MEM2=4000m
+    MEM1=1500m
+    MEM2=3000m
     MEM3=10000000
-    MEM4=15000mb
-fi
-if [ "$MEMSIZE" -gt 32000 ]; then
-    MEM1=4000m
-    MEM2=8000m
-    MEM4=30000mb
-fi
-if [ "$MEMSIZE" -gt 64000 ]; then
-    MEM1=8000m
-    MEM2=16000m
-    MEM4=24000mb
+    MEM4=4500mb
 fi
 IPREX4='([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
 ETHIP=$(ip -o -4 route get 1.0.0.1 | grep -Eo "$IPREX4" | tail -1)
