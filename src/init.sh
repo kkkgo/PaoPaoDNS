@@ -124,6 +124,8 @@ cat /tmp/env.conf
 sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
 if [ "$safemem" = "no" ]; then
     sed -i "s/#safemem//g" /tmp/unbound.conf
+else
+    sed -i "s/#lowrmem//g" /tmp/unbound.conf
 fi
 if [ "$CNAUTO" != "no" ]; then
     DNSPORT="5301"
