@@ -18,7 +18,7 @@ if [ "$UPDATE" != "no" ]; then
 fi
 CORES=$(grep -c ^processor /proc/cpuinfo)
 POWCORES=2
-if [ "$CORES" -gt 4 ]; then
+if [ "$CORES" -gt 3 ]; then
     POWCORES=4
 fi
 if [ "$CORES" -gt 6 ]; then
