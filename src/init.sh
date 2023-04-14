@@ -1,7 +1,7 @@
 #!/bin/sh
 mkdir -p /data
-rm /tmp/*.conf
-rm /tmp/*.toml
+rm /tmp/*.conf >/dev/null 2>&1
+rm /tmp/*.toml >/dev/null 2>&1
 if [ ! -f /data/unbound.conf ]; then
     cp /usr/sbin/unbound.conf /data/
 fi
@@ -36,24 +36,29 @@ fi
 if [ "$CORES" -gt 96 ]; then
     POWCORES=128
 fi
+free -m
+free -h
 MEMSIZE=$(free -m | grep Mem | grep -Eo "[0-9]+" | tail -1)
+echo MEMSIZE:"$MEMSIZE"
 # min:50m suggest:16G
 MEM1=4m
 MEM2=4m
 MEM3=10000
 MEM4=16mb
+safemem=yes
 if [ "$MEMSIZE" -gt 500 ]; then
     MEM1=50m
     MEM2=100m
     MEM4=100mb
 fi
 if [ "$MEMSIZE" -gt 2000 ]; then
+    safemem=no
     MEM1=200m
     MEM2=400m
     MEM4=450mb
 fi
 if [ "$MEMSIZE" -gt 2500 ]; then
-    MEM1=230m
+    MEM1=220m
     MEM2=450m
     MEM3=500000
     MEM4=750mb
@@ -64,7 +69,7 @@ if [ "$MEMSIZE" -gt 4000 ]; then
     MEM4=900mb
 fi
 if [ "$MEMSIZE" -gt 6000 ]; then
-    MEM1=600m
+    MEM1=500m
     MEM2=1000m
     MEM4=1500mb
 fi
@@ -91,12 +96,34 @@ ETHIP=$(ip -o -4 route get 1.0.0.1 | grep -Eo "$IPREX4" | tail -1)
 if [ -z "$ETHIP" ]; then
     ETHIP="127.0.0.2"
 fi
-sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
 if [ -z "$DNS_SERVERNAME" ]; then
     DNS_SERVERNAME="PaoPaoDNS,blog.03k.org"
 fi
 if [ -z "$DNSPORT" ]; then
     DNSPORT="53"
+fi
+
+echo ====ENV TEST==== >/tmp/env.conf
+echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
+if [ "$MEM1" = "4m" ]; then
+    echo "[Warning] LOW MEMORY!"
+fi
+echo CORES:"$CORES" >>/tmp/env.conf
+echo POWCORES:"$POWCORES" >>/tmp/env.conf
+echo TZ:"$TZ" >>/tmp/env.conf
+echo UPDATE:"$UPDATE" >>/tmp/env.conf
+echo DNS_SERVERNAME:"$DNS_SERVERNAME" >>/tmp/env.conf
+echo ETHIP:"$ETHIP" >>/tmp/env.conf
+echo DNSPORT:"$DNSPORT" >>/tmp/env.conf
+echo SOCKS5:"$SOCKS5" >>/tmp/env.conf
+echo CNAUTO:"$CNAUTO" >>/tmp/env.conf
+echo IPV6:"$IPV6" >>/tmp/env.conf
+echo ====ENV TEST==== >>/tmp/env.conf
+cat /tmp/env.conf
+
+sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
+if [ "$safemem" = "no" ]; then
+    sed -i "s/#safemem//g" /tmp/unbound.conf
 fi
 if [ "$CNAUTO" != "no" ]; then
     DNSPORT="5301"

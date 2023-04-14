@@ -1,5 +1,8 @@
 #!/bin/sh
 IPREX4='([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
+cat /tmp/env.conf
+ps -ef
+grep whoami /data/force_cn_list.txt
 echo CNIP URL test:
 curl -sk4 http://test.ipw.cn |grep -Eo "$IPREX4"|tail -1
 curl -sk4 http://ipsu.03k.org |grep -Eo "$IPREX4"|tail -1

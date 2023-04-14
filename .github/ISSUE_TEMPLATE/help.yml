@@ -18,15 +18,6 @@ body:
           required: true
 
   - type: textarea
-    id: config
-    attributes:
-      label: 容器使用的环境参数
-      description: "阅读：参数说明"
-      render: txt
-    validations:
-      required: true
-
-  - type: textarea
     id: log
     attributes:
       label: 脚本自检日志
