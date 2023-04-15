@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# copy redis
+rm -rf /usr/local/bin/docker-entrypoint.sh
+rm -rf /usr/local/bin/redis-benchmark
+mv /usr/local/bin/redis* /src/
 # build unbound
 apk update
 apk add curl musl-dev hiredis-dev gcc make python3-dev swig libevent-dev openssl-dev expat-dev
@@ -23,10 +27,12 @@ tar -xf unbound-latest.tar.gz
 rm unbound-latest.tar.gz
 cd unbound* || exit
 export CFLAGS="-O2"
-./configure --enable-subnet --with-libevent --with-pthreads --with-ssl --disable-static --enable-tfo-client \
-    --enable-tfo-server --with-libhiredis --enable-cachedb --disable-rpath --without-pythonmodule --disable-documentation \
-    --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath --disable-silent-rules \
-    --prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man --localstatedir=/var --with-username=unbound
+    ./configure --with-libevent --with-pthreads --with-libhiredis --enable-cachedb \
+    --disable-rpath --without-pythonmodule --disable-documentation \
+    --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath \
+    --with-pidfile=/tmp/unbound.pid \
+    --prefix=/usr --sysconfdir=/etc --localstatedir=/tmp --with-username=unbound
+make
 make install
 mv /usr/sbin/unbound /src/
 mv /usr/sbin/unbound-checkconf /src/
@@ -60,7 +66,7 @@ echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
 cat /tmp/dnsex.toml >>/src/dnscrypt.toml
 dnscrypt-proxy -config /src/dnscrypt.toml &
 #wait config download
-sleep 5
+sleep 10
 mkdir -p /src/dnscrypt-resolvers
 mv /src/relays.m* /src/dnscrypt-resolvers/
 mv /src/public-resolvers.m* /src/dnscrypt-resolvers/
@@ -79,28 +85,8 @@ add_repo mirrors.tuna.tsinghua.edu.cn
 add_repo mirrors.zju.edu.cn
 add_repo mirrors.sjtug.sjtu.edu.cn
 
-#clean and check
+#clean
 chmod +x /src/*.sh
-cp /src/Country-only-cn-private.mmdb /tmp/
-cp /src/data_update.sh /tmp/
-cp /src/dnscrypt-resolvers/public-resolvers.md /tmp/
-cp /src/dnscrypt-resolvers/public-resolvers.md.minisig /tmp/
-cp /src/dnscrypt-resolvers/relays.md /tmp/
-cp /src/dnscrypt-resolvers/relays.md.minisig /tmp/
-cp /src/dnscrypt.toml /tmp/
-cp /src/force_cn_list.txt /tmp/
-cp /src/force_nocn_list.txt /tmp/
-cp /src/init.sh /tmp/
-cp /src/mosdns /tmp/
-cp /src/mosdns.yaml /tmp/
-cp /src/named.cache /tmp/
-cp /src/redis.conf /tmp/
-cp /src/repositories /tmp/
-cp /src/unbound /tmp/
-cp /src/unbound-checkconf /tmp/
-cp /src/unbound.conf /tmp/
-cp /src/watch_list.sh /tmp/
-
 rm /src/build.sh
 
 

@@ -52,9 +52,9 @@ free -h
 MEMSIZE=$(free -m | grep Mem | grep -Eo "[0-9]+" | tail -1)
 echo MEMSIZE:"$MEMSIZE"
 # min:50m suggest:16G
-MEM1=4m
-MEM2=4m
-MEM3=10000
+MEM1=100k
+MEM2=200k
+MEM3=200
 MEM4=16mb
 safemem=yes
 if [ "$MEMSIZE" -gt 500 ]; then
@@ -102,6 +102,11 @@ if [ "$MEMSIZE" -gt 16000 ]; then
     MEM3=10000000
     MEM4=4500mb
 fi
+if [ "$MEM1" = "100k" ]; then
+    echo "[Warning] LOW MEMORY!"
+    CORES=1
+    POWCORES=1
+fi
 IPREX4='([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
 ETHIP=$(ip -o -4 route get 1.0.0.1 | grep -Eo "$IPREX4" | tail -1)
 if [ -z "$ETHIP" ]; then
@@ -116,9 +121,6 @@ fi
 
 echo ====ENV TEST==== >/tmp/env.conf
 echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
-if [ "$MEM1" = "4m" ]; then
-    echo "[Warning] LOW MEMORY!"
-fi
 echo CORES:"$CORES" >>/tmp/env.conf
 echo POWCORES:"$POWCORES" >>/tmp/env.conf
 echo TZ:"$TZ" >>/tmp/env.conf
@@ -180,10 +182,10 @@ if [ "$CNAUTO" != "no" ]; then
     cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &
-    unbound -c /tmp/unbound_forward.conf >/dev/null 2>&1 &
+    unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
-unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
+unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
 #Unexpected fallback while updating data
 echo "nameserver 127.0.0.1" >/etc/resolv.conf
 echo "nameserver 223.5.5.5" >>/etc/resolv.conf
