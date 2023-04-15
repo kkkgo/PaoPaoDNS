@@ -15,5 +15,6 @@ services:
       - SOCKS5=no
       - CNAUTO=yes
       - IPV6=no
+      - CNFALL=yes
     ports:
       - "53:53/udp"

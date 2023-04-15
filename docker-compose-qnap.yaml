@@ -15,6 +15,7 @@ services:
       - SOCKS5=10.10.10.3:7890
       - CNAUTO=yes
       - IPV6=no
+      - CNFALL=yes
     networks:
       default:
         ipv4_address: 10.10.10.6
