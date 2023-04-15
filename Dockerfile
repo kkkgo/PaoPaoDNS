@@ -15,7 +15,8 @@ ENV TZ=Asia/Shanghai \
     DNSPORT=53 \
     SOCKS5=no \
     CNAUTO=yes \
-    IPV6=no
+    IPV6=no \
+    CNFALL=yes
 VOLUME /data
 EXPOSE 53/udp 5301/udp 5302/udp 5303/udp 5304/udp
 CMD /usr/sbin/init.sh

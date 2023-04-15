@@ -81,6 +81,7 @@ SOCKS5|空，非必须。|如：`10.10.10.8:7890`|
 TZ|`Asia/Shanghai`|tzdata时区值|
 UPDATE|`weekly`|`no`,`daily`,`weekly`,`monthly`|
 IPV6|`no`|`no`,`yes`|
+CNFALL|`yes`|`no`,`yes`|
 
 用途说明：
 - CNAUTO：是否开启CN大陆智能分流，如果位于境外可配置为no
@@ -90,7 +91,8 @@ IPV6|`no`|`no`,`yes`|
 - TZ: 设置系统的运行时区，仅影响输出日志不影响程序运行
 - UPDATE: 检查更新根域数据和GEOIP数据的频率,no不检查,其中GEOIP更新仅在CNAUTO=yes时生效。注意：`daily`,`weekly`,`monthly`分别为alpine默认定义的每天凌晨2点、每周6凌晨3点、每月1号凌晨5点。更新数据后会瞬间完成重载。
 - IPV6： 仅在CNAUTO=yes时生效，是否返回IPv6的解析结果，默认为no，设置为yes返回IPv6的查询。如果没有IPv6环境，选择no可以节省内存。
-
+- CNFALL: 仅在CNAUTO=yes时生效，在遇到本地递归网络质量较差的时候，递归查询是否回退到转发查询，默认为yes。配置为no可以保证更实时准确的解析，但要求网络质量稳定（尽量减少nat的层数），推荐部署在具备公网IP的一级路由下的时候设置为no； 配置为yes可以兼顾解析质量和网络质量的平衡，保证长期总体的准确解析的同时兼顾短时间内网络超时的回退处理。    
+  
 可映射端口|端口用途
 |-|-|
 53|提供DNS服务的端口，在CNAUTO=no时数据直接来自unbound，CNAUTO=yes时数据来自mosdns
@@ -150,3 +152,4 @@ GEOIP:
 - https://github.com/Loyalsoldier/geoip
 
 todo: perfetch list
+      make redis

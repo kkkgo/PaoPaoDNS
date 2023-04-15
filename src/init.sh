@@ -2,6 +2,17 @@
 mkdir -p /data
 rm /tmp/*.conf >/dev/null 2>&1
 rm /tmp/*.toml >/dev/null 2>&1
+if [ ! -f /new.lock ]; then
+    echo New version install ! Try clean...
+    rm -rf /data/*.conf >/dev/null 2>&1
+    rm -rf /data/*.yaml >/dev/null 2>&1
+    rm -rf /data/*.toml >/dev/null 2>&1
+    rm -rf /data/*.txt >/dev/null 2>&1
+    rm -rf /data/*.mmdb >/dev/null 2>&1
+    rm -rf /data/dnscrypt-resolvers >/dev/null 2>&1
+    touch /new.lock
+fi
+
 if [ ! -f /data/unbound.conf ]; then
     cp /usr/sbin/unbound.conf /data/
 fi
@@ -160,6 +171,11 @@ if [ "$CNAUTO" != "no" ]; then
     fi
     if [ "$IPV6" = "yes" ]; then
         sed -i "s/#ipv6ok//g" /tmp/mosdns.yaml
+    fi
+    if [ "$CNFALL" = "yes" ]; then
+        sed -i "s/#cnfall//g" /tmp/mosdns.yaml
+    else
+        sed -i "s/#nofall//g" /tmp/mosdns.yaml
     fi
     cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &

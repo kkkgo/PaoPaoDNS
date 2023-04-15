@@ -3,6 +3,15 @@ log:
     level: error
 
 plugins:
+#cnfall  - tag: cn_test
+#cnfall    type: forward
+#cnfall    args:
+#cnfall      concurrent: 3
+#cnfall      upstreams:
+#cnfall        - addr: "udp://127.0.0.1:5301"
+#cnfall        - addr: "udp://223.5.5.5"
+#cnfall        - addr: "udp://119.29.29.29"
+
   - tag: local_unbound
     type: forward
     args:
@@ -51,7 +60,11 @@ plugins:
           exec: $local_unbound
         - matches: has_wanted_ans
           exec: accept
-        - exec: $local_unbound
+#cnfall        - exec: cache 1024
+#cnfall        - matches: has_wanted_ans
+#cnfall          exec: accept
+#nofall        - exec: $local_unbound
+#cnfall        - exec: $cn_test
         - matches: resp_ip_mmdb $cnip CN
           exec: accept
         - exec: drop_resp
