@@ -2,7 +2,7 @@
 
 # add tools
 apk update
-apk add curl dnscrypt-proxy redis
+apk add curl redis git
 
 # redis
 rm -rf /usr/bin/redis-benchmark
@@ -38,12 +38,10 @@ sed -i -r "s/bootstrap_resolvers.+/bootstrap_resolvers = ['1.0.0.1:53','223.5.5.
 sed -i -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5302']/g" /tmp/dnsex.toml
 echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
 cat /tmp/dnsex.toml >>/src/dnscrypt.toml
-dnscrypt-proxy -config /src/dnscrypt.toml &
-#wait config download
-sleep 30
+git clone https://github.com/DNSCrypt/dnscrypt-resolvers.git --depth 1 /dnscrypt
 mkdir -p /src/dnscrypt-resolvers
-mv /src/relays.m* /src/dnscrypt-resolvers/
-mv /src/public-resolvers.m* /src/dnscrypt-resolvers/
+mv /dnscrypt/v3/relays.m* /src/dnscrypt-resolvers/
+mv /dnscrypt/v3/public-resolvers.m* /src/dnscrypt-resolvers/
 
 # apk mirrors
 mkdir -p /src/
