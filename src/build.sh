@@ -2,30 +2,13 @@
 
 # add tools
 apk update
-apk add curl musl-dev gcc make git python3-dev swig \
-libevent-dev openssl-dev expat-dev hiredis-dev \
-go dnscrypt-proxy
+apk add curl dnscrypt-proxy redis
 
-# build redis
-mkdir -p /redis
-cd /redis || exit
-curl -sLo redis-stable.tar.gz https://download.redis.io/redis-stable.tar.gz
-redis_hash=$(curl -s https://download.redis.io/redis-stable.tar.gz.SHA256SUM | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
-redis_down_hash=$(sha256sum redis-stable.tar.gz | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
-if [ "$redis_down_hash" != "$redis_hash" ]; then
-    cp /redis_down_hash_error .
-    exit
-fi
-tar -xf redis-stable.tar.gz
-cd redis* || exit
-make
-make install
-rm /usr/local/bin/redis-benchmark
-mv /usr/local/bin/redis* /src/
+# redis
+rm -rf /usr/bin/redis-benchmark
+mv /usr/bin/redis* /src/
 
-# build unbound
-git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound
-cd /unbound || exit
+# named
 curl -sLo /src/named.cache https://www.internic.net/domain/named.cache
 named_hash=$(curl -s https://www.internic.net/domain/named.cache.md5 | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
 named_down_hash=$(md5sum /src/named.cache | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
@@ -33,22 +16,8 @@ if [ "$named_down_hash" != "$named_hash" ]; then
     cp /named_down_hash_error .
     exit
 fi
-export CFLAGS="-O2"
-./configure --with-libevent --with-pthreads --with-libhiredis --enable-cachedb \
-    --disable-rpath --without-pythonmodule --disable-documentation \
-    --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath \
-    --with-pidfile=/tmp/unbound.pid \
-    --prefix=/usr --sysconfdir=/etc --localstatedir=/tmp --with-username=unbound
-make
-make install
-mv /usr/sbin/unbound /src/
-mv /usr/sbin/unbound-checkconf /src/
 
-# build mosdns
-mkdir -p /mosdns-build
-git clone https://github.com/kkkgo/mosdns --depth 1 /mosdns-build
-cd /mosdns-build || exit
-go build -ldflags "-s -w" -trimpath -o /src/mosdns
+# mmdb
 curl -sLo /src/Country-only-cn-private.mmdb https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country-only-cn-private.mmdb
 mmdb_hash=$(sha256sum /src/Country-only-cn-private.mmdb | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
 mmdb_down_hash=$(curl -s https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country-only-cn-private.mmdb.sha256sum | grep -Eo "[a-zA-Z0-9]{64}" | head -1)

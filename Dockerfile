@@ -1,4 +1,5 @@
 FROM alpine:edge AS builder
+COPY --from=sliamb/prebuild-paopaodns /src/ /src/
 COPY src/ /src/
 RUN sh /src/build.sh
 # JUST CHECK
@@ -25,7 +26,7 @@ cp /src/redis-server /tmp/
 
 FROM alpine:edge
 COPY --from=builder /src/ /usr/sbin/
-RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools && \
+RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools libgcc && \
     apk upgrade --no-cache &&\
     mkdir -p /etc/unbound && \
     mv /usr/sbin/named.cache /etc/unbound/named.cache && \
