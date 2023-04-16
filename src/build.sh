@@ -1,21 +1,31 @@
 #!/bin/sh
 
-# copy redis
-rm -rf /usr/local/bin/docker-entrypoint.sh
-rm -rf /usr/local/bin/redis-benchmark
-mv /usr/local/bin/redis* /src/
-# build unbound
+# add tools
 apk update
-apk add curl musl-dev hiredis-dev gcc make python3-dev swig libevent-dev openssl-dev expat-dev
-mkdir -p /unbound
-cd /unbound || exit
-curl -sLo unbound-latest.tar.gz https://nlnetlabs.nl/downloads/unbound/unbound-latest.tar.gz
-unboud_hash=$(curl -s https://nlnetlabs.nl/downloads/unbound/unbound-1.17.1.tar.gz.sha256 | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
-unboud_down_hash=$(sha256sum unbound-latest.tar.gz | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
-if [ "$unboud_down_hash" != "$unboud_hash" ]; then
-    cp /unboud_down_hash_error .
+apk add curl musl-dev gcc make git python3-dev swig \
+libevent-dev openssl-dev expat-dev hiredis-dev \
+go dnscrypt-proxy
+
+# build redis
+mkdir -p /redis
+cd /redis || exit
+curl -sLo redis-stable.tar.gz https://download.redis.io/redis-stable.tar.gz
+redis_hash=$(curl -s https://download.redis.io/redis-stable.tar.gz.SHA256SUM | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
+redis_down_hash=$(sha256sum redis-stable.tar.gz | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
+if [ "$redis_down_hash" != "$redis_hash" ]; then
+    cp /redis_down_hash_error .
     exit
 fi
+tar -xf redis-stable.tar.gz
+cd redis* || exit
+make
+make install
+rm /usr/local/bin/redis-benchmark
+mv /usr/local/bin/redis* /src/
+
+# build unbound
+git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound
+cd /unbound || exit
 curl -sLo /src/named.cache https://www.internic.net/domain/named.cache
 named_hash=$(curl -s https://www.internic.net/domain/named.cache.md5 | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
 named_down_hash=$(md5sum /src/named.cache | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
@@ -23,11 +33,8 @@ if [ "$named_down_hash" != "$named_hash" ]; then
     cp /named_down_hash_error .
     exit
 fi
-tar -xf unbound-latest.tar.gz
-rm unbound-latest.tar.gz
-cd unbound* || exit
 export CFLAGS="-O2"
-    ./configure --with-libevent --with-pthreads --with-libhiredis --enable-cachedb \
+./configure --with-libevent --with-pthreads --with-libhiredis --enable-cachedb \
     --disable-rpath --without-pythonmodule --disable-documentation \
     --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath \
     --with-pidfile=/tmp/unbound.pid \
@@ -38,7 +45,6 @@ mv /usr/sbin/unbound /src/
 mv /usr/sbin/unbound-checkconf /src/
 
 # build mosdns
-apk add go git
 mkdir -p /mosdns-build
 git clone https://github.com/kkkgo/mosdns --depth 1 /mosdns-build
 cd /mosdns-build || exit
@@ -53,7 +59,6 @@ fi
 
 # config dnscrypt
 #gen dns toml
-apk add dnscrypt-proxy
 curl -s https://raw.githubusercontent.com/DNSCrypt/dnscrypt-proxy/master/dnscrypt-proxy/example-dnscrypt-proxy.toml | grep -v "#" | grep . >/tmp/dnsex.toml
 sed -i -r 's/log_level.+/log_level = 6/g' /tmp/dnsex.toml
 sed -i -r 's/force_tcp.+/force_tcp = true/g' /tmp/dnsex.toml
@@ -88,5 +93,3 @@ add_repo mirrors.sjtug.sjtu.edu.cn
 #clean
 chmod +x /src/*.sh
 rm /src/build.sh
-
-
