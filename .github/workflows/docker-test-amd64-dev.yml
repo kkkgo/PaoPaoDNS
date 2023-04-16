@@ -1,4 +1,4 @@
-name: Push build AMD64 dev
+name: Test build AMD64 dev
 on:
   push:
     paths-ignore:
@@ -23,5 +23,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/arm/v7
-          tags: sliamb/paopaodns:armv7
+          platforms: linux/amd64
+          tags: sliamb/paopaodns:dev

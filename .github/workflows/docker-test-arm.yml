@@ -1,5 +1,10 @@
-name: Push build AMD64 latest
+name: Test build armv7
 on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
+      - 'LICENSE'
   workflow_dispatch:
 jobs:
   build:
@@ -18,5 +23,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/amd64
-          tags: sliamb/paopaodns:latest
+          platforms: linux/arm/v7
+          tags: sliamb/paopaodns:armv7
