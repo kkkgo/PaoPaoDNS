@@ -40,7 +40,7 @@ echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
 cat /tmp/dnsex.toml >>/src/dnscrypt.toml
 dnscrypt-proxy -config /src/dnscrypt.toml &
 #wait config download
-sleep 10
+sleep 30
 mkdir -p /src/dnscrypt-resolvers
 mv /src/relays.m* /src/dnscrypt-resolvers/
 mv /src/public-resolvers.m* /src/dnscrypt-resolvers/
