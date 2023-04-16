@@ -2,8 +2,7 @@
 
 # add tools
 apk update
-apk add musl-dev gcc make git python3-dev swig libgcc \
-libevent-dev openssl-dev expat-dev hiredis-dev go
+apk add curl musl-dev gcc make git python3-dev swig libgcc libevent-dev openssl-dev expat-dev hiredis-dev go
 # build unbound
 git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound
 cd /unbound || exit
