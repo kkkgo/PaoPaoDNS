@@ -1,8 +1,8 @@
-name: Schedule Build Docker
+name: Schedule prebuild Docker
 
 on:
   schedule:
-    - cron: '5 07 * * 5'
+    - cron: '5 04 * * 5'
   workflow_dispatch:
 jobs:
   build:
@@ -21,6 +21,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          # platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          context: "{{defaultContext}}:prebuild-paopaodns"
+          #platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           platforms: linux/amd64
-          tags: sliamb/paopaodns:latest
+          tags: sliamb/prebuild-paopaodns:latest
