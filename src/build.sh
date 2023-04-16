@@ -57,6 +57,11 @@ add_repo mirrors.tuna.tsinghua.edu.cn
 add_repo mirrors.zju.edu.cn
 add_repo mirrors.sjtug.sjtu.edu.cn
 
+# build time
+bt=$(date +"%Y-%m-%d %H:%M:%S %Z")
+sed -i "s/{bulidtime}/$bt/g" /src/init.sh
+sed -i "s/{bulidtime}/$bt/g" /src/debug.sh
+
 #clean
 chmod +x /src/*.sh
 rm /src/build.sh

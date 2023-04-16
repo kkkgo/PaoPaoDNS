@@ -2,6 +2,7 @@
 mkdir -p /data
 rm /tmp/*.conf >/dev/null 2>&1
 rm /tmp/*.toml >/dev/null 2>&1
+echo images build time : {bulidtime}
 if [ ! -f /new.lock ]; then
     echo New version install ! Try clean...
     rm -rf /data/*.conf >/dev/null 2>&1
