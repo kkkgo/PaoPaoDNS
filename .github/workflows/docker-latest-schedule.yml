@@ -1,4 +1,4 @@
-name: Schedule Build Docker
+name: Schedule Latest Build Docker
 
 on:
   schedule:

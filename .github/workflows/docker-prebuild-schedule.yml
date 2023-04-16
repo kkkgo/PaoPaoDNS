@@ -1,4 +1,4 @@
-name: Schedule prebuild Docker
+name: Schedule Prebuild Docker
 
 on:
   schedule:
