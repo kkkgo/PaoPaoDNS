@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Share/分享讨论
-    url: https://github.com/kkkgo/PaoPaoDNS/discussions
+    url: "https://github.com/kkkgo/PaoPaoDNS/discussions?discussions_q="
     about: 分享你的成功配置和其他问题建议
