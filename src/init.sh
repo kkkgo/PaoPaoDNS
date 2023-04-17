@@ -2,6 +2,7 @@
 mkdir -p /data
 rm /tmp/*.conf >/dev/null 2>&1
 rm /tmp/*.toml >/dev/null 2>&1
+echo =====PaoPaoDNS docker start=====
 echo images build time : {bulidtime}
 if [ ! -f /new.lock ]; then
     echo New version install ! Try clean...
@@ -132,6 +133,7 @@ echo DNSPORT:"$DNSPORT" >>/tmp/env.conf
 echo SOCKS5:"$SOCKS5" >>/tmp/env.conf
 echo CNAUTO:"$CNAUTO" >>/tmp/env.conf
 echo IPV6:"$IPV6" >>/tmp/env.conf
+echo CNFALL:"$CNFALL" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
 
