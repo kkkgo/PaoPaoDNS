@@ -158,5 +158,3 @@ mosdns:
 
 GEOIP:
 - https://github.com/Loyalsoldier/geoip
-
-todo: perfetch list
