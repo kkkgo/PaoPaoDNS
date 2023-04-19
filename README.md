@@ -8,8 +8,6 @@
 - 场景一：仅作为一个纯粹的递归DNS服务器，作为你其他DNS服务程序的上游，替代114这种上游
 - 场景二：作为一个局域网内具备CN智能分流、解决污染问题和IPv6双栈优化的DNS服务器，或者你的局域网已经从IP层面解决了“科学”的问题，需要一个能智能分流的DNS服务器。  
 
-## 构建说明
-`sliamb/paopaodns`Docker镜像由Github Actions自动构建本仓库代码构建推送，你可以在[Actions](https://github.com/kkkgo/PaoPaoDNS/actions)查看构建日志，或者自行下载源码进行构建，只需要执行docker build即可，或者可以fork仓库然后使用Actions进行自动构建。
 ## [→详细说明《为啥需要递归DNS》/运行逻辑](https://blog.03k.org/post/paopaodns.html)
 ## 使用方法
 简单来说，那么你可以运行：  
@@ -135,6 +133,14 @@ forward-zone:
  forward-addr: 10.111.222.14
 
 ```
+## 附赠：PaoPao-Pref
+这是一个让DNS服务器预读取缓存或者压力测试的简单工具，配合[PaoPaoDNS](https://github.com/kkkgo/PaoPaoDNS)使用可以快速生成`redis_dns.rdb`缓存。从指定的文本读取域名列表并调用nslookup命令查询记录，docker镜像默认自带了全球前100万热门域名。    
+详情：https://github.com/kkkgo/PaoPao-Pref    
+
+
+## 构建说明
+`sliamb/paopaodns`Docker镜像由Github Actions自动构建本仓库代码构建推送，你可以在[Actions](https://github.com/kkkgo/PaoPaoDNS/actions)查看构建日志，或者自行下载源码进行构建，只需要执行docker build即可，或者可以fork仓库然后使用Actions进行自动构建。   
+
 ## 附录：使用到的程序
 unbound：
 - https://nlnetlabs.nl/projects/unbound/about/  
