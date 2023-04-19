@@ -52,7 +52,7 @@ dig whoami.ds.akahelp.net @192.168.1.8 txt -p53
 ```  
 或者，你可以使用03k.org的服务：  
 ```cmd
->nslookup whoami.03k.org 114.114.114.114
+>nslookup whoami.03k.org
 服务器:  PaoPaoDNS,blog.03k.org
 Address:  192.168.1.8
 

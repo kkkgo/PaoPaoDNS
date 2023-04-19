@@ -23,7 +23,7 @@ echo
 echo ------------------
 echo The DNS hijacking test, you will see timed out message.
 nslookup www.qq.com 6.7.8.9
-echo ----------whoami test----------
+echo ----------akahelp whoami test----------
 echo ------------------
 echo mosdns whoami dig:
 dig +short whoami.ds.akahelp.net @127.0.0.1 txt -p53
@@ -39,6 +39,23 @@ dig +short whoami.ds.akahelp.net @127.0.0.1 txt -p5303
 echo ------------------
 echo dnscrypt unbound whoami dig:
 dig +short whoami.ds.akahelp.net @127.0.0.1 txt -p5304
+echo ------------------
+echo ----------03k.org whoami test----------
+echo ------------------
+echo mosdns whoami dig:
+dig +short whoami.03k.org @127.0.0.1 a -p53
+echo ------------------
+echo local unbound whoami dig:
+dig +short whoami.03k.org @127.0.0.1 a -p5301
+echo ------------------
+echo dnscrypt raw whoami dig:
+dig +short whoami.03k.org @127.0.0.1 a -p5302
+echo ------------------
+echo dnscrypt with socks5 whoami dig:
+dig +short whoami.03k.org @127.0.0.1 a -p5303
+echo ------------------
+echo dnscrypt unbound whoami dig:
+dig +short whoami.03k.org @127.0.0.1 a -p5304
 echo ------------------
 echo ----------CN test----------
 echo mosdns CN dig:
