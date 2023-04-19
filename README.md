@@ -50,7 +50,16 @@ whoami.ds.akahelp.net   text =
 Linux可使用dig命令：  
 dig whoami.ds.akahelp.net @192.168.1.8 txt -p53
 ```  
+或者，你可以使用03k.org的服务：  
+```cmd
+>nslookup whoami.03k.org 114.114.114.114
+服务器:  PaoPaoDNS,blog.03k.org
+Address:  192.168.1.8
 
+非权威应答:
+名称:    whoami.03k.org
+Address:  116.31.123.234 #连接权威DNS服务器的IP=你的宽带IP
+```
 如果返回的IP和你宽带的出口IP一致的话，说明你的递归DNS服务正常运作了。 
    
 验证CNAUTO的功能：  
