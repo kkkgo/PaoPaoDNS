@@ -143,7 +143,7 @@ forward-zone:
 
 ```
 ## 附赠：PaoPao-Pref
-这是一个让DNS服务器预读取缓存或者压力测试的简单工具，配合[PaoPaoDNS](https://github.com/kkkgo/PaoPaoDNS)使用可以快速生成`redis_dns.rdb`缓存。从指定的文本读取域名列表并调用nslookup命令查询记录，docker镜像默认自带了全球前100万热门域名。    
+这是一个让DNS服务器预读取缓存或者压力测试的简单工具，配合[PaoPaoDNS](https://github.com/kkkgo/PaoPaoDNS)使用可以快速生成`redis_dns.rdb`缓存。从指定的文本读取域名列表并查询A/AAAA记录，docker镜像默认自带了全球前100万热门域名(经过无效域名筛选)。     
 详情：https://github.com/kkkgo/PaoPao-Pref    
 
 
