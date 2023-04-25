@@ -45,7 +45,7 @@ mv /dnscrypt/v3/public-resolvers.m* /src/dnscrypt-resolvers/
 
 # apk mirrors
 mkdir -p /src/
-cp /etc/apk/repositories /src/repositories
+touch /src/repositories
 add_repo() {
     sed "s/dl-cdn.alpinelinux.org/$1/g" /etc/apk/repositories >>/src/repositories
 }
@@ -56,6 +56,7 @@ add_repo mirror.lzu.edu.cn
 add_repo mirrors.tuna.tsinghua.edu.cn
 add_repo mirrors.zju.edu.cn
 add_repo mirrors.sjtug.sjtu.edu.cn
+add_repo dl-cdn.alpinelinux.org
 
 # build time
 bt=$(date +"%Y-%m-%d %H:%M:%S %Z")
