@@ -18,7 +18,7 @@ docker run -d \
 -v /home/mydata:/data \
 -e CNAUTO=yes \
 --restart unless-stopped \
--p 53:53/udp \
+-p 53:53/tcp -p 53:53/udp \
 sliamb/paopaodns
 ```
 如果你需要容器运行在同一个局域网段而不是单独映射端口，除了一些NAS有现成的界面点点点，原生docker你可以考虑使用macvlan如下的配置(假设你的网络是192.168.1.0/24)：  
@@ -102,7 +102,7 @@ CNFALL|`yes`|`no`,`yes`|
 - IPV6： 仅在CNAUTO=yes时生效，是否返回IPv6的解析结果，默认为no，设置为yes返回IPv6的查询。如果没有IPv6环境，选择no可以节省内存。
 - CNFALL: 仅在CNAUTO=yes时生效，在遇到本地递归网络质量较差的时候，递归查询是否回退到转发查询，默认为yes。配置为no可以保证更实时准确的解析，但要求网络质量稳定（尽量减少nat的层数），推荐部署在具备公网IP的一级路由下的时候设置为no； 配置为yes可以兼顾解析质量和网络质量的平衡，保证长期总体的准确解析的同时兼顾短时间内网络超时的回退处理。    
   
-可映射端口|端口用途
+可映射TCP/UDP|端口用途
 |-|-|
 53|提供DNS服务的端口，在CNAUTO=no时数据直接来自unbound，CNAUTO=yes时数据来自mosdns
 5301|在CNAUTO=yes时，递归unbound的端口，可用于dig调试
