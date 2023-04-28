@@ -1,7 +1,7 @@
 #!/bin/sh
 echo =====PaoPaoDNS docker debug=====
 echo images build time : {bulidtime}
-redis-cli info|grep human
+redis-cli -s /tmp/redis.sock info|grep human
 IPREX4='([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
 cat /tmp/env.conf
 ps -ef

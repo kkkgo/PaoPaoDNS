@@ -56,7 +56,7 @@ hashcmd="md5sum"
 newsum_url=https://www.internic.net/domain/named.cache.md5
 down_url=https://www.internic.net/domain/named.cache
 file_update_try
-redis-cli info | grep used_memory_human
+redis-cli -s /tmp/redis.sock info | grep used_memory_human
 
 if [ "$CNAUTO" != "no" ]; then
     update_file="/data/Country-only-cn-private.mmdb"

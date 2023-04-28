@@ -2,7 +2,7 @@
 
 # add tools
 apk update
-apk add build-base byacc musl-dev gcc make git python3-dev swig libevent-dev openssl-dev expat-dev hiredis-dev go
+apk add build-base flex byacc musl-dev gcc make git python3-dev swig libevent-dev openssl-dev expat-dev hiredis-dev go
 # build unbound
 git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound
 cd /unbound || exit
@@ -11,7 +11,7 @@ export CFLAGS="-O2"
     --disable-rpath --without-pythonmodule --disable-documentation \
     --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath \
     --with-pidfile=/tmp/unbound.pid \
-    --prefix=/usr --sysconfdir=/etc --localstatedir=/tmp --with-username=unbound
+    --prefix=/usr --sysconfdir=/etc --localstatedir=/tmp --with-username=root
 make
 make install
 mv /usr/sbin/unbound /src/
