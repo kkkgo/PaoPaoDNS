@@ -1,4 +1,5 @@
 domain:whoami.ds.akahelp.net
+domain:whoami.03k.org
 domain:msftncsi.com
 domain:msftconnecttest.com
 domain:03k.org

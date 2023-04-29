@@ -138,6 +138,7 @@ echo SOCKS5:"$SOCKS5" >>/tmp/env.conf
 echo CNAUTO:"$CNAUTO" >>/tmp/env.conf
 echo IPV6:"$IPV6" >>/tmp/env.conf
 echo CNFALL:"$CNFALL" >>/tmp/env.conf
+echo SAFEMODE:"$SAFEMODE" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
 
