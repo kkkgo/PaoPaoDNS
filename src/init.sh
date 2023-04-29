@@ -59,50 +59,54 @@ MEM2=200k
 MEM3=200
 MEM4=16mb
 safemem=yes
-if [ "$MEMSIZE" -gt 500 ]; then
-    MEM1=50m
-    MEM2=100m
-    MEM4=100mb
-fi
-if [ "$MEMSIZE" -gt 2000 ]; then
-    safemem=no
-    MEM1=200m
-    MEM2=400m
-    MEM4=450mb
-fi
-if [ "$MEMSIZE" -gt 2500 ]; then
-    MEM1=220m
-    MEM2=450m
-    MEM3=500000
-    MEM4=750mb
-fi
-if [ "$MEMSIZE" -gt 4000 ]; then
-    MEM1=400m
-    MEM2=800m
-    MEM4=900mb
-fi
-if [ "$MEMSIZE" -gt 6000 ]; then
-    MEM1=500m
-    MEM2=1000m
-    MEM4=1500mb
-fi
-if [ "$MEMSIZE" -gt 8000 ]; then
-    MEM1=800m
-    MEM2=1600m
-    MEM3=1000000
-    MEM4=1800mb
-fi
-if [ "$MEMSIZE" -gt 12000 ]; then
-    MEM1=1000m
-    MEM2=2000m
-    MEM3=1000000
-    MEM4=3000mb
-fi
-if [ "$MEMSIZE" -gt 16000 ]; then
-    MEM1=1500m
-    MEM2=3000m
-    MEM3=10000000
-    MEM4=4500mb
+if [ "$SAFEMODE" = "yes" ]; then
+    echo safemode enable!
+else
+    if [ "$MEMSIZE" -gt 500 ]; then
+        MEM1=50m
+        MEM2=100m
+        MEM4=100mb
+    fi
+    if [ "$MEMSIZE" -gt 2000 ]; then
+        safemem=no
+        MEM1=200m
+        MEM2=400m
+        MEM4=450mb
+    fi
+    if [ "$MEMSIZE" -gt 2500 ]; then
+        MEM1=220m
+        MEM2=450m
+        MEM3=500000
+        MEM4=750mb
+    fi
+    if [ "$MEMSIZE" -gt 4000 ]; then
+        MEM1=400m
+        MEM2=800m
+        MEM4=900mb
+    fi
+    if [ "$MEMSIZE" -gt 6000 ]; then
+        MEM1=500m
+        MEM2=1000m
+        MEM4=1500mb
+    fi
+    if [ "$MEMSIZE" -gt 8000 ]; then
+        MEM1=800m
+        MEM2=1600m
+        MEM3=1000000
+        MEM4=1800mb
+    fi
+    if [ "$MEMSIZE" -gt 12000 ]; then
+        MEM1=1000m
+        MEM2=2000m
+        MEM3=1000000
+        MEM4=3000mb
+    fi
+    if [ "$MEMSIZE" -gt 16000 ]; then
+        MEM1=1500m
+        MEM2=3000m
+        MEM3=10000000
+        MEM4=4500mb
+    fi
 fi
 if [ "$MEM1" = "100k" ]; then
     echo "[Warning] LOW MEMORY!"
