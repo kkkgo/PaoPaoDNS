@@ -12,6 +12,8 @@
 ## 使用方法
 简单来说，那么你可以运行：  
 ```shell
+#拉取最新的docker镜像
+docker pull sliamb/paopaodns:latest
 #假设你的数据要放在/home/mydata
 docker run -d \
 --name paopaodns \
@@ -27,6 +29,8 @@ sliamb/paopaodns
 ip link set eth0 promisc on
 # 创建macvlan网络
 docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 macvlan_eth0
+#拉取最新的docker镜像
+docker pull sliamb/paopaodns:latest
 # 运行容器并指定IP
 docker run -d \
 --name paopaodns \
