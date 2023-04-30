@@ -79,27 +79,27 @@ else
         MEM1=50m
         MEM2=100m
         MEM4=100mb
-        prefPC=10
+        prefPC=9
     fi
     if [ "$MEMSIZE" -gt 2000 ]; then
         safemem=no
         MEM1=200m
         MEM2=400m
         MEM4=450mb
-        prefPC=48
+        prefPC=41
     fi
     if [ "$MEMSIZE" -gt 2500 ]; then
         MEM1=220m
         MEM2=450m
         MEM3=500000
         MEM4=750mb
-        prefPC=81
+        prefPC=68
     fi
     if [ "$MEMSIZE" -gt 4000 ]; then
         MEM1=400m
         MEM2=800m
         MEM4=900mb
-        prefPC=97
+        prefPC=82
     fi
     if [ "$MEMSIZE" -gt 6000 ]; then
         MEM1=500m
