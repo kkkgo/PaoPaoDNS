@@ -63,6 +63,7 @@ fi
 free -m
 free -h
 MEMSIZE=$(free -m | grep Mem | grep -Eo "[0-9]+" | tail -1)
+prefPC=1
 echo MEMSIZE:"$MEMSIZE"
 # min:50m suggest:16G
 MEM1=100k
@@ -78,28 +79,33 @@ else
         MEM1=50m
         MEM2=100m
         MEM4=100mb
+        prefPC=10
     fi
     if [ "$MEMSIZE" -gt 2000 ]; then
         safemem=no
         MEM1=200m
         MEM2=400m
         MEM4=450mb
+        prefPC=48
     fi
     if [ "$MEMSIZE" -gt 2500 ]; then
         MEM1=220m
         MEM2=450m
         MEM3=500000
         MEM4=750mb
+        prefPC=81
     fi
     if [ "$MEMSIZE" -gt 4000 ]; then
         MEM1=400m
         MEM2=800m
         MEM4=900mb
+        prefPC=97
     fi
     if [ "$MEMSIZE" -gt 6000 ]; then
         MEM1=500m
         MEM2=1000m
         MEM4=1500mb
+        prefPC=100
     fi
     if [ "$MEMSIZE" -gt 8000 ]; then
         MEM1=800m
@@ -139,6 +145,7 @@ fi
 
 echo ====ENV TEST==== >/tmp/env.conf
 echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
+echo prefPC:"$prefPC" >>/tmp/env.conf
 echo CORES:"$CORES" >>/tmp/env.conf
 echo POWCORES:"$POWCORES" >>/tmp/env.conf
 echo ulimit :"$(ulimit -n)" >>/tmp/env.conf
