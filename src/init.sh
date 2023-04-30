@@ -30,6 +30,13 @@ if [ "$UPDATE" != "no" ]; then
     fi
 fi
 CORES=$(grep -c ^processor /proc/cpuinfo)
+if [ "$(ulimit -n)" -gt 999999 ]; then
+    echo "ulimit adbove 1000000."
+else
+    ulimit -SHn 1048576
+    echo ulimit:$(ulimit -n)
+fi
+lim=$(ulimit -n)
 POWCORES=2
 if [ "$CORES" -gt 3 ]; then
     POWCORES=4
@@ -49,6 +56,10 @@ fi
 if [ "$CORES" -gt 96 ]; then
     POWCORES=128
 fi
+FDLIM=$((lim / (2 * CORES) - CORES * 3))
+if [ "$FDLIM" -gt 4096 ]; then
+    FDLIM=4096
+fi
 free -m
 free -h
 MEMSIZE=$(free -m | grep Mem | grep -Eo "[0-9]+" | tail -1)
@@ -61,6 +72,7 @@ MEM4=16mb
 safemem=yes
 if [ "$SAFEMODE" = "yes" ]; then
     echo safemode enable!
+    FDLIM=1
 else
     if [ "$MEMSIZE" -gt 500 ]; then
         MEM1=50m
@@ -129,6 +141,8 @@ echo ====ENV TEST==== >/tmp/env.conf
 echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
 echo CORES:"$CORES" >>/tmp/env.conf
 echo POWCORES:"$POWCORES" >>/tmp/env.conf
+echo ulimit :"$(ulimit -n)" >>/tmp/env.conf
+echo FDLIM :"$FDLIM" >>/tmp/env.conf
 echo TZ:"$TZ" >>/tmp/env.conf
 echo UPDATE:"$UPDATE" >>/tmp/env.conf
 echo DNS_SERVERNAME:"$DNS_SERVERNAME" >>/tmp/env.conf
@@ -142,7 +156,7 @@ echo SAFEMODE:"$SAFEMODE" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
 
-sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
+sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{FDLIM}/$FDLIM/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
 if [ "$safemem" = "no" ]; then
     sed -i "s/#safemem//g" /tmp/unbound.conf
 else
