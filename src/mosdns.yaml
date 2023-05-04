@@ -49,10 +49,10 @@ plugins:
     args:
         - matches: qtype 65
           exec: reject 0
-        - matches: 
-#ipv6ok          - qname &/data/force_nocn_list.txt
-          - qtype 28
-          exec: reject 0
+#emptcusfw        - matches: 
+#emptcusfw#ipv6ok          - qname &/data/force_nocn_list.txt
+#emptcusfw          - qtype 28
+#emptcusfw          exec: reject 0
         - matches: 
           - "!qtype 1 2 5 28 15 16 33 6 99"
           exec: $local_unbound
