@@ -17,6 +17,7 @@ services:
       - IPV6=no
       - CNFALL=yes
       - CUSTOM_FORWARD=10.10.10.3:53
+      - AUTO_FORWARD=no
       - SAFEMODE=no
     ports:
       - "53:53/udp"
