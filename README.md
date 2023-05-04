@@ -96,7 +96,7 @@ UPDATE|`weekly`|`no`,`daily`,`weekly`,`monthly`|
 IPV6|`no`|`no`,`yes`|
 CNFALL|`yes`|`no`,`yes`|
 CUSTOM_FORWARD|空，可选功能|`IP:PORT`,如`10.10.10.3:53`|
-AUTO_FORWARD|`yes`|`no`,`yes`|
+AUTO_FORWARD|`no`|`no`,`yes`|
 SAFEMODE|`no`|`no`,`yes`|
 
 用途说明：
