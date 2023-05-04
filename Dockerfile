@@ -42,5 +42,5 @@ ENV TZ=Asia/Shanghai \
     CNFALL=yes \
     AUTO_FORWARD=no
 VOLUME /data
-EXPOSE 53/udp 53/tcp
+EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp
 CMD /usr/sbin/init.sh
