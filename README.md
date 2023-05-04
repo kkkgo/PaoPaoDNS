@@ -136,7 +136,7 @@ SAFEMODE|`no`|`no`,`yes`|
 尽量避免使用regxp和keyword，会消耗更多资源。同一文本内匹配优先级：`full > domain > regexp > keyword`     
 - `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。   
 - `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，匹配规则同上。   
-- 修改`force_cn_list.txt`和`force_nocn_list.txt`和`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。
+- 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。
 - `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
 ### 进阶自定义
 暂时没有什么高级的自定义需求，如果有的话欢迎写在[评论](https://github.com/kkkgo/PaoPaoDNS/discussions)里面，我会回复如何修改配置。   

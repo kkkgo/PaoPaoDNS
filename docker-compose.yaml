@@ -16,5 +16,8 @@ services:
       - CNAUTO=yes
       - IPV6=no
       - CNFALL=yes
+      - CUSTOM_FORWARD=10.10.10.3:53
+      - SAFEMODE=no
     ports:
       - "53:53/udp"
+      - "53:53/tcp"

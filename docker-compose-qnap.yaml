@@ -16,6 +16,8 @@ services:
       - CNAUTO=yes
       - IPV6=no
       - CNFALL=yes
+      - CUSTOM_FORWARD=10.10.10.3:53
+      - SAFEMODE=no
     networks:
       default:
         ipv4_address: 10.10.10.6
