@@ -18,6 +18,12 @@ plugins:
       upstreams:
         - addr: "udp://127.0.0.1:5301"
 
+#custfw  - tag: force_forward
+#custfw    type: forward
+#custfw    args:
+#custfw      upstreams:
+#custfw        - addr: "udp://{CUSTOM_FORWARD}"
+
   - tag: forward_unbound
     type: forward
     args:
@@ -52,6 +58,10 @@ plugins:
           exec: $local_unbound
         - matches: has_wanted_ans
           exec: accept
+#custfw        - matches: qname &/data/force_forward_list.txt
+#custfw          exec: $force_forward
+#custfw        - matches: has_wanted_ans
+#custfw          exec: accept
         - matches: qname &/data/force_nocn_list.txt
           exec: $forward_unbound
         - matches: has_wanted_ans

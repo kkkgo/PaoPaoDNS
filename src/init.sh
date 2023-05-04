@@ -160,6 +160,7 @@ echo SOCKS5:"$SOCKS5" >>/tmp/env.conf
 echo CNAUTO:"$CNAUTO" >>/tmp/env.conf
 echo IPV6:"$IPV6" >>/tmp/env.conf
 echo CNFALL:"$CNFALL" >>/tmp/env.conf
+echo CUSTOM_FORWARD:"$CUSTOM_FORWARD" >>/tmp/env.conf
 echo SAFEMODE:"$SAFEMODE" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
@@ -208,6 +209,13 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#cnfall//g" /tmp/mosdns.yaml
     else
         sed -i "s/#nofall//g" /tmp/mosdns.yaml
+    fi
+    if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
+        sed -i "s/#custfw//g" /tmp/mosdns.yaml
+        sed -i "s/{CUSTOM_FORWARD}/$CUSTOM_FORWARD/g" /tmp/mosdns.yaml
+        if [ ! -f /data/force_forward_list.txt ]; then
+            cp /usr/sbin/force_cn_list.txt /data/
+        fi
     fi
     cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &

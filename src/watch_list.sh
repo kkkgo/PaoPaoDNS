@@ -29,7 +29,14 @@ watch_mosdns() {
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
             cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
         fi
-        inotifywait -e modify /data/force_cn_list.txt /data/force_nocn_list.txt /data/Country-only-cn-private.mmdb && reload_mosdns
+        if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
+            if [ ! -f /data/force_forward_list.txt ]; then
+                cp /usr/sbin/force_forward_list.txt /data/
+            fi
+            inotifywait -e modify /data/force_cn_list.txt /data/force_nocn_list.txt /data/force_forward_list.txt /data/Country-only-cn-private.mmdb && reload_mosdns
+        else
+            inotifywait -e modify /data/force_cn_list.txt /data/force_nocn_list.txt /data/Country-only-cn-private.mmdb && reload_mosdns
+        fi
     done
 }
 

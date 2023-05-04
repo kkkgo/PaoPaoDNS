@@ -1,0 +1,1 @@
+#focre forward your domains to $CUSTOM_FORWARD DNS server.
