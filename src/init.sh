@@ -9,7 +9,6 @@ if [ ! -f /new.lock ]; then
     rm -rf /data/*.conf >/dev/null 2>&1
     rm -rf /data/*.yaml >/dev/null 2>&1
     rm -rf /data/*.toml >/dev/null 2>&1
-    rm -rf /data/*.txt >/dev/null 2>&1
     rm -rf /data/*.mmdb >/dev/null 2>&1
     rm -rf /data/dnscrypt-resolvers >/dev/null 2>&1
     touch /new.lock
