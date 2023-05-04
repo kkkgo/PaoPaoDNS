@@ -39,7 +39,8 @@ ENV TZ=Asia/Shanghai \
     SOCKS5=no \
     CNAUTO=yes \
     IPV6=no \
-    CNFALL=yes
+    CNFALL=yes \
+    AUTO_FORWARD=no
 VOLUME /data
 EXPOSE 53/udp 53/tcp
 CMD /usr/sbin/init.sh

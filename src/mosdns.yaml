@@ -24,20 +24,20 @@ plugins:
 #custfw      upstreams:
 #custfw        - addr: "udp://{CUSTOM_FORWARD}"
 
-  - tag: forward_unbound
-    type: forward
-    args:
-      concurrent: 2
-      upstreams:
-        - addr: "udp://127.0.0.1:5304"
-#nosocks        - addr: "udp://127.0.0.1:5302"
-#socksok        - addr: "udp://127.0.0.1:5303"
+#emptcusfw  - tag: forward_unbound
+#emptcusfw    type: forward
+#emptcusfw    args:
+#emptcusfw      concurrent: 2
+#emptcusfw      upstreams:
+#emptcusfw        - addr: "udp://127.0.0.1:5304"
+#emptcusfw#nosocks        - addr: "udp://127.0.0.1:5302"
+#emptcusfw#socksok        - addr: "udp://127.0.0.1:5303"
 
-  - tag: forward_dnscrypt
-    type: forward
-    args:
-      upstreams:
-        - addr: "udp://127.0.0.1:5302"
+#emptcusfw  - tag: forward_dnscrypt
+#emptcusfw    type: forward
+#emptcusfw    args:
+#emptcusfw      upstreams:
+#emptcusfw        - addr: "udp://127.0.0.1:5302"
 
   - tag: cnip
     type: mmdb
@@ -62,10 +62,10 @@ plugins:
 #custfw          exec: $force_forward
 #custfw        - matches: has_wanted_ans
 #custfw          exec: accept
-        - matches: qname &/data/force_nocn_list.txt
-          exec: $forward_unbound
-        - matches: has_wanted_ans
-          exec: accept
+#emptcusfw        - matches: qname &/data/force_nocn_list.txt
+#emptcusfw          exec: $forward_unbound
+#emptcusfw        - matches: has_wanted_ans
+#emptcusfw          exec: accept
         - matches: qname &/data/force_cn_list.txt
           exec: $local_unbound
         - matches: has_wanted_ans
@@ -79,11 +79,13 @@ plugins:
           exec: accept
         - exec: drop_resp
 #ipv6ok        - exec: prefer_ipv4
-        - exec: $forward_unbound
-        - matches: has_wanted_ans
-          exec: accept
-        - exec: $forward_dnscrypt
-        - exec: accept
+#emptcusfw        - exec: $forward_unbound
+#emptcusfw        - matches: has_wanted_ans
+#emptcusfw          exec: accept
+#emptcusfw        - exec: $forward_dnscrypt
+#emptcusfw        - exec: accept
+#nocncusfw        - exec: $force_forward
+#nocncusfw        - exec: accept
 
   - tag: udp_server
     type: udp_server

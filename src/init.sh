@@ -143,6 +143,9 @@ fi
 if [ -z "$DNSPORT" ]; then
     DNSPORT="53"
 fi
+if [ -z "$AUTO_FORWARD" ]; then
+    AUTO_FORWARD="no"
+fi
 
 echo ====ENV TEST==== >/tmp/env.conf
 echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
@@ -161,6 +164,7 @@ echo CNAUTO:"$CNAUTO" >>/tmp/env.conf
 echo IPV6:"$IPV6" >>/tmp/env.conf
 echo CNFALL:"$CNFALL" >>/tmp/env.conf
 echo CUSTOM_FORWARD:"$CUSTOM_FORWARD" >>/tmp/env.conf
+echo AUTO_FORWARD:"$AUTO_FORWARD" >>/tmp/env.conf
 echo SAFEMODE:"$SAFEMODE" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
@@ -176,25 +180,29 @@ if [ "$CNAUTO" != "no" ]; then
     if [ ! -f /data/mosdns.yaml ]; then
         cp /usr/sbin/mosdns.yaml /data/
     fi
-    if [ ! -f /data/dnscrypt.toml ]; then
+    if [ ! -f /data/Country-only-cn-private.mmdb ]; then
+        cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
+    fi
+    if [ "$AUTO_FORWARD" = "no" ]; then
+        if [ ! -f /data/dnscrypt.toml ]; then
         cp /usr/sbin/dnscrypt.toml /data/
     fi
     if [ ! -f /data/dnscrypt-resolvers/public-resolvers.md ]; then
         mkdir -p /data/dnscrypt-resolvers/
         cp /usr/sbin/dnscrypt-resolvers/* /data/dnscrypt-resolvers/
     fi
-    if [ ! -f /data/Country-only-cn-private.mmdb ]; then
-        cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
-    fi
     if [ ! -f /data/force_nocn_list.txt ]; then
         cp /usr/sbin/force_nocn_list.txt /data/
+    fi
     fi
     if [ ! -f /data/force_cn_list.txt ]; then
         cp /usr/sbin/force_cn_list.txt /data/
     fi
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" >/data/dnscrypt-resolvers/dnscrypt_socks.yaml
-        dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.yaml >/dev/null 2>&1 &
+        if [ "$AUTO_FORWARD" = "no" ]; then
+            dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.yaml >/dev/null 2>&1 &
+        fi
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#socksok//g" >/tmp/unbound_forward.conf
         sed "s/#socksok//g" /data/mosdns.yaml >/tmp/mosdns.yaml
         sleep 5
@@ -216,11 +224,17 @@ if [ "$CNAUTO" != "no" ]; then
         if [ ! -f /data/force_forward_list.txt ]; then
             cp /usr/sbin/force_cn_list.txt /data/
         fi
+        if [ "$AUTO_FORWARD" = "yes" ]; then
+            sed -i "s/#nocncusfw//g" /tmp/mosdns.yaml
+        fi
     fi
     cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
-    dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
+    if [ "$AUTO_FORWARD" = "no" ]; then
+        sed -i "s/#emptcusfw//g" /tmp/mosdns.yaml
+        dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
+        unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
+    fi
     mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &
-    unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
