@@ -135,7 +135,7 @@ SAFEMODE|`no`|`no`,`yes`|
 以`full:`开头，完整匹配，`full:03k.org` 只会匹配自身。完整匹配优先级更高。     
 以`regxp:`开头，正则匹配，如`regexp:.+\.03k\.org$`。[Go标准正则](https://github.com/google/re2/wiki/Syntax)。   
 以`keyword:`开头匹配域名关键字，如以`keyword: 03k.org`会匹配到`www.03k.org.cn`   
-尽量避免使用regxp和keyword，会消耗更多资源。同一文本内匹配优先级：`full > domain > regexp > keyword`     
+尽量避免使用regxp和keyword，会消耗更多资源。域名表达式省略前缀则为`domain:`。同一文本内匹配优先级：`full > domain > regexp > keyword`     
 - `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。   
 - `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，匹配规则同上。   
 - 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。

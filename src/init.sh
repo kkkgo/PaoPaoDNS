@@ -217,18 +217,18 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#nofall//g" /tmp/mosdns.yaml
     fi
     if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
-        sed -i "s/#custfw//g" /tmp/mosdns.yaml
+        sed -i "s/#customforward-seted//g" /tmp/mosdns.yaml
         sed -i "s/{CUSTOM_FORWARD}/$CUSTOM_FORWARD/g" /tmp/mosdns.yaml
         if [ ! -f /data/force_forward_list.txt ]; then
             cp /usr/sbin/force_cn_list.txt /data/
         fi
         if [ "$AUTO_FORWARD" = "yes" ]; then
-            sed -i "s/#nocncusfw//g" /tmp/mosdns.yaml
+            sed -i "s/#autoforward-yes//g" /tmp/mosdns.yaml
         fi
     fi
     cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
     if [ "$AUTO_FORWARD" = "no" ]; then
-        sed -i "s/#emptcusfw//g" /tmp/mosdns.yaml
+        sed -i "s/#autoforward-no//g" /tmp/mosdns.yaml
     fi
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &

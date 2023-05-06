@@ -3,6 +3,25 @@ log:
     level: error
 
 plugins:
+
+  - tag: "force_cn_list"
+    type: "domain_set"
+    args:
+      files:
+        - "/data/force_cn_list.txt"
+
+#autoforward-no  - tag: "force_nocn_list"
+#autoforward-no    type: "domain_set"
+#autoforward-no    args:
+#autoforward-no      files:
+#autoforward-no        - "/data/force_nocn_list.txt"
+
+#customforward-seted  - tag: "force_forward_list"
+#customforward-seted    type: "domain_set"
+#customforward-seted    args:
+#customforward-seted      files:
+#customforward-seted        - "/data/force_forward_list.txt"
+
 #cnfall  - tag: cn_test
 #cnfall    type: forward
 #cnfall    args:
@@ -18,26 +37,26 @@ plugins:
       upstreams:
         - addr: "udp://127.0.0.1:5301"
 
-#custfw  - tag: force_forward
-#custfw    type: forward
-#custfw    args:
-#custfw      upstreams:
-#custfw        - addr: "udp://{CUSTOM_FORWARD}"
+#customforward-seted  - tag: force_forward
+#customforward-seted    type: forward
+#customforward-seted    args:
+#customforward-seted      upstreams:
+#customforward-seted        - addr: "udp://{CUSTOM_FORWARD}"
 
-#emptcusfw  - tag: forward_unbound
-#emptcusfw    type: forward
-#emptcusfw    args:
-#emptcusfw      concurrent: 2
-#emptcusfw      upstreams:
-#emptcusfw        - addr: "udp://127.0.0.1:5304"
-#emptcusfw#nosocks        - addr: "udp://127.0.0.1:5302"
-#emptcusfw#socksok        - addr: "udp://127.0.0.1:5303"
+#autoforward-no  - tag: forward_unbound
+#autoforward-no    type: forward
+#autoforward-no    args:
+#autoforward-no      concurrent: 2
+#autoforward-no      upstreams:
+#autoforward-no        - addr: "udp://127.0.0.1:5304"
+#autoforward-no#nosocks        - addr: "udp://127.0.0.1:5302"
+#autoforward-no#socksok        - addr: "udp://127.0.0.1:5303"
 
-#emptcusfw  - tag: forward_dnscrypt
-#emptcusfw    type: forward
-#emptcusfw    args:
-#emptcusfw      upstreams:
-#emptcusfw        - addr: "udp://127.0.0.1:5302"
+#autoforward-no  - tag: forward_dnscrypt
+#autoforward-no    type: forward
+#autoforward-no    args:
+#autoforward-no      upstreams:
+#autoforward-no        - addr: "udp://127.0.0.1:5302"
 
   - tag: cnip
     type: mmdb
@@ -49,43 +68,50 @@ plugins:
     args:
         - matches: qtype 65
           exec: reject 0
-#emptcusfw        - matches: 
-#emptcusfw#ipv6ok          - qname &/data/force_nocn_list.txt
-#emptcusfw          - qtype 28
-#emptcusfw          exec: reject 0
+#autoforward-no        - matches: 
+#autoforward-no#ipv6ok          - qname $force_nocn_list
+#autoforward-no          - qtype 28
+#autoforward-no          exec: reject 0
         - matches: 
           - "!qtype 1 2 5 28 15 16 33 6 99"
           exec: $local_unbound
         - matches: has_wanted_ans
           exec: accept
-#custfw        - matches: qname &/data/force_forward_list.txt
-#custfw          exec: $force_forward
-#custfw        - matches: has_wanted_ans
-#custfw          exec: accept
-#emptcusfw        - matches: qname &/data/force_nocn_list.txt
-#emptcusfw          exec: $forward_unbound
-#emptcusfw        - matches: has_wanted_ans
-#emptcusfw          exec: accept
-        - matches: qname &/data/force_cn_list.txt
+#customforward-seted        - matches: qname $force_forward_list
+#customforward-seted          exec: $force_forward
+#customforward-seted        - matches: qname $force_forward_list
+#customforward-seted          exec: accept
+#autoforward-no        - matches: qname $force_nocn_list
+#autoforward-no          exec: $forward_unbound
+#autoforward-no        - matches: qname $force_nocn_list
+#autoforward-no          exec: accept
+        - matches: qname $force_cn_list
           exec: $local_unbound
-        - matches: has_wanted_ans
+        - matches: qname $force_cn_list
           exec: accept
 #cnfall        - exec: cache 1024
 #cnfall        - matches: has_wanted_ans
 #cnfall          exec: accept
 #nofall        - exec: $local_unbound
 #cnfall        - exec: $cn_test
+        - matches: 
+          - "!qtype 1 28"
+          - has_wanted_ans
+          exec: accept
         - matches: resp_ip_mmdb $cnip CN
           exec: accept
         - exec: drop_resp
 #ipv6ok        - exec: prefer_ipv4
-#emptcusfw        - exec: $forward_unbound
-#emptcusfw        - matches: has_wanted_ans
-#emptcusfw          exec: accept
-#emptcusfw        - exec: $forward_dnscrypt
-#emptcusfw        - exec: accept
-#nocncusfw        - exec: $force_forward
-#nocncusfw        - exec: accept
+#autoforward-yes        - exec: $force_forward
+#autoforward-yes        - matches: has_wanted_ans
+#autoforward-yes          exec: accept
+#autoforward-no        - exec: $forward_unbound
+#autoforward-no        - matches: has_wanted_ans
+#autoforward-no          exec: accept
+#autoforward-no        - exec: $forward_dnscrypt
+#autoforward-no        - matches: has_wanted_ans
+#autoforward-no          exec: accept
+        - exec: reject 0
 
   - tag: udp_server
     type: udp_server
