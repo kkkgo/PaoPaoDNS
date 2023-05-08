@@ -88,6 +88,5 @@ if [ "$CN_TRACKER" = "yes" ]; then
     curl -4s https://cdn.jsdelivr.net/gh/ngosang/trackerslist/trackers_all.txt >>/tmp/trackerslist.txt
     echo "" >>/tmp/trackerslist.txt
     sort -u /tmp/trackerslist.txt >/data/trackerslist.txt
-    echo "" >>/tmp/trackerslist.txt
     echo "Trackerlist has been updated."
 fi
