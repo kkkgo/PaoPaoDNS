@@ -97,6 +97,7 @@ IPV6|`no`|`no`,`yes`|
 CNFALL|`yes`|`no`,`yes`|
 CUSTOM_FORWARD|空，可选功能|`IP:PORT`,如`10.10.10.3:53`|
 AUTO_FORWARD|`no`|`no`,`yes`|
+CN_TRACKER|`yes`|`no`,`yes`|
 SAFEMODE|`no`|`no`,`yes`|
 
 用途说明：
@@ -110,6 +111,7 @@ SAFEMODE|`no`|`no`,`yes`|
 - CNFALL: 仅在CNAUTO=yes时生效，在遇到本地递归网络质量较差的时候，递归查询是否回退到转发查询，默认为yes。配置为no可以保证更实时准确的解析，但要求网络质量稳定（尽量减少nat的层数），推荐部署在具备公网IP的一级路由下的时候设置为no； 配置为yes可以兼顾解析质量和网络质量的平衡，保证长期总体的准确解析的同时兼顾短时间内网络超时的回退处理。    
 - CUSTOM_FORWARD: 仅在CNAUTO=yes时生效，将`force_forward_list.txt`内的域名列表转发到到`CUSTOM_FORWARD`DNS服务器。该功能可以配合第三方旁网关的[fakeip](https://www.v2fly.org/config/fakedns.html)，[域名嗅探sniffing](https://www.v2fly.org/config/inbounds.html#sniffingobject)等特性完成简单的域名分流效果。    
 - AUTO_FORWARD：仅在CNAUTO=yes时生效，配合`CUSTOM_FORWARD`功能使用，默认值为no，当设置为yes的时候，解析非CN大陆IP的域名将会直接转发到`CUSTOM_FORWARD`。该功能开启的时候，`force_nocn_list.txt`功能会失效（功能与`force_forward_list.txt`重复）。       
+- CN_TRACKER：仅在CNAUTO=yes时生效，默认值为yes，当设置为yes的时候，强制`trackerslist.txt`里面tracker的域名走本地递归解析。更新数据的时候会自动下载最新的trakcerlist。该功能在一些场景比较有用，比如`AUTO_FORWARD`配合fakeip的时候可以避免使用fakeip连接tracker。       
 - SAFEMODE： 安全模式，仅作调试使用，内存环境存在问题无法正常启动的时候尝试启用。   
 
 可映射TCP/UDP|端口用途
@@ -138,7 +140,8 @@ SAFEMODE|`no`|`no`,`yes`|
 尽量避免使用regxp和keyword，会消耗更多资源。域名表达式省略前缀则为`domain:`。同一文本内匹配优先级：`full > domain > regexp > keyword`     
 - `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。   
 - `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，匹配规则同上。   
-- 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。
+- 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。   
+- `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRAKCER`功能会出现，会增量自动更新，更新数据来源[[1]](https://github.com/XIU2/TrackersListCollection) [[2]](https://github.com/ngosang/trackerslist) ，你也可以添加自己的trakcer到这个文件，更新的时候会自动合并。修改将实时重载生效。   
 - `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
 ### 进阶自定义
 暂时没有什么高级的自定义需求，如果有的话欢迎写在[评论](https://github.com/kkkgo/PaoPaoDNS/discussions)里面，我会回复如何修改配置。   

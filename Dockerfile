@@ -40,6 +40,7 @@ ENV TZ=Asia/Shanghai \
     CNAUTO=yes \
     IPV6=no \
     CNFALL=yes \
+    CN_TRACKER=yes \
     AUTO_FORWARD=no
 VOLUME /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp

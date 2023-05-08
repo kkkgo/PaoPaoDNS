@@ -230,6 +230,13 @@ if [ "$CNAUTO" != "no" ]; then
     if [ "$AUTO_FORWARD" = "no" ]; then
         sed -i "s/#autoforward-no//g" /tmp/mosdns.yaml
     fi
+    if [ "$CN_TRACKER" = "yes" ]; then
+        sed -i "s/#cntracker-yes//g" /tmp/mosdns.yaml
+        if [ ! -f /data/trackerslist.txt ]; then
+            cp /usr/sbin/trackerslist.txt /data/
+        fi
+        sed -r "s/.+\/\///g" /data/trackerslist.txt | sed -r "s/:.+//g" | sed -r "s/\/.+//g" | grep "^[A-Za-z0-9]" | grep -E "[a-z]" | sort -u >/tmp/cn_tracker_list.txt
+    fi
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
     mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &

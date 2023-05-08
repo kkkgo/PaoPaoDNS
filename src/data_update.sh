@@ -20,7 +20,7 @@ file_update() {
     downsum=$($hashcmd "$update_file_down" | grep -Eo "$update_reg")
     if [ "$newsum" = "$downsum" ]; then
         echo "$update_file_down" "Download OK."
-        cat "$update_file_down" > "$update_file"
+        cat "$update_file_down" >"$update_file"
         rm "$update_file_down"
         echo "$update_file" "Update OK."
         return 0
@@ -32,7 +32,7 @@ file_update() {
 }
 
 file_update_try() {
-    if echo "$SOCKS5"|grep -Eoq ":[0-9]+"; then
+    if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         SOCKS5ON="yes"
     fi
     file_update
@@ -71,4 +71,15 @@ if [ "$CNAUTO" != "no" ]; then
         down_url=https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/Country-only-cn-private.mmdb
         file_update_try
     fi
+fi
+
+# Update Trackerlist Best Effort
+if [ "$CN_TRACKER" = "yes" ]; then
+    cat /data/trackerslist.txt >/tmp/trackerslist.txt
+    cat /usr/sbin/trackerslist.txt >>/tmp/trackerslist.txt
+    curl -4s https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt >>/tmp/trackerslist.txt
+    curl -4s https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/master/all.txt >>/tmp/trackerslist.txt
+    curl -4s https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt >>/tmp/trackerslist.txt
+    curl -4s https://cdn.jsdelivr.net/gh/ngosang/trackerslist/master/trackers_all.txt >>/tmp/trackerslist.txt
+    sort -u /tmp/trackerslist.txt >/data/trackerslist.txt
 fi

@@ -9,6 +9,7 @@ plugins:
     args:
       files:
         - "/data/force_cn_list.txt"
+#cntracker-yes        - "/tmp/cn_tracker_list.txt"
 
 #autoforward-no  - tag: "force_nocn_list"
 #autoforward-no    type: "domain_set"

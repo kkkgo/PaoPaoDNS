@@ -18,6 +18,7 @@ services:
       - CNFALL=yes
       - CUSTOM_FORWARD=10.10.10.3:53
       - AUTO_FORWARD=no
+      - CN_TRACKER=yes
       - SAFEMODE=no
     ports:
       - "53:53/udp"

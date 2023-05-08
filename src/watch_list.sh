@@ -1,5 +1,8 @@
 #!/bin/sh
 reload_mosdns() {
+    if [ "$CN_TRACKER" = "yes" ]; then
+        sed -r "s/.+\/\///g" /data/trackerslist.txt | sed -r "s/:.+//g" | sed -r "s/\/.+//g" | grep "^[A-Za-z0-9]" | grep -E "[a-z]" | sort -u >/tmp/cn_tracker_list.txt
+    fi
     killall mosdns
     echo "mosdns reload..."
     mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &
@@ -31,19 +34,29 @@ watch_mosdns() {
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
             cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
         fi
+        file_list="/data/Country-only-cn-private.mmdb /data/force_cn_list.txt"
+        if [ "$CN_TRACKER" = "yes" ]; then
+            if [ ! -f /data/trackerslist.txt ]; then
+                cp /usr/sbin/trackerslist.txt /data/
+            fi
+            file_list=$file_list" /data/trackerslist.txt"
+        fi
+        nocnlist="no"
         if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
+            file_list=$file_list" /data/force_forward_list.txt"
             if [ ! -f /data/force_forward_list.txt ]; then
                 cp /usr/sbin/force_forward_list.txt /data/
             fi
-
-            if [ "$AUTO_FORWARD" = "yes" ]; then
-                inotifywait -e modify /data/force_cn_list.txt /data/force_forward_list.txt /data/Country-only-cn-private.mmdb && reload_mosdns
-            else
-                inotifywait -e modify /data/force_cn_list.txt /data/force_nocn_list.txt /data/force_forward_list.txt /data/Country-only-cn-private.mmdb && reload_mosdns
+            if [ "$AUTO_FORWARD" = "no" ]; then
+                nocnlist="yes"
             fi
         else
-            inotifywait -e modify /data/force_cn_list.txt /data/force_nocn_list.txt /data/Country-only-cn-private.mmdb && reload_mosdns
+            nocnlist="yes"
         fi
+        if [ "$nocnlist" = "yes" ]; then
+            file_list=$file_list" /data/force_nocn_list.txt"
+        fi
+        inotifywait -e modify $file_list && reload_mosdns
     done
 }
 
@@ -55,5 +68,7 @@ watch_unbound() {
         inotifywait -e modify /etc/unbound/named.cache && reload_unbound
     done
 }
-watch_mosdns &
+if [ "$CNAUTO" != "no" ]; then
+    watch_mosdns &
+fi
 watch_unbound &
