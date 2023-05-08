@@ -1,7 +1,7 @@
 #!/bin/sh
 reload_mosdns() {
     if [ "$CN_TRACKER" = "yes" ]; then
-        sed -r "s/.+\/\///g" /data/trackerslist.txt | sed -r "s/:.+//g" | sed -r "s/\/.+//g" | grep "^[A-Za-z0-9]" | grep -E "[a-z]" | sort -u >/tmp/cn_tracker_list.txt
+        sed -r "s/.+\/\///g" /data/trackerslist.txt | sed -r "s/:.+//g" | sed -r "s/\/.+//g" | grep -E "^[-_.A-Za-z0-9]+$" | grep -E "[a-z]" | grep "." | sort -u >/tmp/cn_tracker_list.txt
     fi
     killall mosdns
     echo "mosdns reload..."
