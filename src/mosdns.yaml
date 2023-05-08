@@ -4,6 +4,12 @@ log:
 
 plugins:
 
+#usehosts-yes  - tag: "usehosts"
+#usehosts-yes    type: "hosts"
+#usehosts-yes    args:
+#usehosts-yes      files:
+#usehosts-yes        - "/tmp/hosts.txt" 
+
   - tag: "force_cn_list"
     type: "domain_set"
     args:
@@ -67,6 +73,7 @@ plugins:
   - tag: main_sequence
     type: sequence
     args:
+#usehosts-yes        - exec: $usehosts
         - matches: qtype 65
           exec: reject 0
 #autoforward-no        - matches: 

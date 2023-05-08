@@ -238,6 +238,16 @@ if [ "$CNAUTO" != "no" ]; then
         fi
         sed -r "s/.+\/\///g" /data/trackerslist.txt | sed -r "s/:.+//g" | sed -r "s/\/.+//g" | grep -E "^[-_.A-Za-z0-9]+$" | grep -E "[a-z]" | grep "." | sort -u >/tmp/cn_tracker_list.txt
     fi
+    #convert hosts
+    if [ "$USE_HOSTS" = "yes" ]; then
+        echo "" >/tmp/hosts.txt
+        while read line; do
+            record=$(echo "$line" | grep -Eo "[.:a-f0-9]+" | head -1)
+            domain=$(echo "$line" | grep -Eo "[-_.a-zA-Z0-9]+" | tail -1)
+            echo "$domain" "$record" >>/tmp/hosts.txt
+        done </etc/hosts
+        sed -i "s/#usehosts-yes//g" /tmp/mosdns.yaml
+    fi
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
     mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &

@@ -6,7 +6,7 @@ file_update() {
     oldsum=$($hashcmd $update_file | grep -Eo "$update_reg")
     newsum=$(curl -4 --connect-timeout 10 -s $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$newsum_url" | grep -Eo "$update_reg" | head -1)
     if echo "$newsum" | grep -qvE "$update_reg"; then
-        echo "Network error."
+        echo "Network error: ""$SOCKS5ON" "$newsum_url"
         return 1
     fi
     if [ "$newsum" = "$oldsum" ]; then
@@ -33,7 +33,7 @@ file_update() {
 
 file_update_try() {
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
-        SOCKS5ON="yes"
+        SOCKS5ON="$SOCKS5"
     fi
     file_update
     if [ "$?" = "1" ]; then

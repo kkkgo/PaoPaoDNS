@@ -98,6 +98,7 @@ CNFALL|`yes`|`no`,`yes`|
 CUSTOM_FORWARD|空，可选功能|`IP:PORT`,如`10.10.10.3:53`|
 AUTO_FORWARD|`no`|`no`,`yes`|
 CN_TRACKER|`yes`|`no`,`yes`|
+USE_HOSTS|`no`|`no`,`yes`|
 SAFEMODE|`no`|`no`,`yes`|
 
 用途说明：
@@ -112,6 +113,7 @@ SAFEMODE|`no`|`no`,`yes`|
 - CUSTOM_FORWARD: 仅在CNAUTO=yes时生效，将`force_forward_list.txt`内的域名列表转发到到`CUSTOM_FORWARD`DNS服务器。该功能可以配合第三方旁网关的[fakeip](https://www.v2fly.org/config/fakedns.html)，[域名嗅探sniffing](https://www.v2fly.org/config/inbounds.html#sniffingobject)等特性完成简单的域名分流效果。    
 - AUTO_FORWARD：仅在CNAUTO=yes时生效，配合`CUSTOM_FORWARD`功能使用，默认值为no，当设置为yes的时候，解析非CN大陆IP的域名将会直接转发到`CUSTOM_FORWARD`。该功能开启的时候，`force_nocn_list.txt`功能会失效（功能与`force_forward_list.txt`重复）。       
 - CN_TRACKER：仅在CNAUTO=yes时生效，默认值为yes，当设置为yes的时候，强制`trackerslist.txt`里面tracker的域名走本地递归解析。更新数据的时候会自动下载最新的trakcerlist。该功能在一些场景比较有用，比如`AUTO_FORWARD`配合fakeip的时候可以避免使用fakeip连接tracker。       
+- USE_HOSTS: 当设置为yes的时候，在启动时读取容器/etc/hosts文件。可以配合docker的`-add-hosts`或者docker compose的`extra_hosts`使用。仅在CNAUTO=yes时生效。         
 - SAFEMODE： 安全模式，仅作调试使用，内存环境存在问题无法正常启动的时候尝试启用。   
 
 可映射TCP/UDP|端口用途
