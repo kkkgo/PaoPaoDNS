@@ -78,8 +78,9 @@ if [ "$CN_TRACKER" = "yes" ]; then
     cat /data/trackerslist.txt >/tmp/trackerslist.txt
     cat /usr/sbin/trackerslist.txt >>/tmp/trackerslist.txt
     curl -4s https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt >>/tmp/trackerslist.txt
-    curl -4s https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/master/all.txt >>/tmp/trackerslist.txt
+    curl -4s https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/all.txt >>/tmp/trackerslist.txt
     curl -4s https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt >>/tmp/trackerslist.txt
-    curl -4s https://cdn.jsdelivr.net/gh/ngosang/trackerslist/master/trackers_all.txt >>/tmp/trackerslist.txt
+    curl -4s https://cdn.jsdelivr.net/gh/ngosang/trackerslist/trackers_all.txt >>/tmp/trackerslist.txt
     sort -u /tmp/trackerslist.txt >/data/trackerslist.txt
+    echo "Trackerlist has been updated."
 fi
