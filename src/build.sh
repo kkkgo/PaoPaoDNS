@@ -45,7 +45,9 @@ mv /dnscrypt/v3/public-resolvers.m* /src/dnscrypt-resolvers/
 
 # trackerlist
 curl -s https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt >/tmp/trackerslist.txt
+echo "" >>/tmp/trackerslist.txt
 curl -s https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt >>/tmp/trackerslist.txt
+echo "" >>/tmp/trackerslist.txt
 sort -u /tmp/trackerslist.txt >/src/trackerslist.txt
 
 # apk mirrors
