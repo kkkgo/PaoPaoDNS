@@ -251,7 +251,7 @@ if [ "$CNAUTO" != "no" ]; then
     fi
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
-    mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &
+    mosdns start -d /tmp -c mosdns.yaml &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
