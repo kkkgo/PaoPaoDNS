@@ -26,7 +26,7 @@ cp /src/redis-server /tmp/
 
 FROM alpine:edge
 COPY --from=builder /src/ /usr/sbin/
-RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools libgcc && \
+RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools mini_httpd libgcc && \
     apk upgrade --no-cache &&\
     mkdir -p /etc/unbound && \
     mv /usr/sbin/named.cache /etc/unbound/named.cache && \
@@ -42,7 +42,8 @@ ENV TZ=Asia/Shanghai \
     CNFALL=yes \
     CN_TRACKER=yes \
     AUTO_FORWARD=no \
-    USE_HOSTS=no
+    USE_HOSTS=no \
+    HTTP_FILE=no
 VOLUME /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp
 CMD /usr/sbin/init.sh
