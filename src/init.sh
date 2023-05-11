@@ -257,7 +257,7 @@ sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
 #mini_httpd
 if [ "$HTTP_FILE" = "yes" ]; then
-    mini_httpd -d /data -p 7889
+    mini_httpd -d /data -p 7889 -r
 fi
 #Unexpected fallback while updating data
 echo "nameserver 127.0.0.1" >/etc/resolv.conf
