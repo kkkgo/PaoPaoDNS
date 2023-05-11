@@ -166,6 +166,7 @@ echo CUSTOM_FORWARD:"$CUSTOM_FORWARD" >>/tmp/env.conf
 echo AUTO_FORWARD:"$AUTO_FORWARD" >>/tmp/env.conf
 echo CN_TRACKER:"$CN_TRACKER" >>/tmp/env.conf
 echo USE_HOSTS:"$USE_HOSTS" >>/tmp/env.conf
+echo HTTP_FILE:"$HTTP_FILE" >>/tmp/env.conf
 echo SAFEMODE:"$SAFEMODE" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
