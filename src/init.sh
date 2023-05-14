@@ -156,6 +156,7 @@ echo FDLIM :"$FDLIM" >>/tmp/env.conf
 echo TZ:"$TZ" >>/tmp/env.conf
 echo UPDATE:"$UPDATE" >>/tmp/env.conf
 echo DNS_SERVERNAME:"$DNS_SERVERNAME" >>/tmp/env.conf
+echo SERVER_IP:"$SERVER_IP" >>/tmp/env.conf
 echo ETHIP:"$ETHIP" >>/tmp/env.conf
 echo DNSPORT:"$DNSPORT" >>/tmp/env.conf
 echo SOCKS5:"$SOCKS5" >>/tmp/env.conf
@@ -177,7 +178,10 @@ if [ "$safemem" = "no" ]; then
 else
     sed -i "s/#lowrmem//g" /tmp/unbound.conf
 fi
-
+if echo "$SERVER_IP" | grep -Eoq "[.0-9]+"; then
+    sed -i "s/{SERVER_IP}/$SERVER_IP/g" /tmp/unbound.conf
+    sed -i "s/#serverip-enable//g" /tmp/unbound.conf
+fi
 if [ "$CNAUTO" != "no" ]; then
     DNSPORT="5301"
     if [ ! -f /data/mosdns.yaml ]; then
@@ -249,6 +253,12 @@ if [ "$CNAUTO" != "no" ]; then
             echo "$domain" "$record" >>/tmp/hosts.txt
         done </etc/hosts
         sed -i "s/#usehosts-yes//g" /tmp/mosdns.yaml
+        sed -i "s/#usehosts-enable//g" /tmp/mosdns.yaml
+    fi
+    if echo "$SERVER_IP" | grep -Eoq "[.0-9]+"; then
+        sed -i "s/#usehosts-yes//g" /tmp/mosdns.yaml
+        sed -i "s/#serverip-enable//g" /tmp/mosdns.yaml
+        sed -i "s/{SERVER_IP}/$SERVER_IP/g" /tmp/mosdns.yaml
     fi
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &

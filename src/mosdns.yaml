@@ -7,8 +7,10 @@ plugins:
 #usehosts-yes  - tag: "usehosts"
 #usehosts-yes    type: "hosts"
 #usehosts-yes    args:
-#usehosts-yes      files:
-#usehosts-yes        - "/tmp/hosts.txt" 
+#usehosts-yes#serverip-enable      entries:
+#usehosts-yes#serverip-enable        - "paopao.dns {SERVER_IP}"
+#usehosts-yes#usehosts-enable      files:
+#usehosts-yes#usehosts-enable        - "/tmp/hosts.txt" 
 
   - tag: "force_cn_list"
     type: "domain_set"

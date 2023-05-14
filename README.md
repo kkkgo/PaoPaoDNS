@@ -90,6 +90,7 @@ https://ping.chinaz.com/
 CNAUTO|`yes`|`yes`,`no`|
 DNSPORT|`53`|端口值|
 DNS_SERVERNAME|`PaoPaoDNS,blog.03k.org`|不含空格的英文字符串|
+SERVER_IP|空，非必须。|IP地址，如`10.10.10.8`|
 SOCKS5|空，非必须。|如：`10.10.10.8:7890`|
 TZ|`Asia/Shanghai`|tzdata时区值|
 UPDATE|`weekly`|`no`,`daily`,`weekly`,`monthly`|
@@ -105,7 +106,8 @@ SAFEMODE|`no`|`no`,`yes`|
 用途说明：
 - CNAUTO：是否开启CN大陆智能分流，如果位于境外可配置为no
 - DNSPORT：设置DNS服务器端口，仅在CNAUTO=no时生效
-- DNS_SERVERNAME：DNS的服务器名称，你使用windows的nslookup的时候会看到它。注意，该选项仅在容器的网卡IP和外部网卡IP一致的时候生效（比如macvlan）。    
+- DNS_SERVERNAME：DNS的服务器名称，你使用windows的nslookup的时候会看到它。    
+- SERVER_IP：指定DNS服务器的外部IP。假设你的DNS容器是宿主`10.10.10.4`映射出来的端口而不是独立的IP，设置该项为`10.10.10.4`可以让你看到正确的`DNS_SERVERNAME`。同时会设定域名`paopao.dns`指向该IP地址`10.10.10.4`，可配合其他服务使用。         
 - SOCKS5：为分流非CN IP的域名优先使用SOCKS5查询，但没有也能查，非必须项。仅在CNAUTO=yes时生效
 - TZ: 设置系统的运行时区，仅影响输出日志不影响程序运行
 - UPDATE: 检查更新根域数据和GEOIP数据的频率,no不检查,其中GEOIP更新仅在CNAUTO=yes时生效。注意：`daily`,`weekly`,`monthly`分别为alpine默认定义的每天凌晨2点、每周6凌晨3点、每月1号凌晨5点。更新数据后会瞬间完成重载。
