@@ -41,19 +41,13 @@ watch_mosdns() {
             fi
             file_list=$file_list" /data/trackerslist.txt"
         fi
-        nocnlist="no"
         if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
             file_list=$file_list" /data/force_forward_list.txt"
             if [ ! -f /data/force_forward_list.txt ]; then
                 cp /usr/sbin/force_forward_list.txt /data/
             fi
-            if [ "$AUTO_FORWARD" = "no" ]; then
-                nocnlist="yes"
-            fi
-        else
-            nocnlist="yes"
         fi
-        if [ "$nocnlist" = "yes" ]; then
+        if [ "$AUTO_FORWARD" = "no" ]; then
             file_list=$file_list" /data/force_nocn_list.txt"
         fi
         inotifywait -e modify $file_list && reload_mosdns
