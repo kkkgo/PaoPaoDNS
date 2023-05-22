@@ -36,13 +36,15 @@ ENV TZ=Asia/Shanghai \
     UPDATE=weekly \
     DNS_SERVERNAME=PaoPaoDNS,blog.03k.org \
     DNSPORT=53 \
-    SOCKS5=no \
     CNAUTO=yes \
-    IPV6=no \
     CNFALL=yes \
     CN_TRACKER=yes \
-    AUTO_FORWARD=no \
     USE_HOSTS=no \
+    IPV6=no \
+    SOCKS5="IP:PORT" \
+    SERVER_IP=none \
+    CUSTOM_FORWARD="IP:PORT" \
+    AUTO_FORWARD=no \
     HTTP_FILE=no
 VOLUME /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp 7889/tcp
