@@ -150,6 +150,8 @@ SAFEMODE|`no`|`no`,`yes`|
 - 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。   
 - `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRAKCER`功能会出现，会增量自动更新，更新数据来源[[1]](https://github.com/XIU2/TrackersListCollection) [[2]](https://github.com/ngosang/trackerslist) ，你也可以添加自己的trakcer到这个文件，更新的时候会自动合并。修改将实时重载生效。   
 - `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
+
+注意事项：更新容器镜像版本会覆盖旧版本配置文件（不包括自定义的txt文件），如果你对配置文件有修改（比如高级的自定义），请注意备份。   
 ### 进阶自定义
 暂时没有什么高级的自定义需求，如果有的话欢迎写在[评论](https://github.com/kkkgo/PaoPaoDNS/discussions)里面，我会回复如何修改配置。   
 这里说一个在企业内可能需要的一个功能，就是需要和AD域整合，转发指定域名到AD域服务器的方法：

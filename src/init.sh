@@ -7,7 +7,7 @@ echo images build time : {bulidtime}
 if [ ! -f /new.lock ]; then
     echo New version install ! Try clean...
     rm -rf /data/*.conf >/dev/null 2>&1
-    rm -rf /data/*.yaml >/dev/null 2>&1
+    rm -rf /data/mosdns.yaml >/dev/null 2>&1
     rm -rf /data/*.toml >/dev/null 2>&1
     rm -rf /data/*.mmdb >/dev/null 2>&1
     rm -rf /data/dnscrypt-resolvers >/dev/null 2>&1
