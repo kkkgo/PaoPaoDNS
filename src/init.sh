@@ -165,6 +165,7 @@ echo IPV6:"$IPV6" >>/tmp/env.conf
 echo CNFALL:"$CNFALL" >>/tmp/env.conf
 echo CUSTOM_FORWARD:"$CUSTOM_FORWARD" >>/tmp/env.conf
 echo AUTO_FORWARD:"$AUTO_FORWARD" >>/tmp/env.conf
+echo AUTO_FORWARD_CHECK:"$AUTO_FORWARD_CHECK" >>/tmp/env.conf
 echo CN_TRACKER:"$CN_TRACKER" >>/tmp/env.conf
 echo USE_HOSTS:"$USE_HOSTS" >>/tmp/env.conf
 echo HTTP_FILE:"$HTTP_FILE" >>/tmp/env.conf
