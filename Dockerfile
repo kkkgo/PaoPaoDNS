@@ -45,6 +45,7 @@ ENV TZ=Asia/Shanghai \
     SERVER_IP=none \
     CUSTOM_FORWARD="IP:PORT" \
     AUTO_FORWARD=no \
+    AUTO_FORWARD_CHECK=yes \
     HTTP_FILE=no
 VOLUME /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp 7889/tcp

@@ -231,6 +231,11 @@ if [ "$CNAUTO" != "no" ]; then
         fi
         if [ "$AUTO_FORWARD" = "yes" ]; then
             sed -i "s/#autoforward-yes//g" /tmp/mosdns.yaml
+            if [ "$AUTO_FORWARD_CHECK" = "yes" ]; then
+                sed -i "s/#autoforward-check//g" /tmp/mosdns.yaml
+            else
+                sed -i "s/#autoforward-nocheck//g" /tmp/mosdns.yaml
+            fi
         fi
     fi
     cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml

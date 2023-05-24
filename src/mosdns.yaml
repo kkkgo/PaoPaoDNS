@@ -52,14 +52,14 @@ plugins:
 #customforward-seted      upstreams:
 #customforward-seted        - addr: "udp://{CUSTOM_FORWARD}"
 
-#autoforward-no  - tag: forward_unbound
-#autoforward-no    type: forward
-#autoforward-no    args:
-#autoforward-no      concurrent: 2
-#autoforward-no      upstreams:
-#autoforward-no        - addr: "udp://127.0.0.1:5304"
-#autoforward-no#nosocks        - addr: "udp://127.0.0.1:5302"
-#autoforward-no#socksok        - addr: "udp://127.0.0.1:5303"
+  - tag: forward_unbound
+    type: forward
+    args:
+      concurrent: 2
+      upstreams:
+        - addr: "udp://127.0.0.1:5304"
+#nosocks        - addr: "udp://127.0.0.1:5302"
+#socksok        - addr: "udp://127.0.0.1:5303"
 
 #autoforward-no  - tag: forward_dnscrypt
 #autoforward-no    type: forward
@@ -113,9 +113,16 @@ plugins:
           exec: accept
         - exec: drop_resp
 #ipv6ok        - exec: prefer_ipv4
-#autoforward-yes        - exec: $force_forward
-#autoforward-yes        - matches: has_wanted_ans
-#autoforward-yes          exec: accept
+#autoforward-yes#autoforward-check        - exec: $forward_unbound
+#autoforward-yes#autoforward-check        - matches: resp_ip_mmdb $cnip PRIVATE
+#autoforward-yes#autoforward-check          exec: accept
+#autoforward-yes#autoforward-check        - matches: has_wanted_ans
+#autoforward-yes#autoforward-check          exec: $force_forward
+#autoforward-yes#autoforward-check        - matches: has_wanted_ans
+#autoforward-yes#autoforward-check          exec: accept
+#autoforward-yes#autoforward-nocheck        - exec: $force_forward
+#autoforward-yes#autoforward-nocheck        - matches: has_wanted_ans
+#autoforward-yes#autoforward-nocheck          exec: accept
 #autoforward-no        - exec: $forward_unbound
 #autoforward-no        - matches: has_wanted_ans
 #autoforward-no          exec: accept

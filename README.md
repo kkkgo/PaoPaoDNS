@@ -98,6 +98,7 @@ IPV6|`no`|`no`,`yes`|
 CNFALL|`yes`|`no`,`yes`|
 CUSTOM_FORWARD|空，可选功能|`IP:PORT`,如`10.10.10.3:53`|
 AUTO_FORWARD|`no`|`no`,`yes`|
+AUTO_FORWARD_CHECK|`yes`|`no`,`yes`|
 CN_TRACKER|`yes`|`no`,`yes`|
 USE_HOSTS|`no`|`no`,`yes`|
 HTTP_FILE|`no`|`no`,`yes`|
@@ -115,6 +116,7 @@ SAFEMODE|`no`|`no`,`yes`|
 - CNFALL: 仅在CNAUTO=yes时生效，在遇到本地递归网络质量较差的时候，递归查询是否回退到转发查询，默认为yes。配置为no可以保证更实时准确的解析，但要求网络质量稳定（尽量减少nat的层数），推荐部署在具备公网IP的一级路由下的时候设置为no； 配置为yes可以兼顾解析质量和网络质量的平衡，保证长期总体的准确解析的同时兼顾短时间内网络超时的回退处理。    
 - CUSTOM_FORWARD: 仅在CNAUTO=yes时生效，将`force_forward_list.txt`内的域名列表转发到到`CUSTOM_FORWARD`DNS服务器。该功能可以配合第三方旁网关的[fakeip](https://www.v2fly.org/config/fakedns.html)，[域名嗅探sniffing](https://www.v2fly.org/config/inbounds.html#sniffingobject)等特性完成简单的域名分流效果。    
 - AUTO_FORWARD：仅在CNAUTO=yes时生效，配合`CUSTOM_FORWARD`功能使用，默认值为no，当设置为yes的时候，解析非CN大陆IP的域名将会直接转发到`CUSTOM_FORWARD`。该功能开启的时候，`force_nocn_list.txt`功能会失效（功能与`force_forward_list.txt`重复）。       
+- AUTO_FORWARD_CHECK：在`AUTO_FORWARD=yes`时，转发前是否检查域名是否有效，避免产生无效查询。默认值为yes，设置为no则不检查。       
 - CN_TRACKER：仅在CNAUTO=yes时生效，默认值为yes，当设置为yes的时候，强制`trackerslist.txt`里面tracker的域名走本地递归解析。更新数据的时候会自动下载最新的trakcerlist。该功能在一些场景比较有用，比如`AUTO_FORWARD`配合fakeip的时候可以避免使用fakeip连接tracker。       
 - USE_HOSTS: 当设置为yes的时候，在启动时读取容器/etc/hosts文件。可以配合docker的`-add-hosts`或者docker compose的`extra_hosts`使用。仅在CNAUTO=yes时生效。         
 - HTTP_FILE: 当设置为yes的时候，会启动一个7889端口的http静态文件服务器映射`/data`目录。你可以利用此功能与其他服务程序共享文件配置。         
@@ -173,7 +175,7 @@ forward-zone:
 详情：https://github.com/kkkgo/PaoPao-Pref    
 
 ## 相关项目：PaoPaoGateWay
-PaoPao GateWay是一个体积小巧、稳定强大的FakeIP网关，系统由openwrt定制构建，核心由clash驱动，支持多种方式下发配置，支持多种出站方式，包括自定义socks5、自定义yaml节点、订阅模式和自由出站，支持节点测速自动选择、节点排除等功能，并附带web面板可供查看日志连接信息等。PaoPao GateWay配合PaoPaoDNS的`CUSTOM_FORWARD`功能就可以完成简单精巧的分流。   
+PaoPao GateWay是一个体积小巧、稳定强大的FakeIP网关，系统由openwrt定制构建，核心由clash驱动，支持`Full Cone NAT` ，0支持多种方式下发配置，支持多种出站方式，包括自定义socks5、自定义yaml节点、订阅模式和自由出站，支持节点测速自动选择、节点排除等功能，并附带web面板可供查看日志连接信息等。PaoPao GateWay配合PaoPaoDNS的`CUSTOM_FORWARD`功能就可以完成简单精巧的分流。   
 详情：https://github.com/kkkgo/PaoPaoGateWay   
 
 ## 构建说明
