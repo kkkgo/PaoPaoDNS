@@ -23,10 +23,8 @@ reload_unbound() {
 
 watch_mosdns() {
     while true; do
-        if [ "$AUTO_FORWARD" = "no" ]; then
-            if [ ! -f /data/force_nocn_list.txt ]; then
-                cp /usr/sbin/force_nocn_list.txt /data/
-            fi
+        if [ ! -f /data/force_nocn_list.txt ]; then
+            cp /usr/sbin/force_nocn_list.txt /data/
         fi
         if [ ! -f /data/force_cn_list.txt ]; then
             cp /usr/sbin/force_cn_list.txt /data/
@@ -34,7 +32,7 @@ watch_mosdns() {
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
             cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
         fi
-        file_list="/data/Country-only-cn-private.mmdb /data/force_cn_list.txt"
+        file_list="/data/Country-only-cn-private.mmdb /data/force_cn_list.txt /data/force_nocn_list.txt"
         if [ "$CN_TRACKER" = "yes" ]; then
             if [ ! -f /data/trackerslist.txt ]; then
                 cp /usr/sbin/trackerslist.txt /data/
@@ -46,9 +44,6 @@ watch_mosdns() {
             if [ ! -f /data/force_forward_list.txt ]; then
                 cp /usr/sbin/force_forward_list.txt /data/
             fi
-        fi
-        if [ "$AUTO_FORWARD" = "no" ]; then
-            file_list=$file_list" /data/force_nocn_list.txt"
         fi
         inotifywait -e modify $file_list && reload_mosdns
     done

@@ -198,10 +198,8 @@ if [ "$CNAUTO" != "no" ]; then
         mkdir -p /data/dnscrypt-resolvers/
         cp /usr/sbin/dnscrypt-resolvers/* /data/dnscrypt-resolvers/
     fi
-    if [ "$AUTO_FORWARD" = "no" ]; then
-        if [ ! -f /data/force_nocn_list.txt ]; then
-            cp /usr/sbin/force_nocn_list.txt /data/
-        fi
+    if [ ! -f /data/force_nocn_list.txt ]; then
+        cp /usr/sbin/force_nocn_list.txt /data/
     fi
     if [ ! -f /data/force_cn_list.txt ]; then
         cp /usr/sbin/force_cn_list.txt /data/

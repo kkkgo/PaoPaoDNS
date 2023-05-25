@@ -19,11 +19,11 @@ plugins:
         - "/data/force_cn_list.txt"
 #cntracker-yes        - "/tmp/cn_tracker_list.txt"
 
-#autoforward-no  - tag: "force_nocn_list"
-#autoforward-no    type: "domain_set"
-#autoforward-no    args:
-#autoforward-no      files:
-#autoforward-no        - "/data/force_nocn_list.txt"
+  - tag: "force_nocn_list"
+    type: "domain_set"
+    args:
+      files:
+        - "/data/force_nocn_list.txt"
 
 #customforward-seted  - tag: "force_forward_list"
 #customforward-seted    type: "domain_set"
@@ -61,12 +61,6 @@ plugins:
 #nosocks        - addr: "udp://127.0.0.1:5302"
 #socksok        - addr: "udp://127.0.0.1:5303"
 
-#autoforward-no  - tag: forward_dnscrypt
-#autoforward-no    type: forward
-#autoforward-no    args:
-#autoforward-no      upstreams:
-#autoforward-no        - addr: "udp://127.0.0.1:5302"
-
   - tag: cnip
     type: mmdb
     args:
@@ -79,8 +73,7 @@ plugins:
         - matches: qtype 65
           exec: reject 0
         - matches: 
-#autoforward-no#ipv6ok          - qname $force_nocn_list
-#autoforward-yes#ipv6ok          - qname $force_forward_list
+#ipv6ok          - qname $force_nocn_list
           - qtype 28
           exec: reject 0
         - matches: 
@@ -92,10 +85,10 @@ plugins:
 #customforward-seted          exec: $force_forward
 #customforward-seted        - matches: qname $force_forward_list
 #customforward-seted          exec: accept
-#autoforward-no        - matches: qname $force_nocn_list
-#autoforward-no          exec: $forward_unbound
-#autoforward-no        - matches: qname $force_nocn_list
-#autoforward-no          exec: accept
+        - matches: qname $force_nocn_list
+          exec: $forward_unbound
+        - matches: qname $force_nocn_list
+          exec: accept
         - matches: qname $force_cn_list
           exec: $local_unbound
         - matches: qname $force_cn_list
@@ -124,9 +117,6 @@ plugins:
 #autoforward-yes#autoforward-nocheck        - matches: has_wanted_ans
 #autoforward-yes#autoforward-nocheck          exec: accept
 #autoforward-no        - exec: $forward_unbound
-#autoforward-no        - matches: has_wanted_ans
-#autoforward-no          exec: accept
-#autoforward-no        - exec: $forward_dnscrypt
 #autoforward-no        - matches: has_wanted_ans
 #autoforward-no          exec: accept
         - exec: reject 0
