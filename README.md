@@ -175,7 +175,7 @@ forward-zone:
 详情：https://github.com/kkkgo/PaoPao-Pref    
 
 ## 相关项目：PaoPaoGateWay
-PaoPao GateWay是一个体积小巧、稳定强大的FakeIP网关，系统由openwrt定制构建，核心由clash驱动，支持`Full Cone NAT` ，0支持多种方式下发配置，支持多种出站方式，包括自定义socks5、自定义yaml节点、订阅模式和自由出站，支持节点测速自动选择、节点排除等功能，并附带web面板可供查看日志连接信息等。PaoPao GateWay配合PaoPaoDNS的`CUSTOM_FORWARD`功能就可以完成简单精巧的分流。   
+PaoPao GateWay是一个体积小巧、稳定强大的FakeIP网关，系统由openwrt定制构建，核心由clash驱动，支持`Full Cone NAT` ，支持多种方式下发配置，支持多种出站方式，包括自定义socks5、自定义yaml节点、订阅模式和自由出站，支持节点测速自动选择、节点排除等功能，并附带web面板可供查看日志连接信息等。PaoPao GateWay配合PaoPaoDNS的`CUSTOM_FORWARD`功能就可以完成简单精巧的分流。   
 详情：https://github.com/kkkgo/PaoPaoGateWay   
 
 ## 构建说明
