@@ -30,11 +30,11 @@ fi
 #gen dns toml
 curl -s https://raw.githubusercontent.com/DNSCrypt/dnscrypt-proxy/master/dnscrypt-proxy/example-dnscrypt-proxy.toml | grep -v "#" | grep . >/tmp/dnsex.toml
 sed -i -r 's/log_level.+/log_level = 6/g' /tmp/dnsex.toml
-sed -i -r 's/force_tcp.+/force_tcp = true/g' /tmp/dnsex.toml
+sed -i -r 's/require_dnssec.+/require_dnssec = true/g' /tmp/dnsex.toml
 sed -i -r 's/require_nolog.+/require_nolog = false/g' /tmp/dnsex.toml
 sed -i -r 's/odoh_servers.+/odoh_servers = true/g' /tmp/dnsex.toml
 sed -i -r "s/netprobe_address.+/netprobe_address = '223.5.5.5:53'/g" /tmp/dnsex.toml
-sed -i -r "s/bootstrap_resolvers.+/bootstrap_resolvers = ['1.0.0.1:53','223.5.5.5:53','8.8.8.8:53','114.114.114.114:53']/g" /tmp/dnsex.toml
+sed -i -r "s/bootstrap_resolvers.+/bootstrap_resolvers = ['127.0.0.1:5301','1.0.0.1:53','8.8.8.8:53','223.5.5.5:53']/g" /tmp/dnsex.toml
 sed -i -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5302']/g" /tmp/dnsex.toml
 echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
 cat /tmp/dnsex.toml >>/src/dnscrypt.toml
