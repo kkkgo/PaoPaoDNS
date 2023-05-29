@@ -72,10 +72,10 @@ plugins:
 #usehosts-yes        - exec: $usehosts
         - matches: qtype 65
           exec: reject 0
-        - matches: 
+#ipv6raw        - matches: 
 #ipv6ok          - qname $force_nocn_list
-          - qtype 28
-          exec: reject 0
+#ipv6raw          - qtype 28
+#ipv6raw          exec: reject 0
         - matches: 
           - "!qtype 1 2 5 28 15 16 33 6 99"
           exec: $local_unbound
