@@ -96,6 +96,7 @@ plugins:
 #cnfall        - exec: cache 1024
 #cnfall        - matches: has_wanted_ans
 #cnfall          exec: accept
+#ipv6only6        - exec: prefer_ipv4
 #nofall        - exec: $local_unbound
 #cnfall        - exec: $cn_test
         - matches: 
