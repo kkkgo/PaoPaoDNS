@@ -267,13 +267,13 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/{SERVER_IP}/$SERVER_IP/g" /tmp/mosdns.yaml
     fi
     if [ -f /data/force_nocn_list.txt ]; then
-        sed 's/\r$//' /data/force_nocn_list.txt >/tmp/force_nocn_list.txt
+        sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_nocn_list.txt
     fi
     if [ -f /data/force_cn_list.txt ]; then
-        sed 's/\r$//' /data/force_cn_list.txt >/tmp/force_cn_list.txt
+        sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_cn_list.txt
     fi
     if [ -f /data/force_forward_list.txt ]; then
-        sed 's/\r$//' /data/force_forward_list.txt >/tmp/force_forward_list.txt
+        sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
     fi
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
@@ -283,7 +283,7 @@ sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
 #mini_httpd
 if [ "$HTTP_FILE" = "yes" ]; then
-    mini_httpd -d /data -p 7889 -r
+    mini_httpd -d /data -p 7889
 fi
 #Unexpected fallback while updating data
 echo "nameserver 127.0.0.1" >/etc/resolv.conf

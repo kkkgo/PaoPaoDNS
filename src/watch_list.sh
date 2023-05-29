@@ -4,13 +4,13 @@ reload_mosdns() {
         sed 's/\r$//' /data/trackerslist.txt | sed -r "s/.+\/\///g" | sed -r "s/:.+//g" | sed -r "s/\/.+//g" | grep -E "^[-_.A-Za-z0-9]+$" | grep -E "[a-z]" | grep "." | sort -u >/tmp/cn_tracker_list.txt
     fi
     if [ -f /data/force_nocn_list.txt ]; then
-        sed 's/\r$//' /data/force_nocn_list.txt >/tmp/force_nocn_list.txt
+        sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_nocn_list.txt
     fi
     if [ -f /data/force_cn_list.txt ]; then
-        sed 's/\r$//' /data/force_cn_list.txt >/tmp/force_cn_list.txt
+        sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_cn_list.txt
     fi
     if [ -f /data/force_forward_list.txt ]; then
-        sed 's/\r$//' /data/force_forward_list.txt >/tmp/force_forward_list.txt
+        sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
     fi
     killall mosdns
     echo "mosdns reload..."
