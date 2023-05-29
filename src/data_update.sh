@@ -34,6 +34,7 @@ file_update() {
 file_update_try() {
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         SOCKS5ON="$SOCKS5"
+        SOCKS5=$(echo "$SOCKS5"|sed 's/"//g')
     fi
     file_update
     if [ "$?" = "1" ]; then

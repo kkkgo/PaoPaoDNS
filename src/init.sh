@@ -205,6 +205,7 @@ if [ "$CNAUTO" != "no" ]; then
         cp /usr/sbin/force_cn_list.txt /data/
     fi
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
+        SOCKS5=$(echo "$SOCKS5" | sed 's/"//g')
         sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" >/data/dnscrypt-resolvers/dnscrypt_socks.yaml
         dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.yaml >/dev/null 2>&1 &
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#socksok//g" >/tmp/unbound_forward.conf
@@ -223,6 +224,7 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#nofall//g" /tmp/mosdns.yaml
     fi
     if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
+        CUSTOM_FORWARD=$(echo "$CUSTOM_FORWARD" | sed 's/"//g')
         sed -i "s/#customforward-seted//g" /tmp/mosdns.yaml
         sed -i "s/{CUSTOM_FORWARD}/$CUSTOM_FORWARD/g" /tmp/mosdns.yaml
         if [ ! -f /data/force_forward_list.txt ]; then
