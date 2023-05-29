@@ -228,7 +228,7 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#customforward-seted//g" /tmp/mosdns.yaml
         sed -i "s/{CUSTOM_FORWARD}/$CUSTOM_FORWARD/g" /tmp/mosdns.yaml
         if [ ! -f /data/force_forward_list.txt ]; then
-            cp /usr/sbin/force_cn_list.txt /data/
+            cp /usr/sbin/force_forward_list.txt /data/
         fi
         if [ "$AUTO_FORWARD" = "yes" ]; then
             sed -i "s/#autoforward-yes//g" /tmp/mosdns.yaml
@@ -265,6 +265,15 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#usehosts-yes//g" /tmp/mosdns.yaml
         sed -i "s/#serverip-enable//g" /tmp/mosdns.yaml
         sed -i "s/{SERVER_IP}/$SERVER_IP/g" /tmp/mosdns.yaml
+    fi
+    if [ -f /data/force_nocn_list.txt ]; then
+        sed 's/\r$//' /data/force_nocn_list.txt >/tmp/force_nocn_list.txt
+    fi
+    if [ -f /data/force_cn_list.txt ]; then
+        sed 's/\r$//' /data/force_cn_list.txt >/tmp/force_cn_list.txt
+    fi
+    if [ -f /data/force_forward_list.txt ]; then
+        sed 's/\r$//' /data/force_forward_list.txt >/tmp/force_forward_list.txt
     fi
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &

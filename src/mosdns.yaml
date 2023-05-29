@@ -16,20 +16,20 @@ plugins:
     type: "domain_set"
     args:
       files:
-        - "/data/force_cn_list.txt"
+        - "/tmp/force_cn_list.txt"
 #cntracker-yes        - "/tmp/cn_tracker_list.txt"
 
   - tag: "force_nocn_list"
     type: "domain_set"
     args:
       files:
-        - "/data/force_nocn_list.txt"
+        - "/tmp/force_nocn_list.txt"
 
 #customforward-seted  - tag: "force_forward_list"
 #customforward-seted    type: "domain_set"
 #customforward-seted    args:
 #customforward-seted      files:
-#customforward-seted        - "/data/force_forward_list.txt"
+#customforward-seted        - "/tmp/force_forward_list.txt"
 
 #cnfall  - tag: cn_test
 #cnfall    type: forward
