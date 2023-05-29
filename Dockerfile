@@ -26,7 +26,7 @@ RUN cp /src/Country-only-cn-private.mmdb /tmp/ &&\
 
 FROM alpine:edge
 COPY --from=builder /src/ /usr/sbin/
-RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools mini_httpd libgcc && \
+RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools darkhttpd libgcc && \
     apk upgrade --no-cache &&\
     mkdir -p /etc/unbound && \
     mv /usr/sbin/named.cache /etc/unbound/named.cache &&           \
@@ -41,9 +41,9 @@ ENV TZ=Asia/Shanghai \
     CN_TRACKER=yes \
     USE_HOSTS=no \
     IPV6=no \
-    SOCKS5="IP:PORT" \
+    SOCKS5=IP:PORT \
     SERVER_IP=none \
-    CUSTOM_FORWARD="IP:PORT" \
+    CUSTOM_FORWARD=IP:PORT \
     AUTO_FORWARD=no \
     AUTO_FORWARD_CHECK=yes \
     HTTP_FILE=no
