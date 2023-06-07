@@ -110,8 +110,10 @@ plugins:
 #autoforward-yes#autoforward-check        - exec: $forward_unbound
 #autoforward-yes#autoforward-check        - matches: resp_ip_mmdb $cnip PRIVATE
 #autoforward-yes#autoforward-check          exec: accept
-#autoforward-yes#autoforward-check        - matches: has_wanted_ans
-#autoforward-yes#autoforward-check          exec: $force_forward
+#autoforward-yes#autoforward-check        - matches: "!has_wanted_ans"
+#autoforward-yes#autoforward-check          exec: reject 0
+#autoforward-yes#autoforward-check        - exec: drop_resp
+#autoforward-yes#autoforward-check        - exec: $force_forward
 #autoforward-yes#autoforward-check        - matches: has_wanted_ans
 #autoforward-yes#autoforward-check          exec: accept
 #autoforward-yes#autoforward-nocheck        - exec: $force_forward
