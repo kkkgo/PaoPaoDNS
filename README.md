@@ -19,7 +19,7 @@ docker run -d \
 --name paopaodns \
 -v /home/mydata:/data \
 -e CNAUTO=yes \
---restart unless-stopped \
+--restart always \
 -p 53:53/tcp -p 53:53/udp \
 sliamb/paopaodns
 ```
@@ -36,7 +36,7 @@ docker run -d \
 --name paopaodns \
 -v /home/mydata:/data \
 -e CNAUTO=yes \
---restart unless-stopped \
+--restart always \
 --network macvlan_eth0 --ip 192.168.1.8 \
 sliamb/paopaodns
 ```
