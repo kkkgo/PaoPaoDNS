@@ -64,12 +64,12 @@ if [ "$CNAUTO" != "no" ]; then
     update_file_down="/tmp/Country-only-cn-private.mmdb"
     update_reg="[0-9A-Za-z]{64}"
     hashcmd="sha256sum"
-    newsum_url=https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country-only-cn-private.mmdb.sha256sum
-    down_url=https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country-only-cn-private.mmdb
+    newsum_url=https://raw.githubusercontent.com/kkkgo/Country-only-cn-private.mmdb/main/Country-only-cn-private.mmdb.sha256sum
+    down_url=https://raw.githubusercontent.com/kkkgo/Country-only-cn-private.mmdb/main/Country-only-cn-private.mmdb
     file_update_try
     if [ "$?" = "1" ]; then
-        newsum_url=https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/Country-only-cn-private.mmdb.sha256sum
-        down_url=https://cdn.jsdelivr.net/gh/Loyalsoldier/geoip@release/Country-only-cn-private.mmdb
+        newsum_url=https://cdn.jsdelivr.net/gh/kkkgo/Country-only-cn-private.mmdb/Country-only-cn-private.mmdb.sha256sum
+        down_url=https://cdn.jsdelivr.net/gh/kkkgo/Country-only-cn-private.mmdb/Country-only-cn-private.mmdb
         file_update_try
     fi
 fi

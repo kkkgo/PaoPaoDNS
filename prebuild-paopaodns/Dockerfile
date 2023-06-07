@@ -5,5 +5,5 @@ RUN sh /src/build.sh
 RUN cp /src/mosdns /tmp/
 RUN cp /src/unbound /tmp/
 RUN cp /src/unbound-checkconf /tmp/
-FROM alpine:edge
+FROM scratch
 COPY --from=builder /src/ /src/

@@ -196,5 +196,5 @@ dnscrypt:
 mosdns:
 - https://github.com/kkkgo/mosdns
 
-GEOIP:
-- https://github.com/Loyalsoldier/geoip
+Country-only-cn-private.mmdb:
+- https://github.com/kkkgo/Country-only-cn-private.mmdb
