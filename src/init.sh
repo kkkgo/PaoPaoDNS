@@ -290,7 +290,7 @@ if [ "$CNAUTO" != "no" ]; then
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
-#mini_httpd
+#httpd
 if [ "$HTTP_FILE" = "yes" ]; then
     thttpd -p 7889 -d /data &
 fi

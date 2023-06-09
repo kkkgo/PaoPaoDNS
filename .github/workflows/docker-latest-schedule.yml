@@ -2,7 +2,7 @@ name: Schedule Latest Build Docker
 
 on:
   schedule:
-    - cron: '5 07 * * 5'
+    - cron: '30 5 * * 4'
   workflow_dispatch:
 jobs:
   build:
