@@ -2,7 +2,7 @@ name: Schedule Prebuild Docker
 
 on:
   schedule:
-    - cron: '30 2 * * 4'
+    - cron: '00 01 * * 3'
   workflow_dispatch:
 jobs:
   build:
