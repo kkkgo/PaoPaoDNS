@@ -6,16 +6,21 @@ echo =====PaoPaoDNS docker start=====
 echo images build time : {bulidtime}
 if [ ! -f /new.lock ]; then
     echo New version install ! Try clean...
-    rm -rf /data/*.conf >/dev/null 2>&1
+    rm -rf /data/redis.conf >/dev/null 2>&1
+    rm -rf /data/unbound.conf >/dev/null 2>&1
     rm -rf /data/mosdns.yaml >/dev/null 2>&1
-    rm -rf /data/*.toml >/dev/null 2>&1
-    rm -rf /data/*.mmdb >/dev/null 2>&1
+    rm -rf /data/dnscrypt.toml >/dev/null 2>&1
+    rm -rf /data/Country-only-cn-private.mmdb >/dev/null 2>&1
+    rm -rf /data/global_mark.dat >/dev/null 2>&1
     rm -rf /data/dnscrypt-resolvers >/dev/null 2>&1
     touch /new.lock
 fi
 
 if [ ! -f /data/unbound.conf ]; then
     cp /usr/sbin/unbound.conf /data/
+fi
+if [ ! -f /data/unbound_custom.conf ]; then
+    cp /usr/sbin/unbound_custom.conf /data/
 fi
 if [ ! -f /data/redis.conf ]; then
     cp /usr/sbin/redis.conf /data/
@@ -69,6 +74,7 @@ MEM1=100k
 MEM2=200k
 MEM3=200
 MEM4=16mb
+MSCACHE=1024
 safemem=yes
 if [ "$SAFEMODE" = "yes" ]; then
     echo safemode enable!
@@ -85,6 +91,7 @@ else
         MEM1=200m
         MEM2=400m
         MEM4=450mb
+        MSCACHE=10240
         prefPC=41
     fi
     if [ "$MEMSIZE" -gt 2500 ]; then
@@ -104,6 +111,7 @@ else
         MEM1=500m
         MEM2=1000m
         MEM4=1500mb
+        MSCACHE=102400
         prefPC=100
     fi
     if [ "$MEMSIZE" -gt 8000 ]; then
@@ -111,6 +119,7 @@ else
         MEM2=1600m
         MEM3=1000000
         MEM4=1800mb
+        MSCACHE=1024000
     fi
     if [ "$MEMSIZE" -gt 12000 ]; then
         MEM1=1000m
@@ -149,27 +158,31 @@ fi
 echo ====ENV TEST==== >/tmp/env.conf
 echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
 echo prefPC:"$prefPC" >>/tmp/env.conf
-echo CORES:"$CORES" >>/tmp/env.conf
-echo POWCORES:"$POWCORES" >>/tmp/env.conf
-echo ulimit :"$(ulimit -n)" >>/tmp/env.conf
-echo FDLIM :"$FDLIM" >>/tmp/env.conf
-echo TZ:"$TZ" >>/tmp/env.conf
-echo UPDATE:"$UPDATE" >>/tmp/env.conf
-echo DNS_SERVERNAME:"$DNS_SERVERNAME" >>/tmp/env.conf
-echo SERVER_IP:"$SERVER_IP" >>/tmp/env.conf
-echo ETHIP:"$ETHIP" >>/tmp/env.conf
-echo DNSPORT:"$DNSPORT" >>/tmp/env.conf
-echo SOCKS5:"$SOCKS5" >>/tmp/env.conf
-echo CNAUTO:"$CNAUTO" >>/tmp/env.conf
-echo IPV6:"$IPV6" >>/tmp/env.conf
-echo CNFALL:"$CNFALL" >>/tmp/env.conf
-echo CUSTOM_FORWARD:"$CUSTOM_FORWARD" >>/tmp/env.conf
-echo AUTO_FORWARD:"$AUTO_FORWARD" >>/tmp/env.conf
-echo AUTO_FORWARD_CHECK:"$AUTO_FORWARD_CHECK" >>/tmp/env.conf
-echo CN_TRACKER:"$CN_TRACKER" >>/tmp/env.conf
-echo USE_HOSTS:"$USE_HOSTS" >>/tmp/env.conf
-echo HTTP_FILE:"$HTTP_FILE" >>/tmp/env.conf
-echo SAFEMODE:"$SAFEMODE" >>/tmp/env.conf
+echo CORES:-"$CORES""-" >>/tmp/env.conf
+echo POWCORES:-"$POWCORES""-" >>/tmp/env.conf
+echo ulimit :-"$(ulimit -n)""-" >>/tmp/env.conf
+echo FDLIM :-"$FDLIM""-" >>/tmp/env.conf
+echo TZ:-"$TZ""-" >>/tmp/env.conf
+echo UPDATE:-"$UPDATE""-" >>/tmp/env.conf
+echo DNS_SERVERNAME:-"$DNS_SERVERNAME""-" >>/tmp/env.conf
+echo SERVER_IP:-"$SERVER_IP""-" >>/tmp/env.conf
+echo ETHIP:-"$ETHIP""-" >>/tmp/env.conf
+echo DNSPORT:-"$DNSPORT""-" >>/tmp/env.conf
+echo SOCKS5:-"$SOCKS5""-" >>/tmp/env.conf
+echo CNAUTO:-"$CNAUTO""-" >>/tmp/env.conf
+echo IPV6:-"$IPV6""-" >>/tmp/env.conf
+echo CNFALL:-"$CNFALL""-" >>/tmp/env.conf
+echo CUSTOM_FORWARD:-"$CUSTOM_FORWARD""-" >>/tmp/env.conf
+echo AUTO_FORWARD:-"$AUTO_FORWARD""-" >>/tmp/env.conf
+echo AUTO_FORWARD_CHECK:-"$AUTO_FORWARD_CHECK""-" >>/tmp/env.conf
+echo USE_MARK_DATA:-"$USE_MARK_DATA""-" >>/tmp/env.conf
+echo RULES_TTL:-"$RULES_TTL""-" >>/tmp/env.conf
+echo CN_TRACKER:-"$CN_TRACKER""-" >>/tmp/env.conf
+echo USE_HOSTS:-"$USE_HOSTS""-" >>/tmp/env.conf
+echo HTTP_FILE:-"$HTTP_FILE""-" >>/tmp/env.conf
+echo SAFEMODE:-"$SAFEMODE""-" >>/tmp/env.conf
+echo QUERY_TIME:-"$QUERY_TIME""-" >>/tmp/env.conf
+echo PLATFORM:-"$(uname -a)""-" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
 
@@ -248,25 +261,34 @@ if [ "$CNAUTO" != "no" ]; then
             fi
         fi
     fi
-    cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
     if [ "$AUTO_FORWARD" = "no" ]; then
         sed -i "s/#autoforward-no//g" /tmp/mosdns.yaml
     fi
     if [ "$CN_TRACKER" = "yes" ]; then
         sed -i "s/#cntracker-yes//g" /tmp/mosdns.yaml
-        if [ ! -f /data/trackerslist.txt ]; then
-            cp /usr/sbin/trackerslist.txt /data/
+        /usr/sbin/watch_list.sh load_trackerslist
+    fi
+    if [ "$USE_MARK_DATA" = "yes" ]; then
+        sed -i "s/#global_mark_yes//g" /tmp/mosdns.yaml
+        if [ ! -f /data/global_mark.dat ]; then
+            cp /usr/sbin/global_mark.dat /data/
         fi
-        sed -r "s/.+\/\///g" /data/trackerslist.txt | sed -r "s/:.+//g" | sed -r "s/\/.+//g" | grep -E "^[-_.A-Za-z0-9]+$" | grep -E "[a-z]" | grep "." | sort -u >/tmp/cn_tracker_list.txt
+        /usr/sbin/watch_list.sh load_mark_data
+    else
+        sed -i "s/#global_mark_no//g" /tmp/mosdns.yaml
     fi
     #convert hosts
     if [ "$USE_HOSTS" = "yes" ]; then
+        grep -vE "^#" /etc/hosts | grep . | sort -u >/tmp/hosts.cp.gen
+        echo "" >>/tmp/hosts.cp.gen
+        echo "" >>/tmp/hosts.cp.gen
         echo "" >/tmp/hosts.txt
         while read line; do
             record=$(echo "$line" | grep -Eo "[.:a-f0-9]+" | head -1)
             domain=$(echo "$line" | grep -Eo "[-_.a-zA-Z0-9]+" | tail -1)
             echo "$domain" "$record" >>/tmp/hosts.txt
-        done </etc/hosts
+        done </tmp/hosts.cp.gen
+        rm /tmp/hosts.cp.gen
         sed -i "s/#usehosts-yes//g" /tmp/mosdns.yaml
         sed -i "s/#usehosts-enable//g" /tmp/mosdns.yaml
     fi
@@ -284,16 +306,29 @@ if [ "$CNAUTO" != "no" ]; then
     if [ -f /data/force_forward_list.txt ]; then
         sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
     fi
+    RULES_TTL=$(echo "$RULES_TTL" | grep -Eo "[0-9]+|head -1")
+    if [ -z "$RULES_TTL" ]; then
+        RULES_TTL=0
+    fi
+    if [ "$RULES_TTL" -gt 0 ]; then
+        sed "s/#ttl_rule_ok//g" /data/dnscrypt.toml >/data/dnscrypt-resolvers/dnscrypt.toml
+        sed -i "s/#ttl_rule_ok//g" /tmp/mosdns.yaml
+        sed -i "s/{RULES_TTL}/$RULES_TTL/g" /tmp/mosdns.yaml
+        /usr/sbin/watch_list.sh load_ttl_rules
+    else
+        cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
+    fi
+    if [ "$HTTP_FILE" = "yes" ]; then
+        sed -i "s/#http_file_yes//g" /tmp/mosdns.yaml
+    fi
+    sed -i "s/{MSCACHE}/$MSCACHE/g" /tmp/mosdns.yaml
+    sed -i '/^#/d' /tmp/mosdns.yaml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
     mosdns start -d /tmp -c mosdns.yaml &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
-#httpd
-if [ "$HTTP_FILE" = "yes" ]; then
-    thttpd -p 7889 -d /data &
-fi
 #Unexpected fallback while updating data
 echo "nameserver 127.0.0.1" >/etc/resolv.conf
 echo "nameserver 223.5.5.5" >>/etc/resolv.conf

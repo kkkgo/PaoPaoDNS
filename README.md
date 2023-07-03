@@ -99,10 +99,13 @@ CNFALL|`yes`|`no`,`yes`|
 CUSTOM_FORWARD|空，可选功能|`IP:PORT`,如`10.10.10.3:53`|
 AUTO_FORWARD|`no`|`no`,`yes`|
 AUTO_FORWARD_CHECK|`yes`|`no`,`yes`|
+USE_MARK_DATA|`no`|`no`,`yes`|
+RULES_TTL|`0`|`1-604800`|
 CN_TRACKER|`yes`|`no`,`yes`|
 USE_HOSTS|`no`|`no`,`yes`|
 HTTP_FILE|`no`|`no`,`yes`|
 SAFEMODE|`no`|`no`,`yes`|
+QUERY_TIME|`2000ms`|`time.Duration`|
 
 用途说明：
 - CNAUTO：是否开启CN大陆智能分流，如果位于境外可配置为no
@@ -117,10 +120,48 @@ SAFEMODE|`no`|`no`,`yes`|
 - CUSTOM_FORWARD: 仅在CNAUTO=yes时生效，将`force_forward_list.txt`内的域名列表转发到到`CUSTOM_FORWARD`DNS服务器。该功能可以配合第三方旁网关的fakeip，域名嗅探sniffing等特性完成简单的域名分流效果。    
 - AUTO_FORWARD：仅在CNAUTO=yes时生效，配合`CUSTOM_FORWARD`功能使用，默认值为no，当设置为yes的时候，解析非CN大陆IP的域名将会直接转发到`CUSTOM_FORWARD`。       
 - AUTO_FORWARD_CHECK：在`AUTO_FORWARD=yes`时，转发前是否检查域名是否有效，避免产生无效查询。默认值为yes，设置为no则不检查。       
-- CN_TRACKER：仅在CNAUTO=yes时生效，默认值为yes，当设置为yes的时候，强制`trackerslist.txt`里面tracker的域名走本地递归解析。更新数据的时候会自动下载最新的trakcerlist。该功能在一些场景比较有用，比如`AUTO_FORWARD`配合fakeip的时候可以避免使用fakeip连接tracker。       
+- USE_MARK_DATA：该项默认值为no，当设置为yes的时候，将会自动更新下载预先标记处理的全球百万域名库，在判断大陆分流的时候优先使用该数据，该功能仅标记数据，后续如何处理取决你的设置（比如默认分流或者自动转发）。域名数据库来源于`paopao-pref`项目定期更新。该功能：  
+  - 优点：可以优化DNS泄露问题、提供更快速精准高效的分流
+  - 缺点：会占用更多内存，增加容器启动时间
+- RULES_TTL：该项设置的值大于0的时候生效，将`/data/force_ttl_rules.txt`里面指定的域名转发到指定的DNS服务器，并修改其TTL值为`RULES_TTL`。该功能仅对A记录和AAAA记录生效，其他记录请参考*进阶自定义示例*一节。该功能可以适用于多种场景，比如想实现DDNS的结果更实时一点，你可以把`RULES_TTL`设置为一个较低的值，然后把你的DDNS域名指定转发到对应的权威DNS服务器（也就是whois信息的NS服务器对应的IP地址，注意不要CNAME嵌套）即可。`force_ttl_rules`的规则格式为域名@服务器:端口，以下都是合法的格式：
+```yaml
+# whois info 03k.org:
+# Name Servers:
+# cold.dnspod.net(129.211.176.224)
+# sunfish.dnspod.net(112.80.181.45)
+
+cncheck.03k.org@129.211.176.224
+cncheck.03k.org@129.211.176.224:53
+cncheck.03k.org@129.211.176.224,112.80.181.45
+cncheck.03k.org@129.211.176.224:53,112.80.181.45:53
+cncheck.03k.org@129.211.176.224,112.80.181.45:53
+
+# 注意，在该示例中，cncheck.03k.org和其子域名比如www.cncheck.03k.org都会被转发。
+```  
+此外，`RULES_TTL`功能也可以直接指定某个域名的A记录或者AAAA记录，或者“CNAME”到另一个域名。格式使用域名@@记录或者域名@@@记录，以下都是合法的格式：
+```yaml
+# 重定向www.qq.com
+www.qq.com@@1.2.3.4
+www.qq.com@@5.6.7.8 #可以指定多项记录
+www.qq.com@@2404:6800:4008:c06::99
+
+# CNAME www.qq.com 到qq.03k.org
+www.qq.com@@qq.03k.org
+
+# 注意，使用@@为子域名匹配，上述示例会匹配*.www.qq.com和www.qq.com
+
+
+# 如果需要精确匹配，可以使用@@@：
+www.qq.com@@@1.2.3.4
+www.qq.com@@@2404:6800:4008:c06::99
+www.qq.com@@@qq.03k.org
+```
+
+- CN_TRACKER：仅在CNAUTO=yes时生效，默认值为yes，当设置为yes的时候，强制`trackerslist.txt`里面tracker的域名走dnscrypt解析。更新数据的时候会自动下载最新的trakcerlist。该功能在一些场景比较有用，比如`AUTO_FORWARD`配合fakeip的时候可以避免使用fakeip连接tracker。       
 - USE_HOSTS: 当设置为yes的时候，在启动时读取容器/etc/hosts文件。可以配合docker的`-add-hosts`或者docker compose的`extra_hosts`使用。仅在CNAUTO=yes时生效。         
 - HTTP_FILE: 当设置为yes的时候，会启动一个7889端口的http静态文件服务器映射`/data`目录。你可以利用此功能与其他服务程序共享文件配置。         
 - SAFEMODE： 安全模式，仅作调试使用，内存环境存在问题无法正常启动的时候尝试启用。   
+- QUERY_TIME：限制DNS转发最大时间，仅作调试使用。   
 
 可映射TCP/UDP|端口用途
 |-|-|
@@ -133,31 +174,33 @@ SAFEMODE|`no`|`no`,`yes`|
 
 挂载共享文件夹`/data`目录文件说明：存放redis数据、IP库、各种配置文件，在该目录中修改配置文件会覆盖脚本参数，如果你不清楚配置项的作用，**请不要删除任何注释**。如果修改任何配置出现了异常，把配置文件删除，重启容器即可生成默认文件。  
 
-- `redis.conf`：redis服务器配置模板文件，修改它将会覆盖redis运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
-- `redis_dns.rdb`：redis的缓存文件，容器重启后靠它读取DNS缓存。刚开始使用的时候因为递归DNS有一个积累的过程，一开始查询会比较慢(设置了CNFALL=no的话，如果CNFALL=yes查询速度不会低于公共DNS)，等到这个文件体积起来了就很流畅了。    
-注意：redis_dns.rdb文件生成需要累积达到redis的最持久化要求，取决于`redis.conf`的配置，默认最低2小时后才会进行一次持久化操作。如果你升级容器的镜像，可以删除其他所有配置文件而保留这个rdb文件。         
-- `unbound.conf`：Unbound递归DNS的配置模板文件，除非你有高级的自定义需求，一般不需要修改它。  
+- `redis.conf`：redis服务器配置模板文件，修改它将会覆盖redis运行参数。除了调试用途，一般强烈建议不修改它。容器版本更新将会覆盖该文件。  
+- `redis_dns.rdb`：redis的缓存文件，容器重启后靠它读取DNS缓存。刚开始使用的时候因为递归DNS有一个积累的过程，一开始查询会比较慢(设置了CNFALL=no的话，如果CNFALL=yes查询速度不会低于公共DNS)，等到这个文件体积起来了就很流畅了。容器版本更新不会覆盖该文件。    
+注意：redis_dns.rdb文件生成需要累积达到redis的最持久化要求，取决于`redis.conf`的配置，默认最低2小时后才会进行一次持久化操作。如果你升级容器的镜像，可以删除其他所有配置文件而保留这个rdb文件。           
+- `unbound.conf`：Unbound递归DNS的配置模板文件，除了调试用途，一般不要修改它。容器版本更新将会覆盖该文件。     
+- `unbound_custom.conf`：Unbound的自定义配置文件，里面内置了一些高级自定义的示例。容器版本更新不会覆盖该文件。     
 **以下文件仅在开启CNAUTO功能时出现：**  
-- `dnscrypt-resolvers`文件夹：储存dnscrypt服务器信息和签名，自动动态更新。
-- `Country-only-cn-private.mmdb`：CN IP数据库，自动更新将会覆盖此文件。
-- `dnscrypt.toml`：dnscrypt配置模板文件，修改它将会覆盖dnscrypt运行参数。除非你熟知自己在修改什么，一般不用修改它。
-- `force_cn_list.txt`：强制使用本地递归服务器查询的域名列表，一行一条，语法规则如下：  
+- `dnscrypt-resolvers`文件夹：储存dnscrypt服务器信息和签名，自动动态更新。容器版本更新将会覆盖该文件。  
+- `Country-only-cn-private.mmdb`：CN IP数据库，自动更新将会覆盖此文件。容器版本更新将会覆盖该文件。  
+- `global_mark.dat`：`USE_MARK_DATA`功能的数据库，自动更新将会覆盖此文件。容器版本更新将会覆盖该文件。  
+- `dnscrypt.toml`：dnscrypt配置模板文件，修改它将会覆盖dnscrypt运行参数。除了调试用途，一般不修改它。容器版本更新将会覆盖该文件。   
+- `force_cn_list.txt`：强制使用本地递归服务器查询的域名列表，容器版本更新不会覆盖该文件。一行一条，语法规则如下：  
 以`domain:`开头域匹配: `domain:03k.org`会匹配自身`03k.org`，以及其子域名`www.03k.org`, `blog.03k.org`等。   
 以`full:`开头，完整匹配，`full:03k.org` 只会匹配自身。完整匹配优先级更高。     
 以`regxp:`开头，正则匹配，如`regexp:.+\.03k\.org$`。[Go标准正则](https://github.com/google/re2/wiki/Syntax)。   
 以`keyword:`开头匹配域名关键字，如以`keyword: 03k.org`会匹配到`www.03k.org.cn`   
 尽量避免使用regxp和keyword，会消耗更多资源。域名表达式省略前缀则为`domain:`。同一文本内匹配优先级：`full > domain > regexp > keyword`     
-- `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。   
-- `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，匹配规则同上。   
+- `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。容器版本更新不会覆盖该文件。   
+- `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，匹配规则同上。容器版本更新不会覆盖该文件。   
 - 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。   
-- `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRAKCER`功能会出现，会增量自动更新，更新数据来源[[1]](https://github.com/XIU2/TrackersListCollection) [[2]](https://github.com/ngosang/trackerslist) ，你也可以添加自己的trakcer到这个文件，更新的时候会自动合并。修改将实时重载生效。   
-- `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除非你熟知自己在修改什么，一般强烈建议不修改它。
+- `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRACKER`功能会出现，会增量自动更新，更新数据来源[[1]](https://github.com/XIU2/TrackersListCollection) [[2]](https://github.com/ngosang/trackerslist) ，你也可以添加自己的trakcer到这个文件，更新的时候会自动合并。修改将实时重载生效。容器版本更新不会覆盖该文件。   
+- `force_ttl_rules.txt`: 参见`RULES_TTL`功能。修改将实时重载生效。容器版本更新不会覆盖该文件。   
+- `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除了调试用途，一般强烈建议不修改它。容器版本更新将会覆盖该文件。   
 
-注意事项：更新容器镜像版本会覆盖旧版本配置文件（不包括自定义的txt文件），如果你对配置文件有修改（比如高级的自定义），请注意备份。   
-### 进阶自定义
-暂时没有什么高级的自定义需求，如果有的话欢迎写在[评论](https://github.com/kkkgo/PaoPaoDNS/discussions)里面，我会回复如何修改配置。   
-这里说一个在企业内可能需要的一个功能，就是需要和AD域整合，转发指定域名到AD域服务器的方法：
-打开`/data/unbound.conf`编辑，滚动到最后几行，已经帮你准备好了配置示例，你只需要取消注释即可：
+### 进阶自定义示例
+
+1. 在企业内可能需要的一个功能，就是需要和AD域整合，转发指定域名到AD域服务器的方法：
+打开`/data/unbound_custom.conf`编辑，滚动到最后几行，已经帮你准备好了配置示例，你只需要取消注释即可：
 ```yaml
 #Active Directory Forward Example
 # 在这个示例中，你公司的AD域名为company.local，有四台AD域DNS服务器。
@@ -168,14 +211,29 @@ forward-zone:
  forward-addr: 10.111.222.12
  forward-addr: 10.111.222.13
  forward-addr: 10.111.222.14
+```
+注意：如果你开启了大陆分流功能，为了正确转发内网AD域名，请同时配合`RULES_TTL`功能使用。当然，此处是以AD域为场景进行举例，实际上你可以根据你的需求转发任意的域名。   
+
+2. 添加微软KMS服务器SRV记录
+```yaml
+#Example of setting up SRV records for KMS server VLMCS.
+#假设你的内网后缀是.lan，KMS服务器地址是192.168.1.2或者kms.ad.local
+
+server:
+    local-zone: "vlmcs._tcp.lan." static
+    local-data: "vlmcs._tcp.lan. IN SRV 0 0 1688 kms.ad.local."
+    local-data: "vlmcs._tcp.lan. IN SRV 0 0 1688 192.168.1.2."
 
 ```
+
+如果有其他高级的自定义需求，欢迎在[discussions](https://github.com/kkkgo/PaoPaoDNS/discussions)里面参与讨论。   
+
 ## 附赠：PaoPao-Pref
 这是一个让DNS服务器预读取缓存或者压力测试的简单工具，配合[PaoPaoDNS](https://github.com/kkkgo/PaoPaoDNS)使用可以快速生成`redis_dns.rdb`缓存。从指定的文本读取域名列表并查询A/AAAA记录，docker镜像默认自带了全球前100万热门域名(经过无效域名筛选)。     
 详情：https://github.com/kkkgo/PaoPao-Pref    
 
 ## 相关项目：PaoPaoGateWay
-PaoPao GateWay是一个体积小巧、稳定强大的FakeIP网关，系统由openwrt定制构建，核心由clash驱动，支持`Full Cone NAT` ，支持多种方式下发配置，支持多种出站方式，包括自定义socks5、自定义yaml节点、订阅模式和自由出站，支持节点测速自动选择、节点排除等功能，并附带web面板可供查看日志连接信息等。PaoPao GateWay配合PaoPaoDNS的`CUSTOM_FORWARD`功能就可以完成简单精巧的分流。   
+PaoPao GateWay是一个体积小巧、稳定强大的FakeIP网关，支持`Full Cone NAT` ，支持多种方式下发配置，支持多种出站方式，包括自定义socks5、自定义yaml节点、订阅模式和自由出站，支持节点测速自动选择、节点排除等功能，并附带web面板可供查看日志连接信息等。PaoPao GateWay配合PaoPaoDNS的`CUSTOM_FORWARD`功能就可以完成简单精巧的分流。   
 详情：https://github.com/kkkgo/PaoPaoGateWay   
 
 ## 构建说明

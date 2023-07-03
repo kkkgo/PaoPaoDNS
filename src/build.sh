@@ -26,17 +26,66 @@ if [ "$mmdb_down_hash" != "$mmdb_hash" ]; then
     exit
 fi
 
+# mark_data
+curl -sLo /src/global_mark.dat https://raw.githubusercontent.com/kkkgo/PaoPao-Pref/main/global_mark.dat
+global_mark_hash=$(sha256sum /src/global_mark.dat | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
+global_mark_down_hash=$(curl -s https://raw.githubusercontent.com/kkkgo/PaoPao-Pref/main/global_mark.dat.sha256sum | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
+if [ "$global_mark_down_hash" != "$global_mark_hash" ]; then
+    cp /global_mark_down_hash_error .
+    exit
+fi
+
 # config dnscrypt
 #gen dns toml
 curl -s https://raw.githubusercontent.com/DNSCrypt/dnscrypt-proxy/master/dnscrypt-proxy/example-dnscrypt-proxy.toml | grep -v "#" | grep . >/tmp/dnsex.toml
 sed -i -r 's/log_level.+/log_level = 6/g' /tmp/dnsex.toml
 sed -i -r 's/require_dnssec.+/require_dnssec = true/g' /tmp/dnsex.toml
+sed -i -r 's/cache_min_ttl .+/cache_min_ttl  = 1/g' /tmp/dnsex.toml
+sed -i -r 's/cache_neg_min_ttl .+/cache_neg_min_ttl  = 1/g' /tmp/dnsex.toml
+sed -i -r 's/reject_ttl.+/reject_ttl = 1/g' /tmp/dnsex.toml
+sed -i -r 's/cache_max_ttl .+/cache_max_ttl  = 600/g' /tmp/dnsex.toml
+sed -i -r 's/cache_neg_max_ttl .+/cache_neg_max_ttl  = 600/g' /tmp/dnsex.toml
 sed -i -r 's/require_nolog.+/require_nolog = false/g' /tmp/dnsex.toml
 sed -i -r 's/odoh_servers.+/odoh_servers = true/g' /tmp/dnsex.toml
 sed -i -r "s/netprobe_address.+/netprobe_address = '223.5.5.5:53'/g" /tmp/dnsex.toml
 sed -i -r "s/bootstrap_resolvers.+/bootstrap_resolvers = ['127.0.0.1:5301','1.0.0.1:53','8.8.8.8:53','223.5.5.5:53']/g" /tmp/dnsex.toml
 sed -i -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5302']/g" /tmp/dnsex.toml
+sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/public-resolvers.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://dnsr.evilvibes.com/v3/public-resolvers.md',|g" /tmp/dnsex.toml
+sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/relays.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://dnsr.evilvibes.com/v3/relays.md',|g" /tmp/dnsex.toml
+
+export dnstest_bad="'baddnslist'"
+testrec=$(nslookup local.03k.org)
+if echo "$testrec" | grep -q "10.9.8.7"; then
+    echo "Ready to test..."
+    curl -4s https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md | grep -E "##|sdns://" >/tmp/dnstest_alldns.txt
+    grep -E "sdns://" /tmp/dnstest_alldns.txt >/tmp/dnstest_sdns.txt
+    echo "" >>/tmp/dnstest_sdns.txt
+    echo "" >>/tmp/dnstest_sdns.txt
+    while read sdns; do
+        name=$(grep -B 20 "$sdns" /tmp/dnstest_alldns.txt | grep -oP '(?<=## ).*' | tail -1)
+        test=$(dnslookup local.03k.org $sdns)
+        if [ "$?" = "1" ]; then
+            export dnstest_bad="$dnstest_bad"", '$name'"
+            echo "$name"": CONNECT BAD."
+        else
+            if echo "$test" | grep -q "10.9.8.7"; then
+                echo "$name"": OK."
+            else
+                export dnstest_bad="$dnstest_bad"", '$name'"
+                echo "$name"": LOCAL BAD."
+            fi
+        fi
+    done </tmp/dnstest_sdns.txt
+    echo $dnstest_bad
+else
+    echo "Test record failed.""$testrec"
+fi
+
+sed -i "s/^disabled_server_names.*/disabled_server_names = [ $dnstest_bad ]/" /tmp/dnsex.toml
+
 echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
+echo "#ttl_rule_okforwarding_rules = '/tmp/force_ttl_rules.toml'" >>/src/dnscrypt.toml
+echo "#ttl_rule_okcloaking_rules = '/tmp/force_ttl_rules_cloaking.toml'" >>/src/dnscrypt.toml
 cat /tmp/dnsex.toml >>/src/dnscrypt.toml
 git clone https://github.com/DNSCrypt/dnscrypt-resolvers.git --depth 1 /dnscrypt
 mkdir -p /src/dnscrypt-resolvers

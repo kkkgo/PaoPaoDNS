@@ -1,9 +1,13 @@
 FROM alpine:edge AS builder
 COPY --from=sliamb/prebuild-paopaodns /src/ /src/
 COPY src/ /src/
-RUN sh /src/build.sh
+RUN apk add --no-cache curl bind-tools go grep &&\
+    go install github.com/ameshkov/dnslookup@latest &&\
+    /root/go/bin/dnslookup -h && mv /root/go/bin/dnslookup /usr/bin/ &&\
+    sh /src/build.sh
 # JUST CHECK
 RUN cp /src/Country-only-cn-private.mmdb /tmp/ &&\
+    cp /src/global_mark.dat /tmp/ &&\
     cp /src/data_update.sh /tmp/ &&\
     cp /src/dnscrypt-resolvers/public-resolvers.md /tmp/ &&\
     cp /src/dnscrypt-resolvers/public-resolvers.md.minisig /tmp/ &&\
@@ -21,12 +25,13 @@ RUN cp /src/Country-only-cn-private.mmdb /tmp/ &&\
     cp /src/unbound /tmp/ &&\
     cp /src/unbound-checkconf /tmp/ &&\
     cp /src/unbound.conf /tmp/ &&\
+    cp /src/unbound_custom.conf /tmp/ &&\
     cp /src/watch_list.sh /tmp/ &&\
     cp /src/redis-server /tmp/
 
 FROM alpine:edge
 COPY --from=builder /src/ /usr/sbin/
-RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools thttpd libgcc && \
+RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools libgcc xz && \
     apk upgrade --no-cache &&\
     mkdir -p /etc/unbound && \
     mv /usr/sbin/named.cache /etc/unbound/named.cache &&           \
@@ -46,7 +51,11 @@ ENV TZ=Asia/Shanghai \
     CUSTOM_FORWARD=IP:PORT \
     AUTO_FORWARD=no \
     AUTO_FORWARD_CHECK=yes \
+    USE_MARK_DATA=no \
+    RULES_TTL=0 \
+    QUERY_TIME=2000ms \
     HTTP_FILE=no
 VOLUME /data
+WORKDIR /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp 7889/tcp
 CMD /usr/sbin/init.sh
