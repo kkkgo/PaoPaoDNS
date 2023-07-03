@@ -1,10 +1,7 @@
 FROM alpine:edge AS builder
 COPY --from=sliamb/prebuild-paopaodns /src/ /src/
 COPY src/ /src/
-RUN apk add --no-cache curl bind-tools go grep &&\
-    go install github.com/ameshkov/dnslookup@latest &&\
-    /root/go/bin/dnslookup -h && mv /root/go/bin/dnslookup /usr/bin/ &&\
-    sh /src/build.sh
+RUN sh /src/build.sh
 # JUST CHECK
 RUN cp /src/Country-only-cn-private.mmdb /tmp/ &&\
     cp /src/global_mark.dat /tmp/ &&\

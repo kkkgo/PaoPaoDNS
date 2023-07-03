@@ -2,7 +2,41 @@
 
 # add tools
 apk update
-apk add build-base flex byacc musl-dev gcc make git python3-dev swig libevent-dev openssl-dev expat-dev hiredis-dev go
+apk add build-base flex byacc musl-dev gcc make git python3-dev swig libevent-dev openssl-dev expat-dev hiredis-dev go grep bind-tools
+
+# build dnscrypt server list
+go install github.com/ameshkov/dnslookup@latest
+mv /root/go/bin/dnslookup /usr/bin/
+git clone https://github.com/DNSCrypt/dnscrypt-resolvers.git --depth 1 /dnscrypt-resolvers
+export dnstest_bad="'baddnslist'"
+testrec=$(nslookup local.03k.org)
+if echo "$testrec" | grep -q "10.9.8.7"; then
+    echo "Ready to test..."
+    grep -E "##|sdns://" /dnscrypt-resolvers/v3/public-resolvers.md >/dnscrypt-resolvers/dnstest_alldns.txt
+    grep -E "sdns://" /dnscrypt-resolvers/dnstest_alldns.txt >/dnscrypt-resolvers/dnstest_sdns.txt
+    echo "" >>/dnscrypt-resolvers/dnstest_sdns.txt
+    echo "" >>/dnscrypt-resolvers/dnstest_sdns.txt
+    while read sdns; do
+        name=$(grep -B 20 "$sdns" /dnscrypt-resolvers/dnstest_alldns.txt | grep -oP '(?<=## ).*' | tail -1)
+        test=$(dnslookup local.03k.org $sdns)
+        if [ "$?" = "1" ]; then
+            export dnstest_bad="$dnstest_bad"", '$name'"
+            echo "$name"": CONNECT BAD."
+        else
+            if echo "$test" | grep -q "10.9.8.7"; then
+                echo "$name"": OK."
+            else
+                export dnstest_bad="$dnstest_bad"", '$name'"
+                echo "$name"": LOCAL BAD."
+            fi
+        fi
+    done </dnscrypt-resolvers/dnstest_sdns.txt
+    echo "$dnstest_bad"
+else
+    echo "Test record failed.""$testrec"
+fi
+echo -n "$dnstest_bad" >/src/dnstest_bad.txt
+
 # build unbound
 git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound
 cd /unbound || exit

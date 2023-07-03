@@ -53,35 +53,9 @@ sed -i -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5302']/g" /tmp/dnse
 sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/public-resolvers.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://dnsr.evilvibes.com/v3/public-resolvers.md',|g" /tmp/dnsex.toml
 sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/relays.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://dnsr.evilvibes.com/v3/relays.md',|g" /tmp/dnsex.toml
 
-export dnstest_bad="'baddnslist'"
-testrec=$(nslookup local.03k.org)
-if echo "$testrec" | grep -q "10.9.8.7"; then
-    echo "Ready to test..."
-    curl -4s https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md | grep -E "##|sdns://" >/tmp/dnstest_alldns.txt
-    grep -E "sdns://" /tmp/dnstest_alldns.txt >/tmp/dnstest_sdns.txt
-    echo "" >>/tmp/dnstest_sdns.txt
-    echo "" >>/tmp/dnstest_sdns.txt
-    while read sdns; do
-        name=$(grep -B 20 "$sdns" /tmp/dnstest_alldns.txt | grep -oP '(?<=## ).*' | tail -1)
-        test=$(dnslookup local.03k.org $sdns)
-        if [ "$?" = "1" ]; then
-            export dnstest_bad="$dnstest_bad"", '$name'"
-            echo "$name"": CONNECT BAD."
-        else
-            if echo "$test" | grep -q "10.9.8.7"; then
-                echo "$name"": OK."
-            else
-                export dnstest_bad="$dnstest_bad"", '$name'"
-                echo "$name"": LOCAL BAD."
-            fi
-        fi
-    done </tmp/dnstest_sdns.txt
-    echo $dnstest_bad
-else
-    echo "Test record failed.""$testrec"
-fi
-
+dnstest_bad=$(cat /src/dnstest_bad.txt)
 sed -i "s/^disabled_server_names.*/disabled_server_names = [ $dnstest_bad ]/" /tmp/dnsex.toml
+rm /src/dnstest_bad.txt
 
 echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
 echo "#ttl_rule_okforwarding_rules = '/tmp/force_ttl_rules.toml'" >>/src/dnscrypt.toml
