@@ -40,6 +40,8 @@ docker run -d \
 --network macvlan_eth0 --ip 192.168.1.8 \
 sliamb/paopaodns
 ```
+*如果你的网络环境访问Dokcer镜像有困难，可以尝试使用[上海交大](https://mirror.sjtu.edu.cn/docs/docker-registry)的镜像。*   
+
 验证你的递归DNS正常运行(假设你的容器IP是192.168.1.8)，可以执行以下命令：   
 ```cmd
 >nslookup -type=TXT whoami.ds.akahelp.net 192.168.1.8
