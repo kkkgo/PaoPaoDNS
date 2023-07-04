@@ -54,6 +54,10 @@ sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/
 sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/relays.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://dnsr.evilvibes.com/v3/relays.md',|g" /tmp/dnsex.toml
 
 dnstest_bad=$(cat /src/dnstest_bad.txt)
+echo "dnscrypt ban list: ""$dnstest_bad"
+if [ -z $dnstest_bad ]; then
+    dnstest_bad="'baddnslist'"
+fi
 sed -i "s/^disabled_server_names.*/disabled_server_names = [ $dnstest_bad ]/" /tmp/dnsex.toml
 rm /src/dnstest_bad.txt
 
