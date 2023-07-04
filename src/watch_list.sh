@@ -194,7 +194,7 @@ watch_mosdns() {
         fi
         if [ "$CN_TRACKER" = "yes" ]; then
             if [ ! -f /data/trackerslist.txt ]; then
-                cp /usr/sbin/trackerslist.txt /data/
+                /usr/sbin/data_update.sh comp_trackerslist
             fi
             file_list=$file_list" /data/trackerslist.txt"
         fi
