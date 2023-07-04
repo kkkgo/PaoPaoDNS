@@ -55,7 +55,7 @@ sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/
 
 dnstest_bad=$(cat /src/dnstest_bad.txt)
 echo "dnscrypt ban list: ""$dnstest_bad"
-if [ -z $dnstest_bad ]; then
+if [ -z "$dnstest_bad" ]; then
     dnstest_bad="'baddnslist'"
 fi
 sed -i "s/^disabled_server_names.*/disabled_server_names = [ $dnstest_bad ]/" /tmp/dnsex.toml
