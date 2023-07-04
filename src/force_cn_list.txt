@@ -10,7 +10,9 @@ domain:metaservices.microsoft.com
 domain:smartscreen.microsoft.com
 domain:checkappexec.microsoft.com
 domain:weather.microsoft.com
+domain:update.microsoft.com
 domain:windowsupdate.com
+domain:ntp.msn.com
 domain:time-ios.apple.com
 domain:time.apple.com
 domain:ntp.aliyun.com

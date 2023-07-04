@@ -95,7 +95,7 @@ fi
 
 load_trackerslist() {
     if [ ! -f /data/trackerslist.txt ]; then
-        cp /usr/sbin/trackerslist.txt /data/
+        /usr/sbin/data_update.sh comp_trackerslist
     fi
     sed 's/\r$//' /data/trackerslist.txt | sed -r "s/^[^/]+//g" | sed "s/\/\///g" | sed -r "s/\/.+$//g" | sed -r "s/:.+$//g" | grep -E "\.[a-z]" | grep -E "[-._0-9a-zA-Z]+" | sort -u | sed -r "s/^/full:/g" >/tmp/cn_tracker_list.txt
     echo "Apply trackerslist..."

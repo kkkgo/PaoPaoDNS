@@ -1,4 +1,33 @@
 #!/bin/sh
+comp_trackerslist() {
+    mkdir -p /tmp/trackerslist
+    cp /usr/sbin/trackerslist.txt.xz /tmp/trackerslist/
+    cd /tmp/trackerslist/ || exit
+    xz -df trackerslist.txt.xz
+    if [ -f /data/trackerslist.txt ]; then
+        echo "" >>/tmp/trackerslist/trackerslist.txt
+        cat /data/trackerslist.txt >>/tmp/trackerslist/trackerslist.txt
+        update_file_wait="/data/trackerslist.txt"
+        wait_apply
+    fi
+    sort -u /tmp/trackerslist/trackerslist.txt | grep "." >/tmp/trackerslist/trackerslist.txt.gen
+    cat /tmp/trackerslist/trackerslist.txt.gen >/data/trackerslist.txt
+    rm -rf /tmp/trackerslist/
+    return 0
+}
+
+wait_apply() {
+    while ! ps -ef | grep inotifywait | grep -q $update_file_wait; do
+        sleep 1
+        echo "$update_file_wait"": Waiting to apply the update..."
+    done
+}
+
+if [ "$1" = "comp_trackerslist" ]; then
+    comp_trackerslist
+    exit
+fi
+
 sleep $((1 + $RANDOM % 300))
 file_update() {
     date +"%Y-%m-%d %H:%M:%S %Z"
@@ -20,10 +49,7 @@ file_update() {
     downsum=$($hashcmd "$update_file_down" | grep -Eo "$update_reg")
     if [ "$newsum" = "$downsum" ]; then
         echo "$update_file_down" "Download OK."
-        while ! ps -ef | grep inotifywait | grep -q $update_file; do
-            sleep 1
-            echo "$update_file"": Waiting to apply the update..."
-        done
+        wait_apply
         echo "ok" >"/tmp/""$update_flag"
         cat "$update_file_down" >"$update_file"
         rm "$update_file_down"
@@ -63,6 +89,7 @@ apk add --upgrade curl ca-certificates
 update_file="/etc/unbound/named.cache"
 update_file_down="/tmp/named.cache"
 update_flag="named.flag"
+update_file_wait=$update_file
 update_reg="[0-9A-Za-z]{32}"
 hashcmd="md5sum"
 newsum_url=https://www.internic.net/domain/named.cache.md5
@@ -74,6 +101,7 @@ if [ "$CNAUTO" != "no" ]; then
     update_file="/data/Country-only-cn-private.mmdb"
     update_file_down="/tmp/Country-only-cn-private.mmdb"
     update_flag="Country-only-cn-private.flag"
+    update_file_wait=$update_file
     update_reg="[0-9A-Za-z]{64}"
     hashcmd="sha256sum"
     newsum_url=https://raw.githubusercontent.com/kkkgo/Country-only-cn-private.mmdb/main/Country-only-cn-private.mmdb.sha256sum
@@ -91,32 +119,29 @@ if [ "$CNAUTO" != "no" ]; then
     fi
 fi
 
-# Update Trackerlist Best Effort
+# Update trackerlist data
 if [ "$CNAUTO" != "no" ]; then
     if [ "$CN_TRACKER" = "yes" ]; then
+        update_file="/usr/sbin/trackerslist.txt.xz"
+        update_file_down="/tmp/trackerslist.txt.xz.download"
         update_flag="trackerslist.flag"
-        cat /data/trackerslist.txt >/tmp/trackerslist.txt
-        echo "" >>/tmp/trackerslist.txt
-        cat /usr/sbin/trackerslist.txt >>/tmp/trackerslist.txt
-        echo "" >>/tmp/trackerslist.txt
-        curl -4s https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt >>/tmp/trackerslist.txt
-        echo "" >>/tmp/trackerslist.txt
-        curl -4s https://cdn.jsdelivr.net/gh/XIU2/TrackersListCollection/all.txt >>/tmp/trackerslist.txt
-        echo "" >>/tmp/trackerslist.txt
-        curl -4s https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt >>/tmp/trackerslist.txt
-        echo "" >>/tmp/trackerslist.txt
-        curl -4s https://cdn.jsdelivr.net/gh/ngosang/trackerslist/trackers_all.txt >>/tmp/trackerslist.txt
-        echo "" >>/tmp/trackerslist.txt
-        while ! ps -ef | grep inotifywait | grep -q /data/trackerslist.txt; do
-            sleep 1
-            echo "/data/trackerslist.txt: Waiting to apply the update..."
-        done
-        sort -u /tmp/trackerslist.txt >/tmp/trackerslist.txt.gen
-        echo "ok" >"/tmp/""$update_flag"
-        cat /tmp/trackerslist.txt.gen >/data/trackerslist.txt
-        echo "Trackerlist has been updated."
-        rm /tmp/trackerslist.txt.gen /tmp/trackerslist.txt
-        sleep 5
+        update_file_wait="/data/trackerslist.txt"
+        update_reg="[0-9A-Za-z]{64}"
+        hashcmd="sha256sum"
+        newsum_url=https://github.com/kkkgo/all-tracker-list/raw/main/trackerslist.txt.xz.sha256sum
+        down_url=https://github.com/kkkgo/all-tracker-list/raw/main/trackerslist.txt.xz
+        file_update_try && comp_trackerslist
+        if [ "$?" = "1" ]; then
+            newsum_url=https://cdn.jsdelivr.net/gh/kkkgo/all-tracker-list/trackerslist.txt.sha256sum
+            down_url=https://cdn.jsdelivr.net/gh/kkkgo/all-tracker-list/trackerslist.txt
+            file_update_try failed && comp_trackerslist
+            if [ "$?" = "1" ]; then
+                newsum_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt.sha256sum
+                down_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt
+                file_update_try failed && comp_trackerslist
+            fi
+        fi
+
     fi
 fi
 
@@ -126,6 +151,7 @@ if [ "$CNAUTO" != "no" ]; then
         update_file="/data/global_mark.dat"
         update_file_down="/tmp/global_mark.dat.download"
         update_flag="global_mark.flag"
+        update_file_wait=$update_file
         update_reg="[0-9A-Za-z]{64}"
         hashcmd="sha256sum"
         newsum_url=https://raw.githubusercontent.com/kkkgo/PaoPao-Pref/main/global_mark.dat.sha256sum
