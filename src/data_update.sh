@@ -132,12 +132,12 @@ if [ "$CNAUTO" != "no" ]; then
         down_url=https://github.com/kkkgo/all-tracker-list/raw/main/trackerslist.txt.xz
         file_update_try && comp_trackerslist
         if [ "$?" = "1" ]; then
-            newsum_url=https://cdn.jsdelivr.net/gh/kkkgo/all-tracker-list/trackerslist.txt.sha256sum
-            down_url=https://cdn.jsdelivr.net/gh/kkkgo/all-tracker-list/trackerslist.txt
+            newsum_url=https://cdn.jsdelivr.net/gh/kkkgo/all-tracker-list/trackerslist.txt.xz.sha256sum
+            down_url=https://cdn.jsdelivr.net/gh/kkkgo/all-tracker-list/trackerslist.txt.xz
             file_update_try failed && comp_trackerslist
             if [ "$?" = "1" ]; then
-                newsum_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt.sha256sum
-                down_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt
+                newsum_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt.xz.sha256sum
+                down_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt.xz
                 file_update_try failed && comp_trackerslist
             fi
         fi
