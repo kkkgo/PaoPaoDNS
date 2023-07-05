@@ -97,9 +97,9 @@ file_update_try() {
     fi
 }
 
-update-ca-certificates
-apk update
-apk add --upgrade curl ca-certificates
+update-ca-certificates >/dev/null
+apk update >/dev/null
+apk add --upgrade curl ca-certificates >/dev/null
 
 update_file="/etc/unbound/named.cache"
 update_file_down="/tmp/named.cache"
