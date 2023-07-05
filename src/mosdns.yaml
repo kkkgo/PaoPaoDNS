@@ -95,7 +95,7 @@ plugins:
   - tag: cnip
     type: mmdb
     args:
-      file: "/data/Country-only-cn-private.mmdb"
+      file: "/tmp/Country.mmdb"
 
   - tag: not_a_aaaa
     type: sequence

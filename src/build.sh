@@ -10,7 +10,7 @@ mv /usr/bin/redis* /src/
 
 # named
 curl -sLo /src/named.cache https://www.internic.net/domain/named.cache
-named_hash=$(curl -s https://www.internic.net/domain/named.cache.md5 | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
+named_hash=$(curl -4Ls https://www.internic.net/domain/named.cache.md5 | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
 named_down_hash=$(md5sum /src/named.cache | grep -Eo "[a-zA-Z0-9]{32}" | head -1)
 if [ "$named_down_hash" != "$named_hash" ]; then
     cp /named_down_hash_error .
@@ -19,13 +19,13 @@ fi
 
 # mmdb
 git clone https://github.com/kkkgo/Country-only-cn-private.mmdb --depth 1 /Country-only-cn-private
-mmdb_hash=$(sha256sum /Country-only-cn-private/Country-only-cn-private.mmdb | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
-mmdb_down_hash=$(grep -Eo "[a-zA-Z0-9]{64}" /Country-only-cn-private/Country-only-cn-private.mmdb.sha256sum | head -1)
+mmdb_hash=$(sha256sum /Country-only-cn-private/Country-only-cn-private.mmdb.xz | grep -Eo "[a-zA-Z0-9]{64}" | head -1)
+mmdb_down_hash=$(grep -Eo "[a-zA-Z0-9]{64}" /Country-only-cn-private/Country-only-cn-private.mmdb.xz.sha256sum | head -1)
 if [ "$mmdb_down_hash" != "$mmdb_hash" ]; then
     cp /mmdb_down_hash_error .
     exit
 else
-    cp /Country-only-cn-private/Country-only-cn-private.mmdb /src/Country-only-cn-private.mmdb
+    cp /Country-only-cn-private/Country-only-cn-private.mmdb.xz /src/Country-only-cn-private.mmdb.xz
 fi
 
 # mark_data

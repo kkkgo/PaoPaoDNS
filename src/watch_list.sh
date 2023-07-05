@@ -106,76 +106,102 @@ if [ "$1" = "load_trackerslist" ]; then
     exit
 fi
 
-reload_mosdns() {
-    if [ -f /data/force_nocn_list.txt ]; then
-        sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_nocn_list.txt
+gen_hash() {
+    if [ -f "$1" ]; then
+        md5sum "$1" | cut -d" " -f1
     fi
-    if [ -f /data/force_cn_list.txt ]; then
-        sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_cn_list.txt
-    fi
-    if [ -f /data/force_forward_list.txt ]; then
-        sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
-    fi
-    if [ ! -f /data/Country-only-cn-private.mmdb ]; then
-        cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
-    fi
-    if [ "$CN_TRACKER" = "yes" ]; then
-        if [ -f /tmp/trackerslist.flag ]; then
-            if grep -q "ok" /tmp/trackerslist.flag; then
+}
+
+reload_dns() {
+    if [ "$CNAUTO" != "no" ]; then
+        export reload_mosdns=0
+        if [ -f /data/force_cn_list.txt ]; then
+            sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_cn_list.txt
+        fi
+        if [ -f /data/force_nocn_list.txt ]; then
+            sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_nocn_list.txt
+        fi
+        if [ -f /data/force_forward_list.txt ]; then
+            sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
+        fi
+        if [ ! -f /data/Country-only-cn-private.mmdb ]; then
+            /usr/sbin/data_update.sh ex_mmdb
+        fi
+        if [ "$(gen_hash /data/force_cn_list.txt)" != "$force_cn_list" ]; then
+            export reload_mosdns=1
+        fi
+        if [ "$(gen_hash /data/force_nocn_list.txt)" != "$force_nocn_list" ]; then
+            export reload_mosdns=1
+        fi
+        if [ "$(gen_hash /data/force_forward_list.txt)" != "$force_forward_list" ]; then
+            export reload_mosdns=1
+        fi
+        if [ "$CN_TRACKER" = "yes" ]; then
+            if [ "$(gen_hash /data/trackerslist.txt)" != "$trackerslist" ]; then
                 load_trackerslist
-                echo "" >/tmp/trackerslist.flag
+                export reload_mosdns=1
             fi
         fi
-    fi
-    if [ "$USE_MARK_DATA" = "yes" ]; then
-        if [ -f /tmp/global_mark.flag ]; then
-            if grep -q "ok" /tmp/global_mark.flag; then
-                load_mark_data
-                echo "" >/tmp/global_mark.flag
+        if [ "$USE_MARK_DATA" = "yes" ]; then
+            if [ -f /tmp/global_mark.flag ]; then
+                if grep -q "ok" /tmp/global_mark.flag; then
+                    load_mark_data
+                    echo "" >/tmp/global_mark.flag
+                    export reload_mosdns=1
+                fi
             fi
         fi
-    fi
-    RULES_TTL=$(echo "$RULES_TTL" | grep -Eo "[0-9]+|head -1")
-    if [ -z "$RULES_TTL" ]; then
-        RULES_TTL=0
-    fi
-    if [ "$RULES_TTL" -gt 0 ]; then
-        load_ttl_rules
-        if [ "$?" = "0" ]; then
-            if ps | grep dnscrypt-proxy | grep -q dnscrypt.toml; then
-                dnscrypt_id=$(ps | grep dnscrypt-proxy | grep dnscrypt.toml | grep -Eo "[0-9]+" | head -1)
-                kill "$dnscrypt_id"
+        RULES_TTL=$(echo "$RULES_TTL" | grep -Eo "[0-9]+|head -1")
+        if [ -z "$RULES_TTL" ]; then
+            RULES_TTL=0
+        fi
+        if [ "$RULES_TTL" -gt 0 ]; then
+            if [ "$(gen_hash /data/force_ttl_rules.txt)" != "$force_ttl_rules" ]; then
+                load_ttl_rules
+                if [ "$?" = "0" ]; then
+                    if ps | grep dnscrypt-proxy | grep -q dnscrypt.toml; then
+                        dnscrypt_id=$(ps | grep dnscrypt-proxy | grep dnscrypt.toml | grep -Eo "[0-9]+" | head -1)
+                        kill "$dnscrypt_id"
+                    fi
+                    echo "dnscrypt reload rules..."
+                    dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
+                fi
+                export reload_mosdns=1
             fi
-            echo "dnscrypt reload rules..."
-            dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
+        fi
+        if [ "$(gen_hash /data/Country-only-cn-private.mmdb)" != "$Country" ]; then
+            cat /data/Country-only-cn-private.mmdb >/tmp/Country.mmdb
+            export reload_mosdns=1
+        fi
+        if [ $reload_mosdns = "1" ]; then
+            while ps | grep -v grep | grep mosdns; do
+                killall mosdns
+            done
+            echo "mosdns reload..."
+            killall mosdns
+            mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &
+            sleep 1
+            ps -ef | grep -v "grep" | grep "mosdns"
         fi
     fi
-    while ps | grep -v grep | grep mosdns; do
-        killall mosdns
-    done
-    echo "mosdns reload..."
-    killall mosdns
-    mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &
-    sleep 1
-    ps -ef | grep -v "grep" | grep "mosdns"
-}
-
-reload_unbound() {
-    while ps | grep -v grep | grep unbound; do
+    if [ "$(gen_hash /etc/unbound/named.cache)" != "$named" ]; then
+        while ps | grep -v grep | grep unbound; do
+            killall unbound
+        done
+        echo "unbound reload..."
         killall unbound
-    done
-    echo "unbound reload..."
-    killall unbound
-    unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
-    if [ -f /tmp/unbound_forward.conf ]; then
-        unbound -c /tmp/unbound_forward.conf >/dev/null 2>&1 &
+        unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
+        if [ -f /tmp/unbound_forward.conf ]; then
+            unbound -c /tmp/unbound_forward.conf >/dev/null 2>&1 &
+        fi
+        sleep 1
+        ps -ef | grep -v "grep" | grep "unbound"
     fi
-    sleep 1
-    ps -ef | grep -v "grep" | grep "unbound"
 }
 
-watch_mosdns() {
-    while true; do
+while true; do
+    file_list="/etc/unbound/named.cache"
+    if [ "$CNAUTO" != "no" ]; then
         if [ ! -f /data/force_nocn_list.txt ]; then
             cp /usr/sbin/force_nocn_list.txt /data/
         fi
@@ -183,9 +209,9 @@ watch_mosdns() {
             cp /usr/sbin/force_cn_list.txt /data/
         fi
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
-            cp /usr/sbin/Country-only-cn-private.mmdb /data/Country-only-cn-private.mmdb
+            /usr/sbin/data_update.sh ex_mmdb
         fi
-        file_list="/data/Country-only-cn-private.mmdb /data/force_cn_list.txt /data/force_nocn_list.txt"
+        file_list=$file_list" /data/Country-only-cn-private.mmdb /data/force_cn_list.txt /data/force_nocn_list.txt"
         if [ "$USE_MARK_DATA" = "yes" ]; then
             if [ ! -f /data/global_mark.dat ]; then
                 touch /data/global_mark.dat
@@ -214,20 +240,20 @@ watch_mosdns() {
                 touch /data/force_ttl_rules.txt
             fi
         fi
-        inotifywait -e modify,delete $file_list && sleep 1 && reload_mosdns
-    done
-}
-
-watch_unbound() {
-    while true; do
-        if [ ! -f /etc/unbound/named.cache ]; then
-            touch /etc/unbound/named.cache
-        fi
-        inotifywait -e modify,delete /etc/unbound/named.cache && sleep 1 && reload_unbound
-    done
-}
-echo "Watchlist Run!"
-if [ "$CNAUTO" != "no" ]; then
-    watch_mosdns &
-fi
-watch_unbound &
+        force_nocn_list=$(gen_hash /data/force_nocn_list.txt)
+        export force_nocn_list
+        force_cn_list=$(gen_hash /data/force_cn_list.txt)
+        export force_cn_list
+        force_forward_list=$(gen_hash /data/force_forward_list.txt)
+        export force_forward_list
+        force_ttl_rules=$(gen_hash /data/force_ttl_rules.txt)
+        export force_ttl_rules
+        trackerslist=$(gen_hash /data/trackerslist.txt)
+        export trackerslist
+        Country=$(gen_hash /data/Country-only-cn-private.mmdb)
+        export Country
+    fi
+    named=$(gen_hash /etc/unbound/named.cache)
+    export named
+    inotifywait -e modify,delete $file_list && sleep 1 && reload_dns
+done

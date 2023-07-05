@@ -3,7 +3,7 @@ COPY --from=sliamb/prebuild-paopaodns /src/ /src/
 COPY src/ /src/
 RUN sh /src/build.sh
 # JUST CHECK
-RUN cp /src/Country-only-cn-private.mmdb /tmp/ &&\
+RUN cp /src/Country-only-cn-private.mmdb.xz /tmp/ &&\
     cp /src/global_mark.dat /tmp/ &&\
     cp /src/data_update.sh /tmp/ &&\
     cp /src/dnscrypt-resolvers/public-resolvers.md /tmp/ &&\
