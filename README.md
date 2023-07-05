@@ -195,7 +195,7 @@ www.qq.com@@@qq.03k.org
 - `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。容器版本更新不会覆盖该文件。   
 - `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，匹配规则同上。容器版本更新不会覆盖该文件。   
 - 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。   
-- `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRACKER`功能会出现，会增量自动更新，更新数据来源[[1]](https://github.com/XIU2/TrackersListCollection) [[2]](https://github.com/ngosang/trackerslist) ，你也可以添加自己的trakcer到这个文件，更新的时候会自动合并。修改将实时重载生效。容器版本更新不会覆盖该文件。   
+- `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRACKER`功能会出现，会增量自动更新，[更新数据来源](https://github.com/kkkgo/all-tracker-list) ，你也可以添加自己的trakcer到这个文件(或者向[该项目](https://github.com/kkkgo/all-tracker-list)提交)，更新的时候会自动合并。修改将实时重载生效。容器版本更新不会覆盖该文件。   
 - `force_ttl_rules.txt`: 参见`RULES_TTL`功能。修改将实时重载生效。容器版本更新不会覆盖该文件。   
 - `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除了调试用途，一般强烈建议不修改它。容器版本更新将会覆盖该文件。   
 
