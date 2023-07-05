@@ -9,6 +9,7 @@
 - 场景二：作为一个局域网内具备CN智能分流、解决污染问题和IPv6双栈优化的DNS服务器，或者你的局域网已经从IP层面解决了“科学”的问题，需要一个能智能分流的DNS服务器。  
 
 ## [→详细说明《为啥需要递归DNS》/运行逻辑](https://blog.03k.org/post/paopaodns.html)
+## [更新日志](https://github.com/kkkgo/PaoPaoDNS/discussions/categories/%E5%85%AC%E5%91%8A)
 ## 使用方法
 简单来说，那么你可以运行：  
 ```shell
