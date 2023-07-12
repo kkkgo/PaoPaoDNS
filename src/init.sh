@@ -140,6 +140,12 @@ if [ "$MEM1" = "100k" ]; then
     POWCORES=1
     FDLIM=1
 fi
+if [ "$safemem" = "yes" ]; then
+    echo "[Warning] use safemem!"
+    CORES=1
+    POWCORES=1
+    FDLIM=1
+fi
 IPREX4='([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
 ETHIP=$(ip -o -4 route get 1.0.0.1 | grep -Eo "$IPREX4" | tail -1)
 if [ -z "$ETHIP" ]; then
