@@ -1,15 +1,8 @@
 domain:whoami.ds.akahelp.net
 domain:whoami.03k.org
-domain:msftncsi.com
-domain:msftconnecttest.com
-domain:time.windows.com
-domain:ntp.msn.com
-domain:time-ios.apple.com
-domain:time.apple.com
 domain:ntp.aliyun.com
 domain:time.edu.cn
 domain:ntp.org.cn
-domain:pool.ntp.org
 domain:localhost.ptlogin2.qq.com
 domain:localhost.sec.qq.com
 domain:.lan

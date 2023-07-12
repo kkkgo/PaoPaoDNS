@@ -1,1 +1,8 @@
 domain:bing.com
+domain:msftncsi.com
+domain:msftconnecttest.com
+domain:time.windows.com
+domain:ntp.msn.com
+domain:time-ios.apple.com
+domain:time.apple.com
+domain:pool.ntp.org
