@@ -345,3 +345,4 @@ echo "nameserver 1.0.0.1" >>/etc/resolv.conf
 sed "s/{MEM4}/$MEM4/g" /data/redis.conf >/tmp/redis.conf
 ps
 redis-server /tmp/redis.conf
+redis-server /tmp/redis.conf --ignore-warnings ARM64-COW-BUG
