@@ -68,7 +68,6 @@ rm /src/dnstest_bad.txt
 
 echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
 echo "#ttl_rule_okforwarding_rules = '/tmp/force_ttl_rules.toml'" >>/src/dnscrypt.toml
-echo "#ttl_socks5_rule_okforwarding_rules = '/tmp/force_ttl_rules_socks5.toml'" >>/src/dnscrypt.toml
 echo "#ttl_rule_okcloaking_rules = '/tmp/force_ttl_rules_cloaking.toml'" >>/src/dnscrypt.toml
 cat /dnscrypt-proxy/dnsex.toml >>/src/dnscrypt.toml
 git clone https://github.com/DNSCrypt/dnscrypt-resolvers.git --depth 1 /dnscrypt
