@@ -226,8 +226,7 @@ if [ "$CNAUTO" != "no" ]; then
     fi
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         SOCKS5=$(echo "$SOCKS5" | sed 's/"//g')
-        sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" >/data/dnscrypt-resolvers/dnscrypt_socks.yaml
-        dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.yaml >/dev/null 2>&1 &
+        sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" >/data/dnscrypt-resolvers/dnscrypt_socks.toml
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#socksok//g" >/tmp/unbound_forward.conf
         sed "s/#socksok//g" /data/mosdns.yaml >/tmp/mosdns.yaml
         sleep 5
@@ -322,6 +321,9 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#ttl_rule_ok//g" /tmp/mosdns.yaml
         sed -i "s/{RULES_TTL}/$RULES_TTL/g" /tmp/mosdns.yaml
         /usr/sbin/watch_list.sh load_ttl_rules
+        if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
+            sed -i "s/#ttl_socks5_rule_ok//g" /data/dnscrypt-resolvers/dnscrypt_socks.toml
+        fi
     else
         cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
     fi
@@ -331,6 +333,7 @@ if [ "$CNAUTO" != "no" ]; then
     sed -i "s/{MSCACHE}/$MSCACHE/g" /tmp/mosdns.yaml
     sed -i '/^#/d' /tmp/mosdns.yaml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
+    dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
     mosdns start -d /tmp -c mosdns.yaml &
 fi

@@ -60,6 +60,10 @@ load_ttl_rules() {
     touch /tmp/force_ttl_rules_cloaking.toml.gen
     touch /tmp/force_ttl_rules.toml.gen
     touch /tmp/force_ttl_rules.txt.gen
+    if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
+        touch /tmp/force_ttl_rules_socks5.toml.gen
+        touch /tmp/force_ttl_rules_socks5.txt.gen
+    fi
     sed 's/\r$//' /data/force_ttl_rules.txt | grep -vE "^#" | grep . | sort -u >/tmp/force_ttl_rules.cp.gen
     echo "" >>/tmp/force_ttl_rules.cp.gen
     echo "" >>/tmp/force_ttl_rules.cp.gen
@@ -69,8 +73,17 @@ load_ttl_rules() {
         rule_cloaking=$(echo "$rule" | grep -vE "^#" | grep @@ | cut -d"@" -f3 | grep -Eo "[-.:_0-9a-zA-Z]+" | head -1)
         rule_cloaking_full=$(echo "$rule" | grep -vE "^#" | grep @@@ | cut -d"@" -f4 | grep -Eo "[-.:_0-9a-zA-Z]+" | head -1)
         if [ -n "$rule_domain" ] && [ -n "$rule_adns" ]; then
-            echo "$rule_domain"" ""$rule_adns" >>/tmp/force_ttl_rules.toml.gen
-            echo "domain:""$rule_domain" >>/tmp/force_ttl_rules.txt.gen
+            if echo "$rule" | grep -Eqo "~$"; then
+                if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
+                    echo "$rule_domain"" ""$rule_adns" >>/tmp/force_ttl_rules_socks5.toml.gen
+                    echo "domain:""$rule_domain" >>/tmp/force_ttl_rules_socks5.txt.gen
+                else
+                    echo "Bad socks5 rule:""$rule"", socks5 failed:""$SOCKS5"
+                fi
+            else
+                echo "$rule_domain"" ""$rule_adns" >>/tmp/force_ttl_rules.toml.gen
+                echo "domain:""$rule_domain" >>/tmp/force_ttl_rules.txt.gen
+            fi
         fi
         if [ -n "$rule_domain" ] && [ -n "$rule_cloaking" ]; then
             echo "$rule_domain"" ""$rule_cloaking" >>/tmp/force_ttl_rules_cloaking.toml.gen
@@ -82,8 +95,12 @@ load_ttl_rules() {
         fi
     done </tmp/force_ttl_rules.cp.gen
     sort -u /tmp/force_ttl_rules.toml.gen >/tmp/force_ttl_rules.toml
-    sort -u /tmp/force_ttl_rules_cloaking.toml.gen >/tmp/force_ttl_rules_cloaking.toml
     sort -u /tmp/force_ttl_rules.txt.gen >/tmp/force_ttl_rules.txt
+    if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
+        sort -u /tmp/force_ttl_rules_socks5.toml.gen >/tmp/force_ttl_rules_socks5.toml
+        sort -u /tmp/force_ttl_rules_socks5.txt.gen >/tmp/force_ttl_rules_socks5.txt
+    fi
+    sort -u /tmp/force_ttl_rules_cloaking.toml.gen >/tmp/force_ttl_rules_cloaking.toml
     rm /tmp/force_ttl_rules*.gen
     return 0
 }

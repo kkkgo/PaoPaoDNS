@@ -31,6 +31,12 @@ plugins:
 #ttl_rule_ok      files:
 #ttl_rule_ok        - "/tmp/force_ttl_rules.txt"
 
+#socksok#ttl_rule_ok  - tag: "force_ttl_rules_socks5"
+#socksok#ttl_rule_ok    type: "domain_set"
+#socksok#ttl_rule_ok    args:
+#socksok#ttl_rule_ok      files:
+#socksok#ttl_rule_ok        - "/tmp/force_ttl_rules_socks5.txt"
+
 #global_mark_yes  - tag: "global_mark"
 #global_mark_yes    type: "domain_set"
 #global_mark_yes    args:
@@ -92,6 +98,12 @@ plugins:
 #ttl_rule_ok      upstreams:
 #ttl_rule_ok        - addr: "udp://127.0.0.1:5302"
 
+#socksok#ttl_rule_ok  - tag: forward_dnscrypt_socks5
+#socksok#ttl_rule_ok    type: forward
+#socksok#ttl_rule_ok    args:
+#socksok#ttl_rule_ok      upstreams:
+#socksok#ttl_rule_ok        - addr: "udp://127.0.0.1:5303"
+
   - tag: cnip
     type: mmdb
     args:
@@ -139,6 +151,13 @@ plugins:
 #ttl_rule_ok        - exec: $forward_dnscrypt
 #ttl_rule_ok        - exec: ttl 0-{RULES_TTL}
 #ttl_rule_ok        - exec: accept
+        
+#socksok#ttl_rule_ok  - tag: f_force_ttl_rules_socks5
+#socksok#ttl_rule_ok    type: sequence
+#socksok#ttl_rule_ok    args:
+#socksok#ttl_rule_ok        - exec: $forward_dnscrypt_socks5
+#socksok#ttl_rule_ok        - exec: ttl 0-{RULES_TTL}
+#socksok#ttl_rule_ok        - exec: accept
 
 #cnfall  - tag: try_cn_fall
 #cnfall    type: sequence
@@ -192,6 +211,9 @@ plugins:
         - exec: cache {MSCACHE}
         - matches: has_wanted_ans
           exec: accept
+
+#socksok#ttl_rule_ok        - matches: qname $force_ttl_rules_socks5
+#socksok#ttl_rule_ok          exec: goto f_force_ttl_rules_socks5
 
 #ttl_rule_ok        - matches: qname $force_ttl_rules
 #ttl_rule_ok          exec: goto f_force_ttl_rules
