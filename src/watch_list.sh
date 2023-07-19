@@ -182,6 +182,12 @@ reload_dns() {
                     fi
                     echo "dnscrypt reload rules..."
                     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
+                    if ps | grep dnscrypt-proxy | grep -q dnscrypt_socks.toml; then
+                        dnscrypt_id=$(ps | grep dnscrypt-proxy | grep dnscrypt_socks.toml | grep -Eo "[0-9]+" | head -1)
+                        kill "$dnscrypt_id"
+                    fi
+                    echo "dnscrypt_socks reload rules..."
+                    dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.toml >/dev/null 2>&1 &
                 fi
                 export reload_mosdns=1
             fi
