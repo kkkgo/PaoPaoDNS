@@ -86,11 +86,11 @@ plugins:
 #nosocks        - addr: "udp://127.0.0.1:5302"
 #socksok        - addr: "udp://127.0.0.1:5303"
 
-#ttl_rule_ok  - tag: forward_dnscrypt
-#ttl_rule_ok    type: forward
-#ttl_rule_ok    args:
-#ttl_rule_ok      upstreams:
-#ttl_rule_ok        - addr: "udp://127.0.0.1:5302"
+  - tag: forward_dnscrypt
+    type: forward
+    args:
+      upstreams:
+        - addr: "udp://127.0.0.1:5302"
 
   - tag: cnip
     type: mmdb
