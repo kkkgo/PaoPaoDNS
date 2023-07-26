@@ -160,7 +160,8 @@ fi
 if [ -z "$AUTO_FORWARD" ]; then
     AUTO_FORWARD="no"
 fi
-
+export no_proxy=""
+export http_proxy=""
 echo ====ENV TEST==== >/tmp/env.conf
 echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
 echo prefPC:"$prefPC" >>/tmp/env.conf

@@ -123,6 +123,9 @@ plugins:
         - exec: $forward_unbound
         - matches: has_wanted_ans
           exec: accept
+        - exec: $forward_dnscrypt
+        - matches: has_wanted_ans
+          exec: accept
         - exec: reject 0
 
   - tag: f_local_unbound

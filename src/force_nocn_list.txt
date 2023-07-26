@@ -1,4 +1,5 @@
 domain:bing.com
+domain:ip.03k.org
 domain:msftncsi.com
 domain:msftconnecttest.com
 domain:time.windows.com
