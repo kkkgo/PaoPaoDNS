@@ -19,16 +19,16 @@ if echo "$testrec" | grep -q "10.9.8.7"; then
     while read sdns; do
         name=$(grep -B 20 "$sdns" /dnscrypt-resolvers/dnstest_alldns.txt | grep -oP '(?<=## ).*' | tail -1)
         test=$(dnslookup local.03k.org $sdns)
-        if [ "$?" = "1" ]; then
-            export dnstest_bad="$dnstest_bad"", '$name'"
-            echo "$name"": CONNECT BAD."
-        else
+        if [ "$?" = "0" ]; then
             if echo "$test" | grep -q "10.9.8.7"; then
                 echo "$name"": OK."
             else
                 export dnstest_bad="$dnstest_bad"", '$name'"
                 echo "$name"": LOCAL BAD."
             fi
+        else
+            export dnstest_bad="$dnstest_bad"", '$name'"
+            echo "$name"": CONNECT BAD."
         fi
     done </dnscrypt-resolvers/dnstest_sdns.txt
     echo "$dnstest_bad"
