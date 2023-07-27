@@ -44,6 +44,8 @@ if [ "$1" = "ex_mmdb" ]; then
 fi
 
 sleep $((1 + $RANDOM % 300))
+export no_proxy=""
+export http_proxy=""
 file_update() {
     date +"%Y-%m-%d %H:%M:%S %Z"
     touch $update_file
