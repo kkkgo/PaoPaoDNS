@@ -126,7 +126,7 @@ plugins:
         - exec: $forward_dnscrypt
         - matches: has_wanted_ans
           exec: accept
-        - exec: pong "END by f_force_nocn_list."
+        - exec: pong END by f_force_nocn_list.
 
   - tag: f_local_unbound
     type: sequence
@@ -134,7 +134,7 @@ plugins:
         - exec: $local_unbound
         - matches: has_wanted_ans
           exec: accept
-        - exec: pong "END by f_local_unbound."
+        - exec: pong END by f_local_unbound.
         
 #ttl_rule_ok  - tag: f_force_ttl_rules
 #ttl_rule_ok    type: sequence
@@ -158,7 +158,7 @@ plugins:
 #autoforward-yes#autoforward-check          exec: accept
 #autoforward-yes#autoforward-check        - matches: "has_wanted_ans"
 #autoforward-yes#autoforward-check          exec: goto f_force_forward_list
-#autoforward-yes#autoforward-check        - exec: pong "END by try_auto_check."
+#autoforward-yes#autoforward-check        - exec: pong END by try_auto_check.
 
 #global_mark_yes  - tag: f_global_mark
 #global_mark_yes    type: sequence
@@ -177,12 +177,12 @@ plugins:
     args:
 #usehosts-yes        - exec: $usehosts
         - matches: qtype 65
-          exec: pong "END by block qtype 65."
+          exec: pong END by block qtype 65.
 #ipv6raw        - matches: 
 #ipv6ok          - qname $force_nocn_list
 #ipv6raw          - qtype 28
-#ipv6raw#ipv6ok          exec: pong "END by IPv6=yes, force_nocn_list block aaaa."
-#ipv6raw#ipv6no          exec: pong "END by IPv6=no."
+#ipv6raw#ipv6ok          exec: pong END by IPv6=yes, force_nocn_list block aaaa.
+#ipv6raw#ipv6no          exec: pong END by IPv6=no.
         - matches: 
           - "!qtype 1 28"
           exec: jump not_a_aaaa
@@ -219,7 +219,7 @@ plugins:
 #autoforward-yes#autoforward-nocheck        - exec: goto f_force_forward_list
 
 #autoforward-no        - exec: goto f_force_nocn_list
-        - exec: pong "END by the end."
+        - exec: pong END by the end.
 
   - tag: udp_server
     type: udp_server
