@@ -114,7 +114,7 @@ plugins:
 #customforward-seted    args:
 #customforward-seted        - exec: drop_resp
 #customforward-seted        - exec: $force_forward
-#customforward-seted        - exec: respond forward: {CUSTOM_FORWARD}
+#customforward-seted        - exec: respond forward -> {CUSTOM_FORWARD_SERVER}@{CUSTOM_FORWARD_PORT}
 
   - tag: f_force_nocn_list
     type: sequence
