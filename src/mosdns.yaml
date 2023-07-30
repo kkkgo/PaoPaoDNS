@@ -102,11 +102,11 @@ plugins:
     args:
         - exec: $local_unbound
         - matches: has_wanted_ans
-          exec: accept
+          exec: respond local_unbound not_a_aaaa
         - exec: drop_resp
         - exec: $forward_unbound
         - matches: has_wanted_ans
-          exec: accept
+          exec: respond forward_unbound not_a_aaaa
         - exec: drop_resp
 
 #customforward-seted  - tag: f_force_forward_list
@@ -114,7 +114,7 @@ plugins:
 #customforward-seted    args:
 #customforward-seted        - exec: drop_resp
 #customforward-seted        - exec: $force_forward
-#customforward-seted        - exec: accept
+#customforward-seted        - exec: respond forward: {CUSTOM_FORWARD}
 
   - tag: f_force_nocn_list
     type: sequence
@@ -122,10 +122,10 @@ plugins:
         - exec: drop_resp
         - exec: $forward_unbound
         - matches: has_wanted_ans
-          exec: accept
+          exec: respond nocn forward_unbound
         - exec: $forward_dnscrypt
         - matches: has_wanted_ans
-          exec: accept
+          exec: respond nocn forward_dnscrypt
         - exec: pong END by f_force_nocn_list.
 
   - tag: f_local_unbound
@@ -133,7 +133,7 @@ plugins:
     args:
         - exec: $local_unbound
         - matches: has_wanted_ans
-          exec: accept
+          exec: respond local_unbound
         - exec: pong END by f_local_unbound.
         
 #ttl_rule_ok  - tag: f_force_ttl_rules
@@ -141,7 +141,7 @@ plugins:
 #ttl_rule_ok    args:
 #ttl_rule_ok        - exec: $forward_dnscrypt
 #ttl_rule_ok        - exec: ttl 0-{RULES_TTL}
-#ttl_rule_ok        - exec: accept
+#ttl_rule_ok        - exec: respond force_ttl_rules
 
 #cnfall  - tag: try_cn_fall
 #cnfall    type: sequence
@@ -155,7 +155,7 @@ plugins:
 #autoforward-yes#autoforward-check        - exec: drop_resp
 #autoforward-yes#autoforward-check        - exec: $forward_unbound
 #autoforward-yes#autoforward-check        - matches: resp_ip_mmdb $cnip PRIVATE
-#autoforward-yes#autoforward-check          exec: accept
+#autoforward-yes#autoforward-check          exec: respond AUTO_FORWARD_CHECK forward_unbound PRIVATE
 #autoforward-yes#autoforward-check        - matches: "has_wanted_ans"
 #autoforward-yes#autoforward-check          exec: goto f_force_forward_list
 #autoforward-yes#autoforward-check        - exec: pong END by try_auto_check.
@@ -170,7 +170,7 @@ plugins:
 #global_mark_yes#autoforward-yes#autoforward-check        - exec: goto try_auto_check
 #global_mark_yes#autoforward-yes#autoforward-nocheck        - exec: $force_forward
 #global_mark_yes#autoforward-no        - exec: goto f_force_nocn_list
-#global_mark_yes        - exec: accept
+#global_mark_yes        - exec: respond global_mark
 
   - tag: main_sequence
     type: sequence
@@ -194,7 +194,7 @@ plugins:
           exec: goto f_local_unbound
         - exec: cache {MSCACHE}
         - matches: has_wanted_ans
-          exec: accept
+          exec: respond MOSDNS cache
 
 #ttl_rule_ok        - matches: qname $force_ttl_rules
 #ttl_rule_ok          exec: goto f_force_ttl_rules
@@ -209,7 +209,7 @@ plugins:
 #cnfall          exec: jump try_cn_fall
 
         - matches: resp_ip_mmdb $cnip CN
-          exec: accept
+          exec: respond mmdb CN IP
 #ipv6ok        - exec: prefer_ipv4
 #autoforward-yes#autoforward-check        - matches: 
 #autoforward-yes#autoforward-check          - "!resp_ip_mmdb $cnip PRIVATE"
