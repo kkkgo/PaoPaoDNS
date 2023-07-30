@@ -51,8 +51,9 @@ ENV TZ=Asia/Shanghai \
     AUTO_FORWARD_CHECK=yes \
     USE_MARK_DATA=no \
     RULES_TTL=0 \
+    HTTP_FILE=no \
     QUERY_TIME=2000ms \
-    HTTP_FILE=no
+    ADDINFO=no
 VOLUME /data
 WORKDIR /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp 7889/tcp
