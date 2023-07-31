@@ -194,7 +194,7 @@ plugins:
           exec: goto f_local_unbound
         - exec: cache {MSCACHE}
         - matches: has_wanted_ans
-          exec: respond MOSDNS cache
+          exec: respond mosdns cache
 
 #ttl_rule_ok        - matches: qname $force_ttl_rules
 #ttl_rule_ok          exec: goto f_force_ttl_rules

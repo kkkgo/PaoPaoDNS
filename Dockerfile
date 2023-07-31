@@ -53,7 +53,7 @@ ENV TZ=Asia/Shanghai \
     RULES_TTL=0 \
     HTTP_FILE=no \
     QUERY_TIME=2000ms \
-    ADDINFO=yes
+    ADDINFO=no
 VOLUME /data
 WORKDIR /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp 7889/tcp
