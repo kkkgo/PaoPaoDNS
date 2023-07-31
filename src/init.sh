@@ -189,6 +189,7 @@ echo USE_HOSTS:-"$USE_HOSTS""-" >>/tmp/env.conf
 echo HTTP_FILE:-"$HTTP_FILE""-" >>/tmp/env.conf
 echo SAFEMODE:-"$SAFEMODE""-" >>/tmp/env.conf
 echo QUERY_TIME:-"$QUERY_TIME""-" >>/tmp/env.conf
+echo ADDINFO:-"$ADDINFO""-" >>/tmp/env.conf
 echo PLATFORM:-"$(uname -a)""-" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
