@@ -41,7 +41,7 @@ fi
 
 # config dnscrypt
 #gen dns toml
-git clone https://github.com//DNSCrypt/dnscrypt-proxy --depth 1 /dnscrypt-proxy
+git clone https://github.com/kkkgo/dnscrypt-proxy --depth 1 /dnscrypt-proxy
 grep -v "#" /dnscrypt-proxy/dnscrypt-proxy/example-dnscrypt-proxy.toml | grep . >/dnscrypt-proxy/dnsex.toml
 sed -i -r 's/log_level.+/log_level = 6/g' /dnscrypt-proxy/dnsex.toml
 sed -i -r 's/require_dnssec.+/require_dnssec = true/g' /dnscrypt-proxy/dnsex.toml
@@ -58,15 +58,17 @@ sed -i -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5302']/g" /dnscrypt
 sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/public-resolvers.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://dnsr.evilvibes.com/v3/public-resolvers.md',|g" /dnscrypt-proxy/dnsex.toml
 sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/relays.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://dnsr.evilvibes.com/v3/relays.md',|g" /dnscrypt-proxy/dnsex.toml
 
-dnstest_bad=$(cat /src/dnstest_bad.txt)
-dnstest_bad="'adfilter-adl', 'adfilter-adl-ipv6', 'adfilter-per', 'adfilter-per-ipv6', 'adfilter-syd', 'adfilter-syd-ipv6', 'adguard-dns-family-ipv6', 'adguard-dns-ipv6', 'adguard-dns-unfiltered-ipv6', 'ahadns-doh-la', 'ahadns-doh-nl', 'ams-ads-doh-nl', 'ams-dnscrypt-nl', 'ams-dnscrypt-nl-ipv6', 'ams-doh-nl', 'ams-doh-nl-ipv6', 'att', 'bortzmeyer-ipv6', 'brahma-world', 'brahma-world-ipv6', 'circl-doh-ipv6', 'cisco-familyshield-ipv6', 'cisco-ipv6', 'cisco-ipv6-doh', 'cleanbrowsing-security', 'cloudflare-family-ipv6', 'cloudflare-family-ipv6', 'cloudflare-ipv6', 'cloudflare-ipv6', 'cloudflare-security-ipv6', 'cloudflare-security-ipv6', 'comodo-02', 'dct-at1', 'dct-nl1', 'dct-ru1', 'decloudus-nogoogle-tstipv6', 'dns.digitale-gesellschaft.ch-ipv6', 'dns.digitale-gesellschaft.ch-ipv6', 'dns.digitalsize.net-ipv6', 'dns.sb', 'dnscrypt-de-blahdns-ipv6', 'dnscrypt.ca-1-doh-ipv6', 'dnscrypt.ca-1-ipv6', 'dnscrypt.ca-2-doh-ipv6', 'dnscrypt.ca-2-ipv6', 'dnscrypt.uk-ipv6', 'dnsforfamily-v6', 'dnswarden-uncensor-dc', 'doh-crypto-sx-ipv6', 'doh-crypto-sx-ipv6', 'doh-ibksturm', 'doh.ffmuc.net-v6', 'doh.ffmuc.net-v6-2', 'doh.tiar.app', 'doh.tiar.app-doh', 'doh.tiar.app-doh-ipv6', 'doh.tiar.app-ipv6', 'doh.tiarap.org', 'doh.tiarap.org-ipv6', 'faelix-uk-ipv6', 'faelix-uk-ipv6', 'ffmuc.net', 'ffmuc.net-v6', 'google-ipv6', 'ibksturm', 'jp.tiar.app', 'jp.tiar.app-doh', 'jp.tiar.app-doh-ipv6', 'jp.tiar.app-ipv6', 'jp.tiarap.org', 'jp.tiarap.org-ipv6', 'meganerd-doh-ipv6', 'meganerd-ipv6', 'nextdns-ipv6', 'oszx', 'plan9dns-fl-doh-ipv6', 'plan9dns-mx-doh-ipv6', 'plan9dns-nj-doh-ipv6', 'publicarray-au2-doh', 'quad9-doh-ip6-port443-filter-ecs-pri', 'quad9-doh-ip6-port443-filter-ecs-pri', 'quad9-doh-ip6-port443-filter-pri', 'quad9-doh-ip6-port443-filter-pri', 'quad9-doh-ip6-port443-filter-pri', 'quad9-doh-ip6-port443-nofilter-ecs-pri', 'quad9-doh-ip6-port443-nofilter-ecs-pri', 'quad9-doh-ip6-port443-nofilter-pri', 'quad9-doh-ip6-port443-nofilter-pri', 'quad9-doh-ip6-port5053-filter-ecs-pri', 'quad9-doh-ip6-port5053-filter-ecs-pri', 'quad9-doh-ip6-port5053-filter-pri', 'quad9-doh-ip6-port5053-filter-pri', 'quad9-doh-ip6-port5053-filter-pri', 'quad9-doh-ip6-port5053-nofilter-ecs-pri', 'quad9-doh-ip6-port5053-nofilter-ecs-pri', 'quad9-doh-ip6-port5053-nofilter-pri', 'quad9-doh-ip6-port5053-nofilter-pri', 'sby-doh-limotelu', 'sby-limotelu', 'scaleway-ams-ipv6', 'scaleway-fr-ipv6', 'sth-ads-doh-se', 'sth-dnscrypt-se', 'sth-dnscrypt-se-ipv6', 'sth-doh-se', 'uncensoreddns-dk-ipv6', 'uncensoreddns-ipv6', 'userspace-australia-ipv6', 'userspace-australia-ipv6', 'v.dnscrypt.uk-ipv6', 'yandex', 'yandex'"
+git clone https://github.com/kkkgo/PaoPao-Pref --depth 1 /PaoPao-Pref
+server_names=""
+while read line; do
+    if [ -z "$server_names" ]; then
+        server_names="'$line'"
+    else
+        server_names="$server_names, '$line'"
+    fi
+done <"/PaoPao-Pref/dnscrypt_resolver/ban_list.txt"
 
-echo "dnscrypt ban list: ""$dnstest_bad"
-if [ -z "$dnstest_bad" ]; then
-    dnstest_bad="'baddnslist'"
-fi
-sed -i "s/^disabled_server_names.*/disabled_server_names = [ $dnstest_bad ]/" /dnscrypt-proxy/dnsex.toml
-rm /src/dnstest_bad.txt
+sed -i "s/^disabled_server_names.*/disabled_server_names = [ $server_names ]/" /dnscrypt-proxy/dnsex.toml
 
 echo "#socksokproxy = 'socks5://{SOCKS5}'" >/src/dnscrypt.toml
 echo "#ttl_rule_okforwarding_rules = '/tmp/force_ttl_rules.toml'" >>/src/dnscrypt.toml

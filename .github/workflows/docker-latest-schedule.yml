@@ -1,13 +1,17 @@
 name: Schedule Latest Build Docker
 
 on:
-  # schedule:
-  #   - cron: '57 15 * * 4'
+  schedule:
+    - cron: '57 15 * * 4'
   workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: build check
+        run: bash build_test.sh
+      - name: set check flag
+        run: sed -i "s/#actions //g" Dockerfile
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx

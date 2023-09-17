@@ -170,7 +170,6 @@ plugins:
 #global_mark_yes#autoforward-yes#autoforward-check        - exec: goto try_auto_check
 #global_mark_yes#autoforward-yes#autoforward-nocheck        - exec: $force_forward
 #global_mark_yes#autoforward-no        - exec: goto f_force_nocn_list
-#global_mark_yes        - exec: respond global_mark
 
   - tag: main_sequence
     type: sequence
@@ -178,11 +177,18 @@ plugins:
 #usehosts-yes        - exec: $usehosts
         - matches: qtype 65
           exec: pong END by block qtype 65.
-#ipv6raw        - matches: 
-#ipv6ok          - qname $force_nocn_list
-#ipv6raw          - qtype 28
-#ipv6raw#ipv6ok          exec: pong END by IPv6=yes, force_nocn_list block aaaa.
-#ipv6raw#ipv6no          exec: pong END by IPv6=no.
+
+#ipv6no        - matches: 
+#ipv6no          - qtype 28
+#ipv6no          exec: pong END by IPv6=no.
+
+#ipv6yes        - matches: 
+#ipv6yes          - qname $force_nocn_list
+#ipv6yes          - qtype 28
+#ipv6yes          exec: pong END by IPv6=yes, force_nocn_list block aaaa.
+
+#ipv6only6        - exec: prefer_ipv4
+
         - matches: 
           - "!qtype 1 28"
           exec: jump not_a_aaaa
@@ -202,7 +208,6 @@ plugins:
 #global_mark_yes        - matches: qname $global_mark
 #global_mark_yes          exec: jump f_global_mark
 
-#ipv6only6        - exec: prefer_ipv4
 #nofall        - exec: $local_unbound
 #cnfall        - exec: $local_unbound_fall
 #cnfall        - matches: "!rcode 0"
@@ -210,7 +215,11 @@ plugins:
 
         - matches: resp_ip_mmdb $cnip CN
           exec: respond mmdb CN IP
-#ipv6ok        - exec: prefer_ipv4
+
+#ipv6yes        - matches: 
+#ipv6yes          - qtype 28
+#ipv6yes          exec: pong END by IPv6=yes, NO CN IP block aaaa.
+
 #autoforward-yes#autoforward-check        - matches: 
 #autoforward-yes#autoforward-check          - "!resp_ip_mmdb $cnip PRIVATE"
 #autoforward-yes#autoforward-check          - "has_wanted_ans"
@@ -219,7 +228,6 @@ plugins:
 #autoforward-yes#autoforward-nocheck        - exec: goto f_force_forward_list
 
 #autoforward-no        - exec: goto f_force_nocn_list
-        - exec: pong END by the end.
 
   - tag: udp_server
     type: udp_server

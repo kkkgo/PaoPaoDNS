@@ -54,7 +54,7 @@ echo "[test]" ========== IP TEST END ==========
 echo
 echo "[test]" The DNS hijacking test, you will see timed out message !
 echo "[test]" ========== DNS HIJACK START ==========
-nslookup www.qq.com 6.7.8.9
+nslookup www.qq.com 9.8.7.6
 echo "[test]" ========== DNS HIJACK END ==========
 sleep 1
 echo "[test]" CN domain test, you will see that the DNS resolution result is CN IP !

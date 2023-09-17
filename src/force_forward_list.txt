@@ -1,2 +1,7 @@
 #focre forward your domains to $CUSTOM_FORWARD DNS server.
+#Here are some examples.
+# Global bing
 domain:bing.com
+# Google play download issues
+domain:googleapis.cn
+domain:xn--ngstr-lra8j.com

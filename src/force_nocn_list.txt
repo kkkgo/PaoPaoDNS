@@ -6,4 +6,5 @@ domain:time.windows.com
 domain:ntp.msn.com
 domain:time-ios.apple.com
 domain:time.apple.com
+domain:push.apple.com
 domain:pool.ntp.org

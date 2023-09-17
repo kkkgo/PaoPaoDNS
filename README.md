@@ -109,6 +109,7 @@ CN_TRACKER|`yes`|`no`,`yes`|
 USE_HOSTS|`no`|`no`,`yes`|
 HTTP_FILE|`no`|`no`,`yes`|
 SAFEMODE|`no`|`no`,`yes`|
+ADDINFO|`no`|`no`,`yes`|
 QUERY_TIME|`2000ms`|`time.Duration`|
 
 用途说明：
@@ -165,7 +166,8 @@ www.qq.com@@@qq.03k.org
 - USE_HOSTS: 当设置为yes的时候，在启动时读取容器/etc/hosts文件。可以配合docker的`-add-hosts`或者docker compose的`extra_hosts`使用。仅在CNAUTO=yes时生效。         
 - HTTP_FILE: 当设置为yes的时候，会启动一个7889端口的http静态文件服务器映射`/data`目录。你可以利用此功能与其他服务程序共享文件配置。         
 - SAFEMODE： 安全模式，仅作调试使用，内存环境存在问题无法正常启动的时候尝试启用。   
-- QUERY_TIME：限制DNS转发最大时间，仅作调试使用。   
+- ADDINFO： 默认为`no`,设置为`yes`时，在DNS查询结果中增加`ADDITIONAL SECTION`的调试信息，如结果来源、查询延迟、失败原因等，使用dig命令就可以实时追踪域名结果来源，详情参考更新日志。该功能仅对`CNAUTO=yes`生效。
+- QUERY_TIME：限制DNS转发最大时间，仅作调试使用，随意更改此值会导致你查不到DNS结果。     
 
 可映射TCP/UDP|端口用途
 |-|-|
@@ -225,9 +227,9 @@ forward-zone:
 #假设你的内网后缀是.lan，KMS服务器地址是192.168.1.2或者kms.ad.local
 
 server:
-    local-zone: "vlmcs._tcp.lan." static
-    local-data: "vlmcs._tcp.lan. IN SRV 0 0 1688 kms.ad.local."
-    local-data: "vlmcs._tcp.lan. IN SRV 0 0 1688 192.168.1.2."
+    local-zone: "_vlmcs._tcp.lan." static
+    local-data: "_vlmcs._tcp.lan. IN SRV 0 0 1688 kms.ad.local."
+    local-data: "_vlmcs._tcp.lan. IN SRV 0 0 1688 192.168.1.2."
 
 ```
 

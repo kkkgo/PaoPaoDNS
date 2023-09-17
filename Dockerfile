@@ -1,4 +1,5 @@
 FROM alpine:edge AS builder
+#actions COPY build_test_ok /
 COPY --from=sliamb/prebuild-paopaodns /src/ /src/
 COPY src/ /src/
 RUN sh /src/build.sh

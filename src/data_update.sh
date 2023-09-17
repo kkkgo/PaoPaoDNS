@@ -11,7 +11,7 @@ comp_trackerslist() {
         wait_apply
     fi
     sort -u /tmp/trackerslist/trackerslist.txt | grep "." >/tmp/trackerslist/trackerslist.txt.gen
-    cat /tmp/trackerslist/trackerslist.txt.gen >/data/trackerslist.txt
+    grep -Eo "^[a-z]+://.+" /tmp/trackerslist/trackerslist.txt.gen >/data/trackerslist.txt
     rm -rf /tmp/trackerslist/
     return 0
 }
