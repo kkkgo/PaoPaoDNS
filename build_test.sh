@@ -12,9 +12,6 @@ v4check() {
         exit
     fi
 }
-docker rm -f test1
-docker rm -f test2
-docker rm -f test3
 
 docker run -d --name test1 \
     -e HTTP_FILE=yes \
