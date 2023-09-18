@@ -75,5 +75,4 @@ docker rm -f test3
 
 # pass check
 echo ALL TEST PASSED.
-#touch build_test_ok
-sed -i "s/#actions //g" Dockerfile
+touch build_test_ok
