@@ -13,7 +13,7 @@ jobs:
       - name: build check
         run: bash build_test.sh
       - name: build again test
-        run: docker build -t ppdns .
+        run: docker build --no-cache -t ppdns .
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
