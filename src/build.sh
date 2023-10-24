@@ -99,9 +99,7 @@ add_repo() {
 add_repo mirrors.ustc.edu.cn
 add_repo mirrors.nju.edu.cn
 add_repo mirrors.aliyun.com
-add_repo mirror.lzu.edu.cn
 add_repo mirrors.tuna.tsinghua.edu.cn
-add_repo mirrors.zju.edu.cn
 add_repo mirrors.sjtug.sjtu.edu.cn
 add_repo dl-cdn.alpinelinux.org
 

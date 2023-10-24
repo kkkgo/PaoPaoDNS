@@ -97,7 +97,7 @@ load_trackerslist() {
     if [ ! -f /data/trackerslist.txt ]; then
         /usr/sbin/data_update.sh comp_trackerslist
     fi
-    sed 's/\r$//' /data/trackerslist.txt |grep -Eo "^[a-z]+://.+"| sed -r "s/^[^/]+//g" | sed "s/\/\///g" | sed -r "s/\/.+$//g" | sed -r "s/:.+$//g" | grep -E "\.[a-z]" | grep -E "[-._0-9a-zA-Z]+" | sort -u | sed -r "s/^/full:/g" >/tmp/cn_tracker_list.txt
+    sed 's/\r$//' /data/trackerslist.txt | grep -Eo "^[a-z]+://.+" | sed -r "s/^[^/]+//g" | sed "s/\/\///g" | sed -r "s/\/.+$//g" | sed -r "s/:.+$//g" | grep -E "\.[a-z]" | grep -E "[-._0-9a-zA-Z]+" | sort -u | sed -r "s/^/full:/g" >/tmp/cn_tracker_list.txt
     echo "Apply trackerslist..."
 }
 
@@ -134,6 +134,9 @@ reload_dns() {
             export reload_mosdns=1
         fi
         if [ "$(gen_hash /data/force_forward_list.txt)" != "$force_forward_list" ]; then
+            export reload_mosdns=1
+        fi
+        if [ "$(gen_hash /data/custom_env.ini)" != "$custom_env" ]; then
             export reload_mosdns=1
         fi
         if [ "$CN_TRACKER" = "yes" ]; then
@@ -179,7 +182,15 @@ reload_dns() {
             done
             echo "mosdns reload..."
             killall mosdns
-            mosdns start -d /tmp -c mosdns.yaml >/dev/null 2>&1 &
+            touch /data/custom_env.ini
+            grep -Eo "^[_a-zA-Z0-9]+=\".+\"" /data/custom_env.ini >/tmp/custom_env.ini
+            if [ -f "/tmp/custom_env.ini" ]; then
+                while IFS= read -r line; do
+                    line=$(echo "$line" | sed 's/"//g' | sed "s/'//g")
+                    export "$line"
+                done <"/tmp/custom_env.ini"
+            fi
+            mosdns start -d /data -c /tmp/mosdns.yaml &
             sleep 1
             ps -ef | grep -v "grep" | grep "mosdns"
         fi
@@ -211,7 +222,7 @@ while true; do
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
             /usr/sbin/data_update.sh ex_mmdb
         fi
-        file_list=$file_list" /data/Country-only-cn-private.mmdb /data/force_cn_list.txt /data/force_nocn_list.txt"
+        file_list=$file_list" /data/Country-only-cn-private.mmdb /data/force_cn_list.txt /data/force_nocn_list.txt /data/custom_env.ini"
         if [ "$USE_MARK_DATA" = "yes" ]; then
             if [ ! -f /data/global_mark.dat ]; then
                 touch /data/global_mark.dat
@@ -252,6 +263,8 @@ while true; do
         export trackerslist
         Country=$(gen_hash /data/Country-only-cn-private.mmdb)
         export Country
+        custom_env=$(gen_hash /data/custom_env.ini)
+        export custom_env
     fi
     named=$(gen_hash /etc/unbound/named.cache)
     export named

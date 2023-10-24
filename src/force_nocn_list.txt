@@ -8,3 +8,11 @@ domain:time-ios.apple.com
 domain:time.apple.com
 domain:push.apple.com
 domain:pool.ntp.org
+
+# Skip proxy...
+# https://github.com/kkkgo/PaoPaoDNS/discussions/47
+#domain:steamcontent.com
+#domain:download.epicgames.com
+#domain:xboxlive.com
+#domain:akamaihd.net
+#domain:akamaized.net

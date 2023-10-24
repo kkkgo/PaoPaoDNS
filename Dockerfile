@@ -24,6 +24,7 @@ RUN cp /src/Country-only-cn-private.mmdb.xz /tmp/ &&\
     cp /src/unbound-checkconf /tmp/ &&\
     cp /src/unbound.conf /tmp/ &&\
     cp /src/unbound_custom.conf /tmp/ &&\
+    cp /src/custom_mod.yaml /tmp/ &&\
     cp /src/trackerslist.txt.xz /tmp/ &&\
     cp /src/watch_list.sh /tmp/ &&\
     cp /src/redis-server /tmp/

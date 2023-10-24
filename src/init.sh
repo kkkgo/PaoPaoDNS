@@ -1,7 +1,32 @@
 #!/bin/sh
 mkdir -p /data
+chmod -R 777 /data
+
+if [ -w /data ]; then
+    export DATA_W="[OK]DATA_writeable"
+else
+    export DATA_W="[ERROR]DATA_not_writeable"
+fi
+
+if [ -r /data ]; then
+    export DATA_R="[OK]DATA_readable"
+else
+    export DATA_R="[ERROR]DATA_not_readable"
+fi
+
 rm /tmp/*.conf >/dev/null 2>&1
 rm /tmp/*.toml >/dev/null 2>&1
+
+if [ ! -f /data/custom_env.ini ]; then
+    cp /usr/sbin/custom_env.ini /data/
+fi
+grep -Eo "^[_a-zA-Z0-9]+=\".+\"" /data/custom_env.ini >/tmp/custom_env.ini
+if [ -f "/tmp/custom_env.ini" ]; then
+    while IFS= read -r line; do
+        line=$(echo "$line" | sed 's/"//g' | sed "s/'//g")
+        export "$line"
+    done <"/tmp/custom_env.ini"
+fi
 echo =====PaoPaoDNS docker start=====
 echo images build time : {bulidtime}
 if [ ! -f /new.lock ]; then
@@ -22,6 +47,10 @@ fi
 if [ ! -f /data/unbound_custom.conf ]; then
     cp /usr/sbin/unbound_custom.conf /data/
 fi
+if [ ! -f /data/custom_mod.yaml ]; then
+    cp /usr/sbin/custom_mod.yaml /data/
+fi
+
 if [ ! -f /data/redis.conf ]; then
     cp /usr/sbin/redis.conf /data/
 fi
@@ -33,40 +62,15 @@ if [ "$UPDATE" != "no" ]; then
         cp /usr/sbin/data_update.sh /etc/periodic/"$UPDATE"
     fi
 fi
-CORES=$(grep -c ^processor /proc/cpuinfo)
-if [ "$(ulimit -n)" -gt 999999 ]; then
-    echo "ulimit adbove 1000000."
-else
-    ulimit -SHn 1048576
-    echo ulimit:$(ulimit -n)
-fi
-lim=$(ulimit -n)
-POWCORES=2
-if [ "$CORES" -gt 3 ]; then
-    POWCORES=4
-fi
-if [ "$CORES" -gt 6 ]; then
-    POWCORES=8
-fi
-if [ "$CORES" -gt 12 ]; then
-    POWCORES=16
-fi
-if [ "$CORES" -gt 24 ]; then
-    POWCORES=32
-fi
-if [ "$CORES" -gt 48 ]; then
-    POWCORES=64
-fi
-if [ "$CORES" -gt 96 ]; then
-    POWCORES=128
-fi
-FDLIM=$((lim / (2 * CORES) - CORES * 3))
-if [ "$FDLIM" -gt 4096 ]; then
-    FDLIM=4096
-fi
+
 free -m
 free -h
-MEMSIZE=$(free -m | grep Mem | grep -Eo "[0-9]+" | tail -1)
+if grep -q 'MemAvailable' /proc/meminfo; then
+    available=$(grep 'MemAvailable' /proc/meminfo | grep -Eo "[0-9]+" | head -1)
+else
+    available=$(grep 'MemFree' /proc/meminfo | grep -Eo "[0-9]+" | head -1)
+fi
+MEMSIZE=$(echo "scale=0; $available / 1024" | bc)
 prefPC=1
 echo MEMSIZE:"$MEMSIZE"
 # min:50m suggest:16G
@@ -76,6 +80,7 @@ MEM3=200
 MEM4=16mb
 MSCACHE=1024
 safemem=yes
+MAXCORE=1
 if [ "$SAFEMODE" = "yes" ]; then
     echo safemode enable!
     FDLIM=1
@@ -87,6 +92,7 @@ else
         prefPC=9
     fi
     if [ "$MEMSIZE" -gt 2000 ]; then
+        MAXCORE=2
         safemem=no
         MEM1=200m
         MEM2=400m
@@ -108,6 +114,7 @@ else
         prefPC=82
     fi
     if [ "$MEMSIZE" -gt 6000 ]; then
+        MAXCORE=4
         MEM1=500m
         MEM2=1000m
         MEM4=1500mb
@@ -115,6 +122,7 @@ else
         prefPC=100
     fi
     if [ "$MEMSIZE" -gt 8000 ]; then
+        MAXCORE=6
         MEM1=800m
         MEM2=1600m
         MEM3=1000000
@@ -122,18 +130,46 @@ else
         MSCACHE=1024000
     fi
     if [ "$MEMSIZE" -gt 12000 ]; then
+        MAXCORE=8
         MEM1=1000m
         MEM2=2000m
         MEM3=1000000
         MEM4=3000mb
     fi
     if [ "$MEMSIZE" -gt 16000 ]; then
+        MAXCORE=12
         MEM1=1500m
         MEM2=3000m
         MEM3=10000000
         MEM4=4500mb
     fi
 fi
+
+if [ "$(ulimit -n)" -gt 999999 ]; then
+    echo "ulimit adbove 1000000."
+else
+    ulimit -SHn 1048576
+    echo ulimit:$(ulimit -n)
+fi
+
+lim=$(ulimit -n)
+CORES=$(grep -c ^processor /proc/cpuinfo)
+if [ "$CORES" -gt "$MAXCORE" ]; then
+    CORES=$MAXCORE
+fi
+POWCORES=2
+if [ "$CORES" -gt 3 ]; then
+    POWCORES=4
+fi
+if [ "$CORES" -gt 6 ]; then
+    POWCORES=8
+fi
+
+FDLIM=$((lim / (2 * CORES) - CORES * 3))
+if [ "$FDLIM" -gt 4096 ]; then
+    FDLIM=4096
+fi
+
 if [ "$MEM1" = "100k" ]; then
     echo "[Warning] LOW MEMORY!"
     CORES=1
@@ -163,6 +199,8 @@ fi
 export no_proxy=""
 export http_proxy=""
 echo ====ENV TEST==== >/tmp/env.conf
+echo "$DATA_W""-" >>/tmp/env.conf
+echo "$DATA_R""-" >>/tmp/env.conf
 echo MEM:"$MEM1" "$MEM2" "$MEM3" "$MEM4" >>/tmp/env.conf
 echo prefPC:"$prefPC" >>/tmp/env.conf
 echo CORES:-"$CORES""-" >>/tmp/env.conf
@@ -193,7 +231,12 @@ echo ADDINFO:-"$ADDINFO""-" >>/tmp/env.conf
 echo PLATFORM:-"$(uname -a)""-" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 cat /tmp/env.conf
-
+sed "s/{MEM4}/$MEM4/g" /data/redis.conf >/tmp/redis.conf
+redis-server /tmp/redis.conf
+if ! ps -ef | grep -v grep | grep -q redis-server; then
+    redis-server /tmp/redis.conf --ignore-warnings ARM64-COW-BUG
+fi
+sleep 3
 sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{FDLIM}/$FDLIM/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
 if [ "$safemem" = "no" ]; then
     sed -i "s/#safemem//g" /tmp/unbound.conf
@@ -228,6 +271,12 @@ if [ "$CNAUTO" != "no" ]; then
     fi
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         SOCKS5=$(echo "$SOCKS5" | sed 's/"//g')
+        if echo "$SOCKS5" | grep -Eoq "^@"; then
+            SOCKS5=$(echo "$SOCKS5" | sed 's/@//g')
+            if [ "$AUTO_FORWARD" = "no" ]; then
+                sed -i "s/ forward-addr: 127.0.0.1@5302//g" /tmp/unbound.conf
+            fi
+        fi
         sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" | sed -r "s/^force_tcp.+/force_tcp = true/g" >/data/dnscrypt-resolvers/dnscrypt_socks.toml
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#socksok//g" >/tmp/unbound_forward.conf
         sed "s/#socksok//g" /data/mosdns.yaml >/tmp/mosdns.yaml
@@ -331,11 +380,17 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#http_file_yes//g" /tmp/mosdns.yaml
     fi
     sed -i "s/{MSCACHE}/$MSCACHE/g" /tmp/mosdns.yaml
-    sed -i '/^#/d' /tmp/mosdns.yaml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.toml >/dev/null 2>&1 &
     unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
-    mosdns start -d /tmp -c mosdns.yaml &
+    # Add Mods
+    touch /data/custom_mod.yaml
+    mosdns AddMod
+    if [ -f /tmp/mosdns_mod.yaml ]; then
+        cat /tmp/mosdns_mod.yaml >/tmp/mosdns.yaml
+    fi
+    sed -i '/^#/d' /tmp/mosdns.yaml
+    mosdns start -d /data -c /tmp/mosdns.yaml &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
@@ -345,7 +400,5 @@ echo "nameserver 223.5.5.5" >>/etc/resolv.conf
 echo "nameserver 1.0.0.1" >>/etc/resolv.conf
 /usr/sbin/watch_list.sh &
 /usr/sbin/data_update.sh &
-sed "s/{MEM4}/$MEM4/g" /data/redis.conf >/tmp/redis.conf
 ps
-redis-server /tmp/redis.conf
-redis-server /tmp/redis.conf --ignore-warnings ARM64-COW-BUG
+tail -f /dev/null

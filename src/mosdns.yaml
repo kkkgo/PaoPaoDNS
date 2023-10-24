@@ -3,6 +3,17 @@ log:
     level: error
 
 plugins:
+  - tag: check_cache
+    type: sequence
+    args:
+        - exec: cache {MSCACHE}
+        - matches: has_wanted_ans
+          exec: respond mosdns cache
+##zones_dns_start##
+##zones_dns_end##
+
+##zones_seq_start##
+##zones_seq_end##
 
 #usehosts-yes  - tag: "usehosts"
 #usehosts-yes    type: "hosts"
@@ -11,6 +22,9 @@ plugins:
 #usehosts-yes#serverip-enable        - "paopao.dns {SERVER_IP}"
 #usehosts-yes#usehosts-enable      files:
 #usehosts-yes#usehosts-enable        - "/tmp/hosts.txt" 
+
+##swaps_ipset_start##
+##swaps_ipset_end##
 
   - tag: "force_cn_list"
     type: "domain_set"
@@ -121,9 +135,13 @@ plugins:
     args:
         - exec: drop_resp
         - exec: $forward_unbound
+##swaps_match1_start##
+##swaps_match1_end##
         - matches: has_wanted_ans
           exec: respond nocn forward_unbound
         - exec: $forward_dnscrypt
+##swaps_match2_start##
+##swaps_match2_end##
         - matches: has_wanted_ans
           exec: respond nocn forward_dnscrypt
         - exec: pong END by f_force_nocn_list.
@@ -178,6 +196,9 @@ plugins:
         - matches: qtype 65
           exec: pong END by block qtype 65.
 
+##zones_qname_top_start##
+##zones_qname_top_end##
+
 #ipv6no        - matches: 
 #ipv6no          - qtype 28
 #ipv6no          exec: pong END by IPv6=no.
@@ -189,6 +210,9 @@ plugins:
 
 #ipv6only6        - exec: prefer_ipv4
 
+##zones_qname_top6_start##
+##zones_qname_top6_end##
+
         - matches: 
           - "!qtype 1 28"
           exec: jump not_a_aaaa
@@ -198,12 +222,13 @@ plugins:
           exec: goto f_force_nocn_list
         - matches: qname $force_cn_list
           exec: goto f_local_unbound
-        - exec: cache {MSCACHE}
-        - matches: has_wanted_ans
-          exec: respond mosdns cache
+        - exec: jump check_cache
 
 #ttl_rule_ok        - matches: qname $force_ttl_rules
 #ttl_rule_ok          exec: goto f_force_ttl_rules
+
+##zones_qname_list_start##
+##zones_qname_list_end##
 
 #global_mark_yes        - matches: qname $global_mark
 #global_mark_yes          exec: jump f_global_mark

@@ -1,11 +1,30 @@
 #!/bin/sh
 export no_proxy=""
 export http_proxy=""
-ping whoami.03k.org -c1 -W 1 -w 1 -i 1 -4 > /dev/null
+ping whoami.03k.org -c1 -W 1 -w 1 -i 1 -4 >/dev/null
 IPREX4='([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]{1,2}|1[0-9][0-9]|2[0-4][0-9]|25[0-5])'
 
 echo =====PaoPaoDNS docker debug=====
 echo "[info]" images build time : {bulidtime}
+if [ -w /data ]; then
+    echo "[DEBUG-OK]DATA_writeable"
+else
+    echo "[DEBUG-ERROR]DATA_not_writeable"
+fi
+
+if [ -r /data ]; then
+    echo "[DEBUG-OK]DATA_readable"
+else
+    echo "[DEBUG-ERROR]DATA_not_readable"
+fi
+sleep 1
+echo "[info]" ========== network info ==========
+ip a
+ip r
+ping 223.5.5.5 -c2
+ping 119.29.29.29 -c2
+nslookup www.taobao.com 223.5.5.5
+nslookup www.qq.com 119.29.29.29
 sleep 1
 echo "[info]" ========== env info ==========
 cat /tmp/env.conf
@@ -24,13 +43,18 @@ echo "[test]" ========== IP TEST START ==========
 echo CN IP URL:
 curl -sk4 http://test.ipw.cn | grep -Eo "$IPREX4" | tail -1
 curl -sk4 http://ipsu.03k.org | grep -Eo "$IPREX4" | tail -1
+echo CN RAW-IP URL:
+curl -sk4 http://115.231.186.225/ | grep -Eo "$IPREX4" | grep -v "115.231.186.225" | tail -1
 echo ------------------
 echo Non-CN IP URL:
 curl -sk4 https://www.cloudflare.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
-curl -sk4 https://1.0.0.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
-curl -sk4 https://1.1.1.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 curl -sk4 http://checkip.synology.com/ | grep -Eo "$IPREX4" | tail -1
 curl -sk4 https://v4.ident.me/ | grep -Eo "$IPREX4" | tail -1
+echo Non-CN RAW-IP URL:
+curl -sk4 https://1.1.1.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+curl -sk4 https://1.0.0.3/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+curl -sk4 https://1.0.0.2/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+curl -sk4 https://1.0.0.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo ------------------
 sleep 5
 echo IP INFO:
