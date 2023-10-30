@@ -1,7 +1,7 @@
 # PaoPao DNS docker
 ![PaoPaoDNS](https://th.bing.com/th/id/OIG.0FtL40H4krRLeooEGFpu?w=220&h=220&c=6&r=0&o=5&pid=ImgGn)    
 ![pull](https://img.shields.io/docker/pulls/sliamb/paopaodns.svg) ![size](https://img.shields.io/docker/image-size/sliamb/paopaodns)   
-![Docker Platforms](https://img.shields.io/badge/platforms-linux%2F386%20%7C%20linux%2Famd64%20%7C%20linux%2Farm%2Fv6%20%7C%20linux%2Farm%2Fv7%20%7C%20linux%2Farm64%2Fv8%20%7C%20linux%2Fppc64le%20%7C%20%20linux%2Fs390x-blue)
+![Docker Platforms](https://img.shields.io/badge/platforms-linux%2F386%20%7C%20linux%2Famd64%20%7C%20linux%2Farm%2Fv6%20%7C%20linux%2Farm%2Fv7%20%7C%20linux%2Farm64%2Fv8%20%7C%20linux%2Fppc64le%20%7C%20linux%2Friscv64%20%7C%20linux%2Fs390x-blue)
 
 泡泡DNS是一个能一键部署递归DNS的docker镜像，它使用了unbound作为递归服务器程序，使用Redis作为底层缓存，此外针对China大陆，还有智能根据CN分流加密查询的功能，也可以自定义分流列表，可以自动更新IP库，分流使用了mosdns程序，加密查询使用dnscrypt程序，针对IPv4/IPv6双栈用户也有优化处理。   
 泡泡DNS适合的使用场景：  
@@ -117,7 +117,7 @@ QUERY_TIME|`2000ms`|`time.Duration`|
 - DNSPORT：设置DNS服务器端口，仅在CNAUTO=no时生效
 - DNS_SERVERNAME：DNS的服务器名称，你使用windows的nslookup的时候会看到它。    
 - SERVER_IP：指定DNS服务器的外部IP。假设你的DNS容器是宿主`10.10.10.4`映射出来的端口而不是独立的IP，设置该项为`10.10.10.4`可以让你看到正确的`DNS_SERVERNAME`。同时会设定域名`paopao.dns`指向该IP地址`10.10.10.4`，可配合其他服务使用。         
-- SOCKS5：为分流非CN IP的域名优先使用SOCKS5查询（如`10.10.10.8:7890`，强制使用socks5查询则加上@，比如`@10.10.10.8:7890`），但没有也能查，非必须项。仅在CNAUTO=yes时生效。SOCKS5初始化会有大概3分钟的延迟连接测试过程，期间的解析结果并非最优延迟。
+- SOCKS5：为分流非CN IP的域名优先使用SOCKS5查询，但没有也能查，非必须项。仅在CNAUTO=yes时生效
 - TZ: 设置系统的运行时区，仅影响输出日志不影响程序运行
 - UPDATE: 检查更新根域数据和GEOIP数据的频率,no不检查,其中GEOIP更新仅在CNAUTO=yes时生效。注意：`daily`,`weekly`,`monthly`分别为alpine默认定义的每天凌晨2点、每周6凌晨3点、每月1号凌晨5点。更新数据后会瞬间完成重载。
 - IPV6： 仅在CNAUTO=yes时生效，是否返回IPv6的解析结果，默认为no，如果没有IPv6环境，选择no可以节省内存。设置为yes返回IPv6的查询（为分流优化，非大陆双栈域名仅返回A记录）。如果设置为`only6`，则只对IPv6 only的域名返回IPv6结果（该项设置不影响`force_cn_list.txt`）。如果设置为`raw`，则不对IPv6结果做任何处理，直接返回原始记录。    
@@ -179,7 +179,7 @@ www.qq.com@@@qq.03k.org
 7889|HTTP_FILE=yes时，http静态文件服务器端口
 
 挂载共享文件夹`/data`目录文件说明：存放redis数据、IP库、各种配置文件，在该目录中修改配置文件会覆盖脚本参数，如果你不清楚配置项的作用，**请不要删除任何注释**。如果修改任何配置出现了异常，把配置文件删除，重启容器即可生成默认文件。  
-注：[群晖挂载权限问题参考](https://github.com/kkkgo/PaoPaoDNS/discussions/52)   
+
 - `redis.conf`：redis服务器配置模板文件，修改它将会覆盖redis运行参数。除了调试用途，一般强烈建议不修改它。容器版本更新将会覆盖该文件。  
 - `redis_dns.rdb`：redis的缓存文件，容器重启后靠它读取DNS缓存。刚开始使用的时候因为递归DNS有一个积累的过程，一开始查询会比较慢(设置了CNFALL=no的话，如果CNFALL=yes查询速度不会低于公共DNS)，等到这个文件体积起来了就很流畅了。容器版本更新不会覆盖该文件。    
 注意：redis_dns.rdb文件生成需要累积达到redis的最持久化要求，取决于`redis.conf`的配置，默认最低2小时后才会进行一次持久化操作。如果你升级容器的镜像，可以删除其他所有配置文件而保留这个rdb文件。           
@@ -203,64 +203,23 @@ www.qq.com@@@qq.03k.org
 - `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRACKER`功能会出现，会增量自动更新，[更新数据来源](https://github.com/kkkgo/all-tracker-list) ，你也可以添加自己的trakcer到这个文件(或者向[该项目](https://github.com/kkkgo/all-tracker-list)提交)，更新的时候会自动合并。修改将实时重载生效。容器版本更新不会覆盖该文件。   
 - `force_ttl_rules.txt`: 参见`RULES_TTL`功能。修改将实时重载生效。容器版本更新不会覆盖该文件。   
 - `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除了调试用途，一般强烈建议不修改它。容器版本更新将会覆盖该文件。   
-- `custom_env.ini`可以自定义环境变量，会覆盖在容器在启动时的环境变量。在容器启动后修改该文件将会导致MosDNS重载，但在容器启动后修改的环境变量不会影响已经启动的其他组件。配置的格式为`key="value"`（注意英文双引号），错误格式的环境变量将会被忽略加载。容器版本更新不会覆盖该文件。  
-- `custom_mod.yaml`可以自定义一些高级功能，参见下面的`custom_mod.yaml`文件说明。错误的配置可能导致服务运行异常。需要重启容器应用配置。容器版本更新不会覆盖该文件。   
-**custom_mod.yaml配置说明**  
-```yaml
-# yaml配置格式请注意空格缩进和冒号，错误的配置将不会被加载。
 
-# Zones可以配置指定域名转发。可以配置多组。
-# 与`RULES_TLL`等功能不同，Zones配置的域名转发优先级默认最高，并且可以转发所有记录类型。
-Zones:
- - zone: company.local
-   dns: udp://10.10.10.3:53,udp://10.10.10.4:53
-   ttl: 0
-   seq: top
-   cache: yes
-   socks5: no
-# - zone: 此处填转发的域名。也可以是子域名，或者后缀。
-#   dns: 可以逗号分隔指定多个DNS服务器、udp/tcp协议、端口。
-#        指定超过3个DNS服务器将会随机选择。
-#   ttl: 指定该域名的最大ttl值。当设置非0的时候生效。
-#        设置为0为不修改原来的ttl。
-#   seq: top  #缺省选项，优先级最高，直接进行转发所有类型记录，默认不缓存
-#        top6 #与top一样但应用全局的IPv6设置
-#        list #优先级最低，在匹配所有list后匹配，根据ttl缓存
-#   cache: no /yes 是否根据ttl缓存，仅在seq为top/top6的时候起作用
-#   socks5: 可以配置为yes或者no，是否使用socks5代理来查询。
-#           仅支持代理tcp协议的dns服务器。
- - zone: .corp
-   dns: udp://10.10.10.3:53,udp://10.10.10.4:53
-   ttl: 60
-   seq: top6
-   cache: no
-   socks5: no
- - zone: ddns.example.com
-   dns: tcp://172.64.32.176:53,tcp://108.162.192.176:53
-   ttl: 3
-   seq: list
-   socks5: yes
-
-# Swaps可以指定某个IP/CIDR段的解析结果替换为指定变量的结果。
-# 仅支持匹配非CN的IP段。与Zones格式类似可以配置多组。
-Swaps:
- - env_key: test_ip
-   cidr_file: "/data/test_cidr.txt"
-# env_key：配置指定变量的解析结果。可以配合custom_env.ini使用。
-# cidr_file: 配置指定IP/CIDR段的文本文件。格式为每行一个IP/CIDR段。
-# 注意：如果env_key或者cidr_file配置出错，容器日志会报错并忽略替换。
-```
-注：`Swaps`应用场景参考：[替换指定IP段的解析结果为指定IP](https://github.com/kkkgo/PaoPaoDNS/discussions/57 )   
 ### 进阶自定义示例
 
 1. 在企业内可能需要的一个功能，就是需要和AD域整合，转发指定域名到AD域服务器的方法：
-打开`/data/custom_mod.yaml`编辑：
+打开`/data/unbound_custom.conf`编辑，滚动到最后几行，已经帮你准备好了配置示例，你只需要取消注释即可：
 ```yaml
 #Active Directory Forward Example
 # 在这个示例中，你公司的AD域名为company.local，有四台AD域DNS服务器。
-Zones:
- - zone: company.local
-   dns: 10.111.222.11,10.111.222.12,10.111.222.13,10.111.222.14 
+forward-zone:
+ name: "company.local"
+ forward-no-cache:yes
+ forward-addr: 10.111.222.11
+ forward-addr: 10.111.222.12
+ forward-addr: 10.111.222.13
+ forward-addr: 10.111.222.14
+```
+注意：如果你开启了`CNAUTO`大陆分流功能，为了正确转发内网AD域名（分流后A记录和AAAA记录不会被默认接受），请同时配合`force_cn_list.txt`或者`RULES_TTL`功能使用。当然，此处是以AD域为场景进行举例，实际上你可以根据你的需求转发任意的域名。   
 
 2. 添加微软KMS服务器SRV记录
 ```yaml
