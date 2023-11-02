@@ -16,3 +16,4 @@ domain:pool.ntp.org
 #domain:xboxlive.com
 #domain:akamaihd.net
 #domain:akamaized.net
+#domain:mypikpak.com

@@ -3,12 +3,7 @@ log:
     level: error
 
 plugins:
-  - tag: check_cache
-    type: sequence
-    args:
-        - exec: cache {MSCACHE}
-        - matches: has_wanted_ans
-          exec: respond mosdns cache
+
 ##zones_dns_start##
 ##zones_dns_end##
 
@@ -111,16 +106,25 @@ plugins:
     args:
       file: "/tmp/Country.mmdb"
 
+  - tag: accept
+    type: sequence
+    args:
+##swaps_match_start##
+##swaps_match_end##
+        - exec: ok
+
   - tag: not_a_aaaa
     type: sequence
     args:
         - exec: $local_unbound
+#addinfo        - exec: addinfo not_a_aaaa -> local_unbound
         - matches: has_wanted_ans
-          exec: respond local_unbound not_a_aaaa
+          exec: goto accept
         - exec: drop_resp
         - exec: $forward_unbound
+#addinfo        - exec: addinfo not_a_aaaa -> forward_unbound
         - matches: has_wanted_ans
-          exec: respond forward_unbound not_a_aaaa
+          exec: goto accept
         - exec: drop_resp
 
 #customforward-seted  - tag: f_force_forward_list
@@ -128,30 +132,32 @@ plugins:
 #customforward-seted    args:
 #customforward-seted        - exec: drop_resp
 #customforward-seted        - exec: $force_forward
-#customforward-seted        - exec: respond forward -> {CUSTOM_FORWARD_SERVER}@{CUSTOM_FORWARD_PORT}
+#addinfo#customforward-seted        - exec: addinfo forward -> {CUSTOM_FORWARD_SERVER}@{CUSTOM_FORWARD_PORT}
+#CUSTOM_FORWARD_TTL#customforward-seted        - exec: ttl {CUSTOM_FORWARD_TTL}-0
+#customforward-seted        - exec: goto accept
 
   - tag: f_force_nocn_list
     type: sequence
     args:
         - exec: drop_resp
         - exec: $forward_unbound
-##swaps_match1_start##
-##swaps_match1_end##
+
+#addinfo        - exec: addinfo nocn forward_unbound
         - matches: has_wanted_ans
-          exec: respond nocn forward_unbound
+          exec: goto accept
         - exec: $forward_dnscrypt
-##swaps_match2_start##
-##swaps_match2_end##
+#addinfo        - exec: addinfo nocn forward_dnscrypt
         - matches: has_wanted_ans
-          exec: respond nocn forward_dnscrypt
+          exec: goto accept
         - exec: pong END by f_force_nocn_list.
 
   - tag: f_local_unbound
     type: sequence
     args:
         - exec: $local_unbound
+#addinfo        - exec: addinfo local_unbound
         - matches: has_wanted_ans
-          exec: respond local_unbound
+          exec: goto accept
         - exec: pong END by f_local_unbound.
         
 #ttl_rule_ok  - tag: f_force_ttl_rules
@@ -159,7 +165,8 @@ plugins:
 #ttl_rule_ok    args:
 #ttl_rule_ok        - exec: $forward_dnscrypt
 #ttl_rule_ok        - exec: ttl 0-{RULES_TTL}
-#ttl_rule_ok        - exec: respond force_ttl_rules
+#addinfo#ttl_rule_ok        - exec: addinfo force_ttl_rules
+#ttl_rule_ok        - exec: goto accept
 
 #cnfall  - tag: try_cn_fall
 #cnfall    type: sequence
@@ -172,8 +179,9 @@ plugins:
 #autoforward-yes#autoforward-check    args:
 #autoforward-yes#autoforward-check        - exec: drop_resp
 #autoforward-yes#autoforward-check        - exec: $forward_unbound
+#addinfo#autoforward-yes#autoforward-check        - exec: addinfo AUTO_FORWARD_CHECK forward_unbound PRIVATE
 #autoforward-yes#autoforward-check        - matches: resp_ip_mmdb $cnip PRIVATE
-#autoforward-yes#autoforward-check          exec: respond AUTO_FORWARD_CHECK forward_unbound PRIVATE
+#autoforward-yes#autoforward-check          exec: goto accept
 #autoforward-yes#autoforward-check        - matches: "has_wanted_ans"
 #autoforward-yes#autoforward-check          exec: goto f_force_forward_list
 #autoforward-yes#autoforward-check        - exec: pong END by try_auto_check.
@@ -182,7 +190,7 @@ plugins:
 #global_mark_yes    type: sequence
 #global_mark_yes    args:
 #global_mark_yes        - matches: qname $global_mark_cn
-#global_mark_yes          exec: return
+#global_mark_yes          exec: goto accept
 
 #global_mark_yes#ipv6ok        - exec: prefer_ipv4
 #global_mark_yes#autoforward-yes#autoforward-check        - exec: goto try_auto_check
@@ -193,8 +201,8 @@ plugins:
     type: sequence
     args:
 #usehosts-yes        - exec: $usehosts
-        - matches: qtype 65
-          exec: pong END by block qtype 65.
+        - matches: "qtype 64 65"
+          exec: pong END by block qtype 64/65.
 
 ##zones_qname_top_start##
 ##zones_qname_top_end##
@@ -222,8 +230,7 @@ plugins:
           exec: goto f_force_nocn_list
         - matches: qname $force_cn_list
           exec: goto f_local_unbound
-        - exec: jump check_cache
-
+ 
 #ttl_rule_ok        - matches: qname $force_ttl_rules
 #ttl_rule_ok          exec: goto f_force_ttl_rules
 
@@ -237,9 +244,9 @@ plugins:
 #cnfall        - exec: $local_unbound_fall
 #cnfall        - matches: "!rcode 0"
 #cnfall          exec: jump try_cn_fall
-
+#addinfo        - exec: addinfo mmdb CN IP
         - matches: resp_ip_mmdb $cnip CN
-          exec: respond mmdb CN IP
+          exec: goto accept
 
 #ipv6yes        - matches: 
 #ipv6yes          - qtype 28
@@ -254,15 +261,30 @@ plugins:
 
 #autoforward-no        - exec: goto f_force_nocn_list
 
+
+  - tag: respond
+    type: sequence
+    args:
+#shuffle        - exec: shuffle
+#addinfo        - exec: addinfo respond mosdns cache
+        - exec: ok
+  - tag: check_cache
+    type: sequence
+    args:
+        - exec: cache {MSCACHE}
+        - matches: has_wanted_ans
+          exec: goto respond
+        - exec: jump main_sequence
+
   - tag: udp_server
     type: udp_server
     args:
-      entry: main_sequence
+      entry: check_cache
       listen: :53
   - tag: "tcp_server"
     type: "tcp_server"
     args:
-      entry: main_sequence
+      entry: check_cache
       listen: :53
       idle_timeout: 5
 #http_file_yes  - tag: "httpd_server"

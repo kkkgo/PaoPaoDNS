@@ -1,21 +1,19 @@
 #Zones:
-# - zone: company.local
-#   dns: udp://10.10.10.3:53,udp://10.10.10.4:53
-#   ttl: 0
-#   seq: top
-#   cache: no
-#   socks5: no
-# - zone: .corp
-#   dns: udp://10.10.10.3:53,udp://10.10.10.4:53
-#   ttl: 60
-#   seq: top6
-#   cache: yes
-#   socks5: no
-# - zone: ddns.example.com
-#   dns: tcp://172.64.32.176:53,tcp://108.162.192.176:53
-#   ttl: 3
-#   seq: list
-#   socks5: yes
+#- zone: company.local
+#  dns: udp://10.10.10.3:53,udp://10.10.10.4:53
+#  ttl: 0
+#  seq: top
+#  socks5: no
+#- zone: .corp
+#  dns: udp://10.10.10.4:53,udp://10.10.10.5:53,udp://10.10.10.3
+#  ttl: 60
+#  seq: top6
+#  socks5: no
+#- zone: ddns.example.com
+#  dns: tcp://172.64.32.176:53,tcp://108.162.192.176:53
+#  ttl: 3
+#  seq: list
+#  socks5: yes
 #Swaps:
-# - env_key: test_ip
-#   cidr_file: "/data/test_cidr.txt"
+#- env_key: test_ip
+#  cidr_file: "/data/test_cidr.txt"

@@ -25,6 +25,7 @@ RUN cp /src/Country-only-cn-private.mmdb.xz /tmp/ &&\
     cp /src/unbound.conf /tmp/ &&\
     cp /src/unbound_custom.conf /tmp/ &&\
     cp /src/custom_mod.yaml /tmp/ &&\
+    cp /src/custom_env.ini /tmp/ &&\
     cp /src/trackerslist.txt.xz /tmp/ &&\
     cp /src/watch_list.sh /tmp/ &&\
     cp /src/redis-server /tmp/
@@ -49,13 +50,15 @@ ENV TZ=Asia/Shanghai \
     SOCKS5=IP:PORT \
     SERVER_IP=none \
     CUSTOM_FORWARD=IP:PORT \
+    CUSTOM_FORWARD_TTL=0 \
     AUTO_FORWARD=no \
     AUTO_FORWARD_CHECK=yes \
     USE_MARK_DATA=no \
     RULES_TTL=0 \
     HTTP_FILE=no \
     QUERY_TIME=2000ms \
-    ADDINFO=no
+    ADDINFO=no \
+    SHUFFLE=no
 VOLUME /data
 WORKDIR /data
 EXPOSE 53/udp 53/tcp 5304/udp 5304/tcp 7889/tcp

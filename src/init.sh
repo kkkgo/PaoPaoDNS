@@ -222,6 +222,8 @@ echo AUTO_FORWARD:-"$AUTO_FORWARD""-" >>/tmp/env.conf
 echo AUTO_FORWARD_CHECK:-"$AUTO_FORWARD_CHECK""-" >>/tmp/env.conf
 echo USE_MARK_DATA:-"$USE_MARK_DATA""-" >>/tmp/env.conf
 echo RULES_TTL:-"$RULES_TTL""-" >>/tmp/env.conf
+echo CUSTOM_FORWARD_TTL:-"$CUSTOM_FORWARD_TTL""-" >>/tmp/env.conf
+echo SHUFFLE:-"$SHUFFLE""-" >>/tmp/env.conf
 echo CN_TRACKER:-"$CN_TRACKER""-" >>/tmp/env.conf
 echo USE_HOSTS:-"$USE_HOSTS""-" >>/tmp/env.conf
 echo HTTP_FILE:-"$HTTP_FILE""-" >>/tmp/env.conf
@@ -230,6 +232,7 @@ echo QUERY_TIME:-"$QUERY_TIME""-" >>/tmp/env.conf
 echo ADDINFO:-"$ADDINFO""-" >>/tmp/env.conf
 echo PLATFORM:-"$(uname -a)""-" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
+echo mosdns "$(mosdns version)" >>/tmp/env.conf
 cat /tmp/env.conf
 sed "s/{MEM4}/$MEM4/g" /data/redis.conf >/tmp/redis.conf
 redis-server /tmp/redis.conf
@@ -318,6 +321,9 @@ if [ "$CNAUTO" != "no" ]; then
                 sed -i "s/#autoforward-nocheck//g" /tmp/mosdns.yaml
             fi
         fi
+    else
+        echo "Bad CUSTOM_FORWARD=""$CUSTOM_FORWARD"", IP:port. Disable AUTO_FORWARD."
+        AUTO_FORWARD="no"
     fi
     if [ "$AUTO_FORWARD" = "no" ]; then
         sed -i "s/#autoforward-no//g" /tmp/mosdns.yaml
@@ -325,6 +331,12 @@ if [ "$CNAUTO" != "no" ]; then
     if [ "$CN_TRACKER" = "yes" ]; then
         sed -i "s/#cntracker-yes//g" /tmp/mosdns.yaml
         /usr/sbin/watch_list.sh load_trackerslist
+    fi
+    if [ "$ADDINFO" = "yes" ]; then
+        sed -i "s/#addinfo//g" /tmp/mosdns.yaml
+    fi
+    if [ "$SHUFFLE" = "yes" ]; then
+        sed -i "s/#shuffle//g" /tmp/mosdns.yaml
     fi
     if [ "$USE_MARK_DATA" = "yes" ]; then
         sed -i "s/#global_mark_yes//g" /tmp/mosdns.yaml
@@ -368,6 +380,10 @@ if [ "$CNAUTO" != "no" ]; then
     if [ -z "$RULES_TTL" ]; then
         RULES_TTL=0
     fi
+    CUSTOM_FORWARD_TTL=$(echo "$CUSTOM_FORWARD_TTL" | grep -Eo "[0-9]+|head -1")
+    if [ -z "$CUSTOM_FORWARD_TTL" ]; then
+        CUSTOM_FORWARD_TTL=0
+    fi
     if [ "$RULES_TTL" -gt 0 ]; then
         sed "s/#ttl_rule_ok//g" /data/dnscrypt.toml >/data/dnscrypt-resolvers/dnscrypt.toml
         sed -i "s/#ttl_rule_ok//g" /tmp/mosdns.yaml
@@ -375,6 +391,10 @@ if [ "$CNAUTO" != "no" ]; then
         /usr/sbin/watch_list.sh load_ttl_rules
     else
         cp /data/dnscrypt.toml /data/dnscrypt-resolvers/dnscrypt.toml
+    fi
+    if [ "$CUSTOM_FORWARD_TTL" -gt 0 ]; then
+        sed -i "s/#CUSTOM_FORWARD_TTL//g" /tmp/mosdns.yaml
+        sed -i "s/{CUSTOM_FORWARD_TTL}/$CUSTOM_FORWARD_TTL/g" /tmp/mosdns.yaml
     fi
     if [ "$HTTP_FILE" = "yes" ]; then
         sed -i "s/#http_file_yes//g" /tmp/mosdns.yaml
@@ -390,9 +410,9 @@ if [ "$CNAUTO" != "no" ]; then
         cat /tmp/mosdns_mod.yaml >/tmp/mosdns.yaml
     fi
     sed -i '/^#/d' /tmp/mosdns.yaml
-    mosdns start -d /data -c /tmp/mosdns.yaml &
+    mosdns start -d /tmp -c /tmp/mosdns.yaml &
 fi
-sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf >/tmp/unbound_raw.conf
+sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf | sed "s/#RAWDNS//g" >/tmp/unbound_raw.conf
 unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
 #Unexpected fallback while updating data
 echo "nameserver 127.0.0.1" >/etc/resolv.conf

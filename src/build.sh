@@ -58,7 +58,7 @@ sed -i -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5302']/g" /dnscrypt
 sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/public-resolvers.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://dnsr.evilvibes.com/v3/public-resolvers.md',|g" /dnscrypt-proxy/dnsex.toml
 sed -i "s|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md',|'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://cdn.jsdelivr.net/gh/DNSCrypt/dnscrypt-resolvers/v3/relays.md','https://cdn.staticaly.com/gh/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://dnsr.evilvibes.com/v3/relays.md',|g" /dnscrypt-proxy/dnsex.toml
 
-git clone https://github.com/kkkgo/PaoPao-Pref --depth 1 /PaoPao-Pref
+# git clone https://github.com/kkkgo/PaoPao-Pref --depth 1 /PaoPao-Pref
 server_names=""
 while read line; do
     if [ -z "$server_names" ]; then
