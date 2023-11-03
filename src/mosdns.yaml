@@ -198,12 +198,12 @@ plugins:
 #global_mark_yes#autoforward-no        - exec: goto f_force_nocn_list
 
 
-  - tag: accept_hosts
-    type: sequence
-    args:
-        - exec: $usehosts
-        - matches: has_wanted_ans
-          exec: goto accept
+#usehosts-yes  - tag: accept_hosts
+#usehosts-yes    type: sequence
+#usehosts-yes    args:
+#usehosts-yes        - exec: $usehosts
+#usehosts-yes        - matches: has_wanted_ans
+#usehosts-yes          exec: goto accept
 
   - tag: main_sequence
     type: sequence
