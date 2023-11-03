@@ -190,7 +190,7 @@ plugins:
 #global_mark_yes    type: sequence
 #global_mark_yes    args:
 #global_mark_yes        - matches: qname $global_mark_cn
-#global_mark_yes          exec: goto accept
+#global_mark_yes          exec: return
 
 #global_mark_yes#ipv6ok        - exec: prefer_ipv4
 #global_mark_yes#autoforward-yes#autoforward-check        - exec: goto try_auto_check
