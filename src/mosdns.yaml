@@ -197,6 +197,14 @@ plugins:
 #global_mark_yes#autoforward-yes#autoforward-nocheck        - exec: $force_forward
 #global_mark_yes#autoforward-no        - exec: goto f_force_nocn_list
 
+
+  - tag: accept_hosts
+    type: sequence
+    args:
+        - exec: $usehosts
+        - matches: has_wanted_ans
+          exec: goto accept
+
   - tag: main_sequence
     type: sequence
     args:
@@ -204,7 +212,7 @@ plugins:
 ##zones_qname_top_start##
 ##zones_qname_top_end##
 
-#usehosts-yes        - exec: $usehosts
+#usehosts-yes        - exec: jump accept_hosts
         - matches: "qtype 64 65"
           exec: pong END by block qtype 64/65.
 
