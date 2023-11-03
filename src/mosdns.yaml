@@ -200,12 +200,13 @@ plugins:
   - tag: main_sequence
     type: sequence
     args:
-#usehosts-yes        - exec: $usehosts
-        - matches: "qtype 64 65"
-          exec: pong END by block qtype 64/65.
 
 ##zones_qname_top_start##
 ##zones_qname_top_end##
+
+#usehosts-yes        - exec: $usehosts
+        - matches: "qtype 64 65"
+          exec: pong END by block qtype 64/65.
 
 #ipv6no        - matches: 
 #ipv6no          - qtype 28
