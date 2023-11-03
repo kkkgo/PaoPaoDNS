@@ -7,7 +7,7 @@ apk add build-base flex byacc musl-dev gcc make git python3-dev swig libevent-de
 # build unbound
 git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound
 cd /unbound || exit
-export CFLAGS="-O2"
+export CFLAGS="-O3"
 ./configure --with-libevent --with-pthreads --with-libhiredis --enable-cachedb \
     --disable-rpath --without-pythonmodule --disable-documentation \
     --disable-flto --disable-maintainer-mode --disable-option-checking --disable-rpath \
