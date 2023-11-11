@@ -41,24 +41,25 @@ sleep 5
 echo "[test]" IP test, you will see that all the following IPs are your public network exit IP !
 echo "[test]" ========== IP TEST START ==========
 echo CN IP URL:
-curl -sk4 http://test.ipw.cn | grep -Eo "$IPREX4" | tail -1
-curl -sk4 http://ipsu.03k.org | grep -Eo "$IPREX4" | tail -1
+mosdns curl http://test.ipw.cn | grep -Eo "$IPREX4" | tail -1
+mosdns curl http://ipsu.03k.org/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+mosdns curl https://cf-ns.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo CN RAW-IP URL:
-curl -sk4 http://115.231.186.225/ | grep -Eo "$IPREX4" | grep -v "115.231.186.225" | tail -1
+mosdns curl http://115.231.186.225/ | grep -Eo "$IPREX4" | grep -v "115.231.186.225" | tail -1
 echo ------------------
 echo Non-CN IP URL:
-curl -sk4 https://www.cloudflare.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
-curl -sk4 http://checkip.synology.com/ | grep -Eo "$IPREX4" | tail -1
-curl -sk4 https://v4.ident.me/ | grep -Eo "$IPREX4" | tail -1
+mosdns curl https://www.cloudflare.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+mosdns curl http://checkip.synology.com/ | grep -Eo "$IPREX4" | tail -1
+mosdns curl https://v4.ident.me/ | grep -Eo "$IPREX4" | tail -1
 echo Non-CN RAW-IP URL:
-curl -sk4 https://1.1.1.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
-curl -sk4 https://1.0.0.3/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
-curl -sk4 https://1.0.0.2/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
-curl -sk4 https://1.0.0.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+mosdns curl https://1.1.1.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+mosdns curl https://1.0.0.3/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+mosdns curl https://1.0.0.2/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+mosdns curl https://1.0.0.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo ------------------
 sleep 5
 echo IP INFO:
-curl -d "" http://ip.03k.org
+mosdns curl http://ip.03k.org
 echo
 sleep 1
 echo ------------------
@@ -79,6 +80,7 @@ echo
 echo "[test]" The DNS hijacking test, you will see timed out message !
 echo "[test]" ========== DNS HIJACK START ==========
 nslookup www.qq.com 9.8.7.6
+nslookup whether.114dns.com 114.114.114.114
 echo "[test]" ========== DNS HIJACK END ==========
 sleep 1
 echo "[test]" CN domain test, you will see that the DNS resolution result is CN IP !

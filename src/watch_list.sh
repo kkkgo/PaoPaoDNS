@@ -163,7 +163,7 @@ reload_dns() {
                 load_ttl_rules
                 if [ "$?" = "0" ]; then
                     if ps | grep dnscrypt-proxy | grep -q dnscrypt.toml; then
-                        dnscrypt_id=$(ps | grep dnscrypt-proxy | grep dnscrypt.toml | grep -Eo "[0-9]+" | head -1)
+                        dnscrypt_id=$(ps | grep -v "grep" | grep dnscrypt-proxy | grep dnscrypt.toml | grep -Eo "[0-9]+" | head -1)
                         kill "$dnscrypt_id"
                     fi
                     echo "dnscrypt reload rules..."
@@ -177,11 +177,11 @@ reload_dns() {
             export reload_mosdns=1
         fi
         if [ $reload_mosdns = "1" ]; then
-            while ps | grep -v grep | grep mosdns; do
-                killall mosdns
+            while ps | grep -v grep | grep "mosdns.yaml"; do
+                mosdns_id=$(ps | grep -v "grep" | grep "mosdns.yaml" | grep -Eo "[0-9]+" | head -1)
+                kill "$mosdns_id"
             done
             echo "mosdns reload..."
-            killall mosdns
             touch /data/custom_env.ini
             grep -Eo "^[_a-zA-Z0-9]+=\".+\"" /data/custom_env.ini >/tmp/custom_env.ini
             if [ -f "/tmp/custom_env.ini" ]; then
@@ -196,17 +196,14 @@ reload_dns() {
         fi
     fi
     if [ "$(gen_hash /etc/unbound/named.cache)" != "$named" ]; then
-        while ps | grep -v grep | grep unbound; do
-            killall unbound
+        while ps | grep -v grep | grep unbound_raw; do
+            unbound_id=$(ps | grep -v "grep" | grep "unbound_raw" | grep -Eo "[0-9]+" | head -1)
+            kill "$unbound_id"
         done
         echo "unbound reload..."
-        killall unbound
         unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
-        if [ -f /tmp/unbound_forward.conf ]; then
-            unbound -c /tmp/unbound_forward.conf >/dev/null 2>&1 &
-        fi
         sleep 1
-        ps -ef | grep -v "grep" | grep "unbound"
+        ps | grep -v grep | grep unbound_raw
     fi
 }
 

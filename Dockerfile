@@ -32,7 +32,7 @@ RUN cp /src/Country-only-cn-private.mmdb.xz /tmp/ &&\
 
 FROM alpine:edge
 COPY --from=builder /src/ /usr/sbin/
-RUN apk add --no-cache dcron tzdata hiredis libevent curl dnscrypt-proxy inotify-tools bind-tools libgcc xz && \
+RUN apk add --no-cache ca-certificates dcron tzdata hiredis libevent dnscrypt-proxy inotify-tools bind-tools libgcc xz && \
     apk upgrade --no-cache &&\
     mkdir -p /etc/unbound && \
     mv /usr/sbin/named.cache /etc/unbound/named.cache &&           \

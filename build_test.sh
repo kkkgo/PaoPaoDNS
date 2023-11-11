@@ -43,7 +43,7 @@ t9=$(docker exec test1 dig host.paopaodns @127.0.0.1 -p53 A +short)
 v4check "$t9" USE_HOSTS
 t10=$(docker exec test1 dig force_ttl_rules.paopaodns @127.0.0.1 -p53 A +short)
 v4check "$t10" force_ttl_rules
-if docker exec test1 curl -s 127.0.0.1:7889 | grep -q Country-only-cn-private.mmdb; then
+if docker exec test1 mosdns curl http://127.0.0.1:7889 | grep -q Country-only-cn-private.mmdb; then
     echo HTTP_FILE pass.
 else
     exit

@@ -50,7 +50,7 @@ file_update() {
     date +"%Y-%m-%d %H:%M:%S %Z"
     touch $update_file
     oldsum=$($hashcmd $update_file | grep -Eo "$update_reg")
-    newsum=$(curl -4L --connect-timeout 10 -s $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$newsum_url" | grep -Eo "$update_reg" | head -1)
+    newsum=$(mosdns curl "$newsum_url" $(if [ -n "$SOCKS5ON" ]; then echo "$SOCKS5"; fi) | grep -Eo "$update_reg" | head -1)
     if echo "$newsum" | grep -qvE "$update_reg"; then
         echo "Network error: ""$SOCKS5ON" "$newsum_url"
         return 1
@@ -62,7 +62,7 @@ file_update() {
     echo $update_file "diff sha256sum, update..."
     echo newsum:"$newsum"
     echo oldsum:"$oldsum"
-    curl -4L --connect-timeout 10 $(if [ -n "$SOCKS5ON" ]; then echo "--socks5-hostname "$SOCKS5""; fi) "$down_url" -o $update_file_down
+    mosdns curl "$down_url" $(if [ -n "$SOCKS5ON" ]; then echo "$SOCKS5"; fi) $update_file_down
     downsum=$($hashcmd "$update_file_down" | grep -Eo "$update_reg")
     if [ "$newsum" = "$downsum" ]; then
         echo "$update_file_down" "Download OK."
@@ -101,7 +101,7 @@ file_update_try() {
 
 update-ca-certificates >/dev/null 2>&1
 apk update >/dev/null 2>&1
-apk add --upgrade curl ca-certificates >/dev/null 2>&1
+apk add --upgrade ca-certificates >/dev/null 2>&1
 
 update_file="/etc/unbound/named.cache"
 update_file_down="/tmp/named.cache"
