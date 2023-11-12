@@ -80,6 +80,7 @@ echo
 echo "[test]" The DNS hijacking test, you will see timed out message !
 echo "[test]" ========== DNS HIJACK START ==========
 nslookup www.qq.com 9.8.7.6
+dig +short whoami.ds.akahelp.net @9.8.7.6 txt -p53
 nslookup whether.114dns.com 114.114.114.114
 echo "[test]" ========== DNS HIJACK END ==========
 sleep 1
