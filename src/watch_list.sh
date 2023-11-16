@@ -177,7 +177,7 @@ reload_dns() {
             export reload_mosdns=1
         fi
         if [ $reload_mosdns = "1" ]; then
-            while ps | grep -v grep | grep "mosdns.yaml"; do
+            while ps | grep -v grep | grep -q "mosdns.yaml"; do
                 mosdns_id=$(ps | grep -v "grep" | grep "mosdns.yaml" | grep -Eo "[0-9]+" | head -1)
                 kill "$mosdns_id"
             done
@@ -196,7 +196,7 @@ reload_dns() {
         fi
     fi
     if [ "$(gen_hash /etc/unbound/named.cache)" != "$named" ]; then
-        while ps | grep -v grep | grep unbound_raw; do
+        while ps | grep -v grep | grep -q unbound_raw; do
             unbound_id=$(ps | grep -v "grep" | grep "unbound_raw" | grep -Eo "[0-9]+" | head -1)
             kill "$unbound_id"
         done
