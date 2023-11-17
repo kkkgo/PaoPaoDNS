@@ -46,6 +46,12 @@ plugins:
 #global_mark_yes      files:
 #global_mark_yes        - "/tmp/global_mark.dat"
 
+#global_mark_yes  - tag: "cn_mark"
+#global_mark_yes    type: "domain_set"
+#global_mark_yes    args:
+#global_mark_yes      files:
+#global_mark_yes        - "/tmp/cn_mark.dat"
+
 #global_mark_yes  - tag: "global_mark_cn"
 #global_mark_yes    type: "domain_set"
 #global_mark_yes    args:
@@ -253,6 +259,9 @@ plugins:
 #cnfall        - exec: $local_unbound_fall
 #cnfall        - matches: "!rcode 0"
 #cnfall          exec: jump try_cn_fall
+#global_mark_yes#addinfo        - exec: addinfo cn_mark
+#global_mark_yes        - matches: qname $cn_mark
+#global_mark_yes          exec: goto accept
 #addinfo        - exec: addinfo mmdb CN IP
         - matches: resp_ip_mmdb $cnip CN
           exec: goto accept
