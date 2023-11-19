@@ -20,7 +20,7 @@ load_mark_data() {
                 if [ -f /tmp/global_mark/global_mark.dat ]; then
                     grep -E "^domain:[-_.A-Za-z0-9]+$" /tmp/global_mark/global_mark.dat | grep -E "[a-z]" | grep "." | sort -u >/tmp/global_mark.dat
                     grep -E "^##@@domain:[-_.A-Za-z0-9]+$" /tmp/global_mark/global_mark.dat | sed "s/##@@domain:/domain:/g" | grep -E "[a-z]" | grep "." | sort -u >/tmp/global_mark_cn.dat
-                    grep -E "^#@domain:[-_.A-Za-z0-9]+$" /tmp/global_mark/global_mark.dat | sed "s/##@@domain:/domain:/g" | grep -E "[a-z]" | grep "." | sort -u >/tmp/cn_mark.dat
+                    grep -E "^#@domain:[-_.A-Za-z0-9]+$" /tmp/global_mark/global_mark.dat | sed "s/#@domain:/domain:/g" | grep -E "[a-z]" | grep "." | sort -u >/tmp/cn_mark.dat
                 fi
                 cd - || exit
             else

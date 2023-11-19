@@ -419,6 +419,8 @@ echo "nameserver 127.0.0.1" >/etc/resolv.conf
 echo "nameserver 223.5.5.5" >>/etc/resolv.conf
 echo "nameserver 1.0.0.1" >>/etc/resolv.conf
 /usr/sbin/watch_list.sh &
-/usr/sbin/data_update.sh &
+if [ "$UPDATE" != "no" ]; then
+    /usr/sbin/data_update.sh &
+fi
 ps
 tail -f /dev/null
