@@ -8,7 +8,7 @@ v4check() {
     if echo "$1" | grep -v "timed out" | grep -v "127.0.0.1" | grep -E "$IPREX4"; then
         echo "$2" pass.
     else
-        echo "$2" failed.
+        echo "$2" failed:"$1"
         exit
     fi
 }
@@ -49,26 +49,26 @@ else
     exit
 fi
 docker rm -f test1
-docker run -d --name test2 \
+docker run --name test2 \
     -e USE_MARK_DATA=yes \
     -e AUTO_FORWARD=yes \
-    -e CUSTOM_FORWARD=1.1.1.1:53 \
-    ppdns
-sleep 5
+    -e CUSTOM_FORWARD=8.8.8.8:53 \
+    ppdns &
+sleep 15
 t11=$(docker exec test2 dig www.youtube.com @127.0.0.1 -p53 A +short)
 v4check "$t11" AUTO_FORWARD_OK
 docker rm -f test2
-docker run -d --name test3 \
+docker run --name test3 \
     -e USE_MARK_DATA=yes \
     -e AUTO_FORWARD=yes \
     -e CUSTOM_FORWARD=9.8.7.6:53 \
-    ppdns
-sleep 5
+    ppdns &
+sleep 15
 t12=$(docker exec test3 dig www.youtube.com @127.0.0.1 -p53 A)
 if echo "$t12" | grep REFUSED; then
     echo CUSTOM_FORWARD_BAD pass.
 else
-    echo CUSTOM_FORWARD_BAD failed.
+    echo CUSTOM_FORWARD_BAD failed:"$t12"
     exit
 fi
 docker rm -f test3
