@@ -1,5 +1,11 @@
 domain:whoami.ds.akahelp.net
 domain:whoami.03k.org
+domain:nstool.netease.com
+domain:nstool.zhuanzfx.com
+domain:nstool.laiqukankan.com
+domain:nstool.321fenx.com
+domain:nstool.haowu.link
+domain:nstool.yqkk.link
 domain:ntp.aliyun.com
 domain:time.edu.cn
 domain:ntp.org.cn
