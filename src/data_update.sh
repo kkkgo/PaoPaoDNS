@@ -129,8 +129,8 @@ if [ "$CNAUTO" != "no" ]; then
         down_url=https://cdn.jsdelivr.net/gh/kkkgo/Country-only-cn-private.mmdb/Country-only-cn-private.mmdb.xz
         file_update_try failed
         if [ "$?" = "1" ]; then
-            newsum_url=https://cdn.staticaly.com/gh/kkkgo/Country-only-cn-private.mmdb/main/Country-only-cn-private.mmdb.xz.sha256sum
-            down_url=https://cdn.staticaly.com/gh/kkkgo/Country-only-cn-private.mmdb/main/Country-only-cn-private.mmdb.xz
+            newsum_url=https://cdn.statically.io/gh/kkkgo/Country-only-cn-private.mmdb/main/Country-only-cn-private.mmdb.xz.sha256sum
+            down_url=https://cdn.statically.io/gh/kkkgo/Country-only-cn-private.mmdb/main/Country-only-cn-private.mmdb.xz
             file_update_try failed
         fi
     fi
@@ -159,8 +159,8 @@ if [ "$CNAUTO" != "no" ]; then
             down_url=https://cdn.jsdelivr.net/gh/kkkgo/all-tracker-list/trackerslist.txt.xz
             file_update_try failed
             if [ "$?" = "1" ]; then
-                newsum_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt.xz.sha256sum
-                down_url=https://cdn.staticaly.com/gh/kkkgo/all-tracker-list/main/trackerslist.txt.xz
+                newsum_url=https://cdn.statically.io/gh/kkkgo/all-tracker-list/main/trackerslist.txt.xz.sha256sum
+                down_url=https://cdn.statically.io/gh/kkkgo/all-tracker-list/main/trackerslist.txt.xz
                 file_update_try failed
             fi
         fi
@@ -188,8 +188,8 @@ if [ "$CNAUTO" != "no" ]; then
             down_url=https://cdn.jsdelivr.net/gh/kkkgo/PaoPao-Pref/global_mark.dat
             file_update_try failed
             if [ "$?" = "1" ]; then
-                newsum_url=https://cdn.staticaly.com/gh/kkkgo/PaoPao-Pref/main/global_mark.dat.sha256sum
-                down_url=https://cdn.staticaly.com/gh/kkkgo/PaoPao-Pref/main/global_mark.dat
+                newsum_url=https://cdn.statically.io/gh/kkkgo/PaoPao-Pref/main/global_mark.dat.sha256sum
+                down_url=https://cdn.statically.io/gh/kkkgo/PaoPao-Pref/main/global_mark.dat
                 file_update_try failed
             fi
         fi
