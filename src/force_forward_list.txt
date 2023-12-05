@@ -3,6 +3,7 @@
 
 # Global bing
 domain:bing.com
+domain:bing.net
 domain:msn.com
 domain:msn.cn
 
