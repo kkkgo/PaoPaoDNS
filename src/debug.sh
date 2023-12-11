@@ -1,5 +1,5 @@
 #!/bin/sh
-blank(){
+blank() {
     echo "*********************************************************************************"
     echo
 }
@@ -26,7 +26,7 @@ fi
 #sleep 1
 echo "[INFO]" NETWORK
 blank
-ip a|grep -E "UP|inet"
+ip a | grep -E "UP|inet"
 ip r
 ping 223.5.5.5 -c1
 ping 119.29.29.29 -c1
@@ -45,7 +45,7 @@ ps -ef
 blank
 echo "[INFO]" TOP
 blank
-top -n1 |grep "%"
+top -n1 | grep "%"
 blank
 #sleep 5
 echo "[INFO]" REDIS
@@ -120,6 +120,16 @@ echo DNSCRYPT-SOCKS5 NOCN:
 dig +short www.youtube.com @127.0.0.1 -p5303 +retry=0 | head -3
 #sleep 1
 blank
+if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
+    CUSTOM_FORWARD=$(echo "$CUSTOM_FORWARD" | sed 's/"//g')
+    CUSTOM_FORWARD_SERVER=$(echo "$CUSTOM_FORWARD" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b|[0-9a-fA-F:]+" | head -1)
+    CUSTOM_FORWARD_PORT=$(echo "$CUSTOM_FORWARD" | rev | cut -d':' -f1 | rev)
+    echo "CUSTOM_FORWARD TEST [youtube]":
+    dig +short www.youtube.com @"$CUSTOM_FORWARD_SERVER" -p"$CUSTOM_FORWARD_PORT"
+    echo "CUSTOM_FORWARD TEST [taobao]":
+    dig +short www.taobao.com @"$CUSTOM_FORWARD_SERVER" -p"$CUSTOM_FORWARD_PORT"
+    blank
+fi
 echo "[TEST]" DUAL CN "[IPv6=YES will have aaaa,taobao]"
 blank
 dig +short www.taobao.com @127.0.0.1 aaaa -p53
