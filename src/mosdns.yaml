@@ -179,6 +179,7 @@ plugins:
 #cnfall    args:
 #cnfall        - exec: drop_resp
 #cnfall        - exec: $cn_test
+#cnfall#addinfo        - exec: addinfo try_cn_fall
 
 #autoforward-yes#autoforward-check  - tag: try_auto_check
 #autoforward-yes#autoforward-check    type: sequence

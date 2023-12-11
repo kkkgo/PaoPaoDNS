@@ -69,20 +69,12 @@ Address:  116.31.123.234 #连接权威DNS服务器的IP=你的宽带IP
 ```
 如果返回的IP和你宽带的出口IP一致的话，说明你的递归DNS服务正常运作了。 
    
-验证CNAUTO的功能：  
-```cmd
-# 淘宝有全球CDN，可以用来检测分流
->nslookup www.taobao.com 192.168.1.8
-服务器:  PaoPaoDNS,blog.03k.org
-Address:  192.168.1.8
-
-非权威应答:
-名称:    www.taobao.com.danuoyi.tbcache.com
-Addresses:  113.96.179.242 #此处返回的IP应该是CN IP
-          113.96.179.243
-Aliases:  www.taobao.com
-可以把IP用这个网页ping看看是哪里的IP：
-https://ping.chinaz.com/
+简单验证所有DNS组件是否工作正常：  
+```rust
+# 在容器内置执行 test.sh
+docker exec paopaodns test.sh
+# 如果执行后输出 ALL TEST PASS，则所有组件都工作正常。
+# 如果显示 FAIL，可以执行 debug.sh 进一步分析原因。
 ```   
 需要注意的是，如果你的网络有“自动分流IP”的功能，请把容器的IP加入不分流的名单，因为权威DNS需要准确的IP去判断，IP分流会影响权威DNS的判断。此外，一些软路由存在劫持DNS请求的情况，解决办法参见[这个issue](https://github.com/kkkgo/PaoPaoDNS/issues/2#issuecomment-1504708367)。    
 
