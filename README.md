@@ -9,7 +9,7 @@
 ##### 如果对你有帮助，欢迎点`Star`，如果需要关注更新，可以点`Watch`。
 
 ## [→详细说明《为啥需要递归DNS》/运行逻辑](https://blog.03k.org/post/paopaodns.html)
-## [更新日志](https://github.com/kkkgo/PaoPaoDNS/discussions/categories/%E5%85%AC%E5%91%8A)
+## [更新日志](https://github.com/kkkgo/PaoPaoDNS/discussions/categories/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
 ## 使用方法
 简单来说，那么你可以运行：  
 ```shell
