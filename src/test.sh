@@ -15,33 +15,33 @@ v4check() {
         exit
     fi
 }
-if ps -ef | grep -v grep | grep -q mosdns.yaml; then
-    blank
-    echo "-> test start \`$(date +%s)\`"
-    echo "\`\`\`rust"
-    if [ -w /data ]; then
-        t1=y
-    else
-        t1="[ERROR]DATA_not_writeable"
-    fi
+blank
+echo "-> test start \`$(date +%s)\`"
+echo "\`\`\`rust"
+if [ -w /data ]; then
+    t1=y
+else
+    t1="[ERROR]DATA_not_writeable"
+fi
 
-    if [ -r /data ]; then
-        t2=y
-    else
-        t2="[ERROR]DATA_not_readable"
-    fi
-    if dig +short whether.114dns.com @114.114.114.114 | grep -q "127.0.0.1"; then
-        t3="[DNS hijack]"
-    else
-        t3=y
-    fi
-    if dig +short whoami.ds.akahelp.net @9.8.7.6 txt -p53 +retry=0 +timeout=1 | grep -q timed; then
-        t4=y
-    else
-        t4="[DNS hijack]"
-    fi
-    t5t=$(dig www.taobao.com @127.0.0.1 -p53 A +short)
-    t5=$(v4check "$t5t" CN-53)
+if [ -r /data ]; then
+    t2=y
+else
+    t2="[ERROR]DATA_not_readable"
+fi
+if dig +short whether.114dns.com @114.114.114.114 | grep -q "127.0.0.1"; then
+    t3="[DNS hijack]"
+else
+    t3=y
+fi
+if dig +short whoami.ds.akahelp.net @9.8.7.6 txt -p53 +retry=0 +timeout=1 | grep -q timed; then
+    t4=y
+else
+    t4="[DNS hijack]"
+fi
+t5t=$(dig www.taobao.com @127.0.0.1 -p53 A +short)
+t5=$(v4check "$t5t" CN-53)
+if ps -ef | grep -v grep | grep -q mosdns.yaml; then
     t6t=$(dig www.taobao.com @127.0.0.1 -p5301 A +short)
     t6=$(v4check "$t6t" CN-5301)
     t7t=$(dig www.taobao.com @127.0.0.1 -p5302 A +short)
@@ -61,13 +61,27 @@ if ps -ef | grep -v grep | grep -q mosdns.yaml; then
     if echo $result | grep -q "yyyyyyyyyyyy"; then
         echo "[INFO]" ALL TEST PASS.
     else
-            echo $result
+        echo $result
         echo "[INFO]" TEST FAIL.
     fi
     echo "\`\`\`"
     echo "-> test end \`$(date +%s)\`"
     echo
 else
-    echo "DNS NOT READY."
+    if [ "$CNAUTO" != "no" ]; then
+        echo "DNS NOT READY."
+    else
+        echo "UNBOUND MODE TEST."
+        result=$t1$t2$t3$t4$t5
+        if echo $result | grep -q "yyyyy"; then
+            echo "[INFO]" ALL TEST PASS.
+        else
+            echo $result
+            echo "[INFO]" TEST FAIL.
+        fi
+        echo "\`\`\`"
+        echo "-> test end \`$(date +%s)\`"
+        echo
+    fi
 fi
 blank

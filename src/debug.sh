@@ -58,19 +58,26 @@ echo "[TEST]" IP ROUTE
 blank
 echo CN IP URL:
 mosdns curl http://test.ipw.cn | grep -Eo "$IPREX4" | tail -1
+echo -
 mosdns curl http://ipsu.03k.org/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+echo --
 mosdns curl https://cf-ns.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo CN RAW-IP URL:
 mosdns curl http://115.231.186.225/ | grep -Eo "$IPREX4" | grep -v "115.231.186.225" | tail -1
 echo ------------------
 echo Non-CN IP URL:
 mosdns curl https://www.cloudflare.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+echo -
 mosdns curl http://checkip.synology.com/ | grep -Eo "$IPREX4" | tail -1
+echo --
 mosdns curl https://v4.ident.me/ | grep -Eo "$IPREX4" | tail -1
 echo Non-CN RAW-IP URL:
 mosdns curl https://1.1.1.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+echo -
 mosdns curl https://1.0.0.3/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+echo --
 mosdns curl https://1.0.0.2/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+echo ---
 mosdns curl https://1.0.0.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo ------------------
 #sleep 5
