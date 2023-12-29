@@ -72,13 +72,13 @@ mosdns curl http://checkip.synology.com/ | grep -Eo "$IPREX4" | tail -1
 echo --
 mosdns curl https://v4.ident.me/ | grep -Eo "$IPREX4" | tail -1
 echo Non-CN RAW-IP URL:
-mosdns curl https://1.1.1.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
-echo -
 mosdns curl https://1.0.0.3/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+echo -
+mosdns curl http://172.67.150.201/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo --
 mosdns curl https://1.0.0.2/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo ---
-mosdns curl https://1.0.0.1/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
+mosdns curl http://104.16.124.96/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo ------------------
 #sleep 5
 echo IP INFO:
