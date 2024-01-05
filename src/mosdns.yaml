@@ -199,7 +199,7 @@ plugins:
 #global_mark_yes        - matches: qname $global_mark_cn
 #global_mark_yes          exec: return
 
-#global_mark_yes#ipv6ok        - exec: prefer_ipv4
+#global_mark_yes#ipv6yes        - exec: prefer_ipv4
 #global_mark_yes#autoforward-yes#autoforward-check        - exec: goto try_auto_check
 #global_mark_yes#autoforward-yes#autoforward-nocheck        - exec: $force_forward
 #global_mark_yes#autoforward-no        - exec: goto f_force_nocn_list
