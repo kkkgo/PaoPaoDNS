@@ -11,4 +11,3 @@ domain:time.edu.cn
 domain:ntp.org.cn
 domain:localhost.ptlogin2.qq.com
 domain:localhost.sec.qq.com
-domain:.lan
