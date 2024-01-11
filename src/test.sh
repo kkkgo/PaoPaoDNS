@@ -29,15 +29,17 @@ if [ -r /data ]; then
 else
     t2="[ERROR]DATA_not_readable"
 fi
-if dig +short whether.114dns.com @114.114.114.114 | grep -q "127.0.0.1"; then
-    t3="[DNS hijack]"
+t3t=$(dig +short whether.114dns.com @114.114.114.114)
+if echo "$t3t" | grep -q "127.0.0.1"; then
+    t3="[DNS hijack]""$t3t"
 else
     t3=y
 fi
-if dig +short whoami.ds.akahelp.net @9.8.7.6 txt -p53 +retry=0 +timeout=1 | grep -q timed; then
+t4t=$(dig +short whoami.ds.akahelp.net @9.8.7.6 txt -p53 +retry=0 +timeout=1)
+if echo "$t4t" | grep -q timed; then
     t4=y
 else
-    t4="[DNS hijack]"
+    t4="[DNS hijack]""$t4t"
 fi
 t5t=$(dig www.taobao.com @127.0.0.1 -p53 A +short)
 t5=$(v4check "$t5t" CN-53)
