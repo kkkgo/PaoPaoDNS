@@ -297,6 +297,9 @@ if [ "$CNAUTO" != "no" ]; then
     if [ "$IPV6" = "only6" ]; then
         sed -i "s/#ipv6only6//g" /tmp/mosdns.yaml
     fi
+    if [ "$IPV6" = "yes_only6" ]; then
+        sed -i "s/#ipv6cn_only6//g" /tmp/mosdns.yaml
+    fi
     if [ "$CNFALL" = "yes" ]; then
         sed -i "s/#cnfall//g" /tmp/mosdns.yaml
     else

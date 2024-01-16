@@ -199,7 +199,12 @@ plugins:
 #global_mark_yes        - matches: qname $global_mark_cn
 #global_mark_yes          exec: return
 
-#global_mark_yes#ipv6yes        - exec: prefer_ipv4
+#global_mark_yes#ipv6yes        - matches: 
+#global_mark_yes#ipv6yes          - qtype 28
+#global_mark_yes#ipv6yes          exec: pong END by IPv6=yes, MARK_DATA block aaaa.
+#global_mark_yes#ipv6cn_only6        - matches: 
+#global_mark_yes#ipv6cn_only6          - qtype 28
+#global_mark_yes#ipv6cn_only6          exec: prefer_ipv4
 #global_mark_yes#autoforward-yes#autoforward-check        - exec: goto try_auto_check
 #global_mark_yes#autoforward-yes#autoforward-nocheck        - exec: $force_forward
 #global_mark_yes#autoforward-no        - exec: goto f_force_nocn_list
@@ -270,6 +275,10 @@ plugins:
 #ipv6yes        - matches: 
 #ipv6yes          - qtype 28
 #ipv6yes          exec: pong END by IPv6=yes, NO CN IP block aaaa.
+
+#ipv6cn_only6        - matches: 
+#ipv6cn_only6          - qtype 28
+#ipv6cn_only6          exec: prefer_ipv4
 
 #autoforward-yes#autoforward-check        - matches: 
 #autoforward-yes#autoforward-check          - "!resp_ip_mmdb $cnip PRIVATE"
