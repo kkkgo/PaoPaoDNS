@@ -117,7 +117,9 @@ plugins:
     args:
 ##swaps_match_start##
 ##swaps_match_end##
-        - exec: ok
+        - matches: has_wanted_ans
+          exec: ok
+        - exec: pong Record not found.
 
   - tag: not_a_aaaa
     type: sequence
