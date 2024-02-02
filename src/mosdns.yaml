@@ -76,8 +76,8 @@ plugins:
   - tag: local_unbound
     type: forward
     args:
-      upstreams:
       allowcode: 23
+      upstreams:
         - addr: "udp://127.0.0.1:5301"
 
 #cnfall  - tag: local_unbound_fall
@@ -97,8 +97,8 @@ plugins:
   - tag: forward_unbound
     type: forward
     args:
-      concurrent: 2
       allowcode: 23
+      concurrent: 2
       upstreams:
         - addr: "udp://127.0.0.1:5304"
 #nosocks        - addr: "udp://127.0.0.1:5302"
