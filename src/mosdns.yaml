@@ -77,6 +77,7 @@ plugins:
     type: forward
     args:
       upstreams:
+      allowcode: 23
         - addr: "udp://127.0.0.1:5301"
 
 #cnfall  - tag: local_unbound_fall
@@ -89,6 +90,7 @@ plugins:
 #customforward-seted  - tag: force_forward
 #customforward-seted    type: forward
 #customforward-seted    args:
+#customforward-seted      allowcode: 23
 #customforward-seted      upstreams:
 #customforward-seted        - addr: "udp://{CUSTOM_FORWARD}"
 
@@ -96,6 +98,7 @@ plugins:
     type: forward
     args:
       concurrent: 2
+      allowcode: 23
       upstreams:
         - addr: "udp://127.0.0.1:5304"
 #nosocks        - addr: "udp://127.0.0.1:5302"
@@ -155,7 +158,7 @@ plugins:
 #addinfo        - exec: addinfo nocn forward_dnscrypt
         - matches: has_wanted_ans
           exec: goto accept
-        - exec: pong END by f_force_nocn_list.
+        - exec: pongerr END by f_force_nocn_list.
 
   - tag: f_local_unbound
     type: sequence
@@ -164,7 +167,7 @@ plugins:
 #addinfo        - exec: addinfo local_unbound
         - matches: has_wanted_ans
           exec: goto accept
-        - exec: pong END by f_local_unbound.
+        - exec: pongerr END by f_local_unbound.
         
 #ttl_rule_ok  - tag: f_force_ttl_rules
 #ttl_rule_ok    type: sequence
@@ -191,7 +194,7 @@ plugins:
 #autoforward-yes#autoforward-check          exec: goto accept
 #autoforward-yes#autoforward-check        - matches: "has_wanted_ans"
 #autoforward-yes#autoforward-check          exec: goto f_force_forward_list
-#autoforward-yes#autoforward-check        - exec: pong END by try_auto_check.
+#autoforward-yes#autoforward-check        - exec: pongerr END by try_auto_check.
 
 #global_mark_yes  - tag: f_global_mark
 #global_mark_yes    type: sequence
