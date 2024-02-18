@@ -11,4 +11,5 @@ domain:msn.cn
 domain:googleapis.cn
 domain:xn--ngstr-lra8j.com
 domain:gvt1.com
-domain:googleapis.com
+domain:android.googleapis.com
+domain:play.googleapis.com
