@@ -118,6 +118,7 @@ plugins:
   - tag: accept
     type: sequence
     args:
+#liteshuffle        - exec: shuffle 2
 ##swaps_match_start##
 ##swaps_match_end##
         - exec: ok
@@ -297,6 +298,7 @@ plugins:
     type: sequence
     args:
 #shuffle        - exec: shuffle
+#liteshuffle        - exec: shuffle 3
 #addinfo        - exec: addinfo respond mosdns cache
         - exec: ok
   - tag: check_cache
