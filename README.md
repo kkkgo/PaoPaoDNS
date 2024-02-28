@@ -161,7 +161,7 @@ www.qq.com@@@qq.03k.org
 - HTTP_FILE: 当设置为yes的时候，会启动一个7889端口的http静态文件服务器映射`/data`目录。你可以利用此功能与其他服务程序共享文件配置。         
 - SAFEMODE： 安全模式，仅作调试使用，内存环境存在问题无法正常启动的时候尝试启用。   
 - ADDINFO： 默认为`no`,设置为`yes`时，在DNS查询结果中增加`ADDITIONAL SECTION`的调试信息，如结果来源、查询延迟、失败原因等，使用dig命令就可以实时追踪域名结果来源，详情参考更新日志( https://github.com/kkkgo/PaoPaoDNS/discussions/61 )。该功能仅对`CNAUTO=yes`生效。
-- SHUFFLE 默认为`no`,设置为`yes`时，对解析的结果进行洗牌实现`Round-robin DNS`。当设置为`lite`，返回精简的仅与请求类型匹配的回应。参考更新日志( https://github.com/kkkgo/PaoPaoDNS/discussions/108 )  
+- SHUFFLE 默认为`no`,设置为`yes`时，对解析的结果进行洗牌实现`Round-robin DNS`（注：SHUFFLE功能是对每次查询都进行洗牌输出。即使设置为no，在DNS的ttl过期后重新提供的DNS记录本身是经过unbound洗牌过的）。当设置为`lite`，返回精简的仅与请求类型匹配的回应。参考更新日志( https://github.com/kkkgo/PaoPaoDNS/discussions/108 )  
 - QUERY_TIME：限制DNS转发最大时间，仅作调试使用，随意更改此值会导致你查不到DNS结果。     
 
 可映射TCP/UDP|端口用途
