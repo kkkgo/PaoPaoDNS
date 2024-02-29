@@ -16,6 +16,7 @@ v4check() {
     fi
 }
 blank
+echo images build time : {bulidtime}
 echo "-> test start \`$(date +%s)\`"
 echo "\`\`\`rust"
 if [ -w /data ]; then

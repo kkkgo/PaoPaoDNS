@@ -107,6 +107,7 @@ add_repo dl-cdn.alpinelinux.org
 bt=$(date +"%Y-%m-%d %H:%M:%S %Z")
 sed -i "s/{bulidtime}/$bt/g" /src/init.sh
 sed -i "s/{bulidtime}/$bt/g" /src/debug.sh
+sed -i "s/{bulidtime}/$bt/g" /src/test.sh
 
 #clean
 chmod +x /src/*.sh
