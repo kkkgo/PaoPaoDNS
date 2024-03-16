@@ -17,6 +17,8 @@ v4check() {
 }
 blank
 echo images build time : {bulidtime}
+echo "check for the latest version ,"
+echo "go to https://github.com/kkkgo/PaoPaoDNS/discussions " 
 echo "-> test start \`$(date +%s)\`"
 echo "\`\`\`rust"
 if [ -w /data ]; then

@@ -344,6 +344,9 @@ if [ "$CNAUTO" != "no" ]; then
     if [ "$SHUFFLE" = "lite" ]; then
         sed -i "s/#liteshuffle//g" /tmp/mosdns.yaml
     fi
+    if [ "$SHUFFLE" = "trnc" ]; then
+        sed -i "s/#trncshuffle//g" /tmp/mosdns.yaml
+    fi
     if [ "$USE_MARK_DATA" = "yes" ]; then
         sed -i "s/#global_mark_yes//g" /tmp/mosdns.yaml
         if [ ! -f /data/global_mark.dat ]; then
