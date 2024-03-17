@@ -76,6 +76,7 @@ docker exec paopaodns test.sh
 # 如果执行后输出 ALL TEST PASS，则所有组件都工作正常。
 # 如果显示 FAIL，可以执行 debug.sh 进一步分析原因。
 ```   
+同时你可以查阅[更新日志](https://github.com/kkkgo/PaoPaoDNS/discussions/categories/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)的最新版本公告时间，检查输出的镜像版本时间是否大于等于当前最新版本。  
 需要注意的是，如果你的网络有“自动分流IP”的功能，请把容器的IP加入不分流的名单，因为权威DNS需要准确的IP去判断，IP分流会影响权威DNS的判断。此外，一些软路由存在劫持DNS请求的情况，解决办法参见[这个issue](https://github.com/kkkgo/PaoPaoDNS/issues/2#issuecomment-1504708367)。    
 
 ## 参数说明
@@ -102,7 +103,7 @@ USE_HOSTS|`no`|`no`,`yes`|
 HTTP_FILE|`no`|`no`,`yes`|
 SAFEMODE|`no`|`no`,`yes`|
 ADDINFO|`no`|`no`,`yes`|
-SHUFFLE|`no`|`no`,`yes`,`lite`|
+SHUFFLE|`no`|`no`,`yes`,`lite`,`trnc`|
 QUERY_TIME|`2000ms`|`time.Duration`|
 
 用途说明：
@@ -161,7 +162,7 @@ www.qq.com@@@qq.03k.org
 - HTTP_FILE: 当设置为yes的时候，会启动一个7889端口的http静态文件服务器映射`/data`目录。你可以利用此功能与其他服务程序共享文件配置。         
 - SAFEMODE： 安全模式，仅作调试使用，内存环境存在问题无法正常启动的时候尝试启用。   
 - ADDINFO： 默认为`no`,设置为`yes`时，在DNS查询结果中增加`ADDITIONAL SECTION`的调试信息，如结果来源、查询延迟、失败原因等，使用dig命令就可以实时追踪域名结果来源，详情参考更新日志( https://github.com/kkkgo/PaoPaoDNS/discussions/61 )。该功能仅对`CNAUTO=yes`生效。
-- SHUFFLE 默认为`no`,设置为`yes`时，对解析的结果进行洗牌实现`Round-robin DNS`（注：SHUFFLE功能是对每次查询都进行洗牌输出。即使设置为no，在DNS的ttl过期后重新提供的DNS记录本身是经过unbound洗牌过的）。当设置为`lite`，返回精简的仅与请求类型匹配的回应。参考更新日志( https://github.com/kkkgo/PaoPaoDNS/discussions/108 )  
+- SHUFFLE 默认为`no`,设置为`yes`时，对解析的结果进行洗牌实现`Round-robin DNS`（注：SHUFFLE功能是对每次查询都进行洗牌输出。即使设置为no，在DNS的ttl过期后重新提供的DNS记录本身是经过unbound洗牌过的）。当设置为`lite`，返回精简的仅与请求类型匹配的回应，参考更新日志( https://github.com/kkkgo/PaoPaoDNS/discussions/108 )；当设置为`trnc`，在`lite`选项的基础之上，如果返回的记录大于3个，则每次洗牌完成后仅在ttl有效期内输出3个随机记录，参考更新日志( https://github.com/kkkgo/PaoPaoDNS/discussions/109 )    
 - QUERY_TIME：限制DNS转发最大时间，仅作调试使用，随意更改此值会导致你查不到DNS结果。     
 
 可映射TCP/UDP|端口用途
