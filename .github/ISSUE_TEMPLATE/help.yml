@@ -12,7 +12,7 @@ body:
     attributes:
       label: "在提交之前，请确认"
       options:
-        - label: "我已经尝试搜索过Issue和看过参数说明，但没有找到相关问题。"
+        - label: "我已经尝试执行test.sh并搜索过Issue和discussions和文档，但没有找到相关问题。"
           required: true
         - label: "我正在使用最新的docker镜像版本（可以尝试`docker pull sliamb/paopaodns:latest`后重新创建容器）。"
           required: true
@@ -21,7 +21,7 @@ body:
     id: log
     attributes:
       label: 脚本自检日志
-      description: "在容器内执行`debug.sh`，将输出结果粘贴到https://gist.github.com ，如有敏感信息可以用x代替最后一位"
+      description: "在容器内执行`test.sh`和`debug.sh`，如有敏感信息可以用x代替最后一位"
       render: txt
     validations:
       required: true
