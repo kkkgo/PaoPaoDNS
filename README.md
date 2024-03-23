@@ -41,6 +41,8 @@ docker run -d \
 --network macvlan_eth0 --ip 192.168.1.8 \
 sliamb/paopaodns
 ```
+***如果你的网络端口没有冲突，也可以考虑使用docker host网络模式以获得最佳性能。***   
+*如条件允许建议使用**docker compose**部署*    
 *如果你的网络环境访问Dokcer镜像有困难，可以尝试使用[上海交大](https://mirror.sjtu.edu.cn/docs/docker-registry)的镜像。*   
 
 验证你的递归DNS正常运行(假设你的容器IP是192.168.1.8)，可以执行以下命令：   
@@ -69,15 +71,16 @@ Address:  116.31.123.234 #连接权威DNS服务器的IP=你的宽带IP
 ```
 如果返回的IP和你宽带的出口IP一致的话，说明你的递归DNS服务正常运作了。 
    
-简单验证所有DNS组件是否工作正常：  
+***搭建完请简单验证所有DNS组件是否工作正常：***  
 ```rust
 # 在容器内置执行 test.sh
 docker exec paopaodns test.sh
 # 如果执行后输出 ALL TEST PASS，则所有组件都工作正常。
 # 如果显示 FAIL，可以执行 debug.sh 进一步分析原因。
 ```   
-同时你可以查阅[更新日志](https://github.com/kkkgo/PaoPaoDNS/discussions/categories/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)的最新版本公告时间，检查输出的镜像版本时间是否大于等于当前最新版本。  
+同时你可以查阅[更新日志](https://github.com/kkkgo/PaoPaoDNS/discussions/categories/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)的最新版本公告时间，检查输出的镜像版本时间是否大于等于当前最新版本。   
 需要注意的是，如果你的网络有“自动分流IP”的功能，请把容器的IP加入不分流的名单，因为权威DNS需要准确的IP去判断，IP分流会影响权威DNS的判断。此外，一些软路由存在劫持DNS请求的情况，解决办法参见[这个issue](https://github.com/kkkgo/PaoPaoDNS/issues/2#issuecomment-1504708367)。    
+***[DNS hijack]DNS劫持算是经常问的高频问题了，[请参考](https://github.com/kkkgo/PaoPaoDNS/discussions/111#discussioncomment-8872824)***   
 
 ## 参数说明
 环境变量参数如下：  

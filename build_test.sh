@@ -61,6 +61,7 @@ docker rm -f test2
 docker run --name test3 \
     -e USE_MARK_DATA=yes \
     -e AUTO_FORWARD=yes \
+    -e ADDINFO=yes \
     -e CUSTOM_FORWARD=9.8.7.6:53 \
     ppdns &
 sleep 15
