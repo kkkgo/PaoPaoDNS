@@ -2,6 +2,7 @@
 
 # add tools
 apk update
+apk upgrade
 apk add build-base flex byacc musl-dev gcc make git python3-dev swig libevent-dev openssl-dev expat-dev hiredis-dev go grep bind-tools
 
 # build unbound

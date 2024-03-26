@@ -84,7 +84,7 @@ else
         echo "UNBOUND MODE TEST."
         result=$t1$t2$t3$t4$t5
         if echo $result | grep -q "yyyyy"; then
-            echo "[INFO]" ALL TEST PASS.
+            echo "[INFO]" ALL TEST PASS.  🎉🎉🎉
         else
             echo $result
             echo "[INFO]" TEST FAIL.

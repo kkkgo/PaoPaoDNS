@@ -2,6 +2,7 @@
 
 # add tools
 apk update
+apk upgrade
 apk add curl redis git
 
 # redis
