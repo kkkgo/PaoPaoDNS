@@ -44,6 +44,11 @@ if echo "$t4t" | grep -q timed; then
 else
     t4="[DNS hijack]""$t4t"
 fi
+dig www.taobao.com @127.0.0.1 -p5301 A +short >/dev/null
+dig www.taobao.com @127.0.0.1 -p5301 A +short >/dev/null
+dig www.taobao.com @127.0.0.1 -p5301 A +short >/dev/null
+dig www.taobao.com @127.0.0.1 -p5301 A +short >/dev/null
+dig www.taobao.com @127.0.0.1 -p5301 A +short >/dev/null
 t5t=$(dig www.taobao.com @127.0.0.1 -p53 A +short)
 t5=$(v4check "$t5t" CN-53)
 if ps -ef | grep -v grep | grep -q mosdns.yaml; then

@@ -164,8 +164,14 @@ fi
 if [ "$CORES" -gt 6 ]; then
     POWCORES=8
 fi
-
-FDLIM=$((lim / (2 * CORES) - CORES * 3))
+REALCORES=$(grep -c ^processor /proc/cpuinfo)
+if [ "$REALCORES" -lt "$CORES" ]; then
+    REALCORES="$CORES"
+fi
+if [ "$REALCORES" -gt "12" ]; then
+    REALCORES=12
+fi
+FDLIM=$((lim / (2 * REALCORES) - REALCORES * 3))
 if [ "$FDLIM" -gt 4096 ]; then
     FDLIM=4096
 fi

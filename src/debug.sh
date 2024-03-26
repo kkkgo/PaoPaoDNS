@@ -98,14 +98,14 @@ echo
 echo "[INFO]" force_cn_list
 grep whoami /data/force_cn_list.txt
 echo MOSDNS WHOAMI :
-echo -n "akahelp: "
+echo -n "MOSDNS akahelp: "
 dig +short whoami.ds.akahelp.net @127.0.0.1 txt -p53
-echo -n "03k: "
+echo -n "MOSDNS 03k: "
 dig +short whoami.03k.org @127.0.0.1 a -p53
 echo UNBOUND WHOAMI:
-echo -n "akahelp: "
+echo -n "UNBOUND akahelp: "
 dig +short whoami.ds.akahelp.net @127.0.0.1 txt -p5301
-echo -n "03k: "
+echo -n "UNBOUND 03k: "
 dig +short whoami.03k.org @127.0.0.1 a -p5301
 #sleep 1
 blank
