@@ -37,11 +37,21 @@ blank
 echo "[INFO]" ENV
 blank
 cat /tmp/env.conf
+ls -shan
 blank
 #sleep 5
 echo "[INFO]" PS
 blank
 ps -ef
+if ps -ef | grep -v grep | grep unbound_raw; then
+    echo unbound OK.
+else
+    echo Try to run unbound...
+    unbound -c /tmp/unbound_raw.conf -p -v -d &
+    grep -E "(num-threads: |outgoing-range: |outgoing-num-tcp: |incoming-num-tcp: |msg-cache-size: |msg-cache-slabs: |num-queries-per-thread: |rrset-cache-size: |rrset-cache-slabs: )" /tmp/unbound_raw.conf
+    echo RealCore:"$(grep -c ^processor /proc/cpuinfo)"
+    echo ulimit:$(ulimit -n)
+fi
 blank
 echo "[INFO]" TOP
 blank
