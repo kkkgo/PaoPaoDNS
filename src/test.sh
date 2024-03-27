@@ -74,7 +74,7 @@ if ps -ef | grep -v grep | grep -q mosdns.yaml; then
 
     result=$t1$t2$t3$t4$t5$t6$t7$t8$t9$t10$t11$t12$tredis
     if echo $result | grep -q "yyyyyyyyyyyyy"; then
-        echo "[INFO]" ALL TEST PASS.✔
+        echo "[INFO]" ALL TEST PASS.✅
     else
         echo $result
         echo "[INFO]" TEST FAIL.❌
@@ -89,7 +89,7 @@ else
         echo "UNBOUND MODE TEST."
         result=$t1$t2$t3$t4$t5$tredis
         if echo $result | grep -q "yyyyyy"; then
-            echo "[INFO]" ALL TEST PASS.✔
+            echo "[INFO]" ALL TEST PASS.✅
         else
             echo $result
             echo "[INFO]" TEST FAIL.❌

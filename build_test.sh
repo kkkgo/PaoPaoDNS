@@ -73,7 +73,12 @@ else
     exit
 fi
 docker rm -f test3
-
+if docker exec test3 redis-cli -s /tmp/redis.sock info | grep -q human; then
+    echo redis pass.
+else
+    echo redis failed.
+    exit
+fi
 # pass check
 echo ALL TEST PASSED.
 touch build_test_ok
