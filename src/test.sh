@@ -18,7 +18,7 @@ v4check() {
 blank
 echo images build time : {bulidtime}
 echo "check for the latest version ,"
-echo "go to https://github.com/kkkgo/PaoPaoDNS/discussions " 
+echo "go to https://github.com/kkkgo/PaoPaoDNS/discussions "
 echo "-> test start \`$(date +%s)\`"
 echo "\`\`\`rust"
 if [ -w /data ]; then
@@ -51,6 +51,11 @@ dig www.taobao.com @127.0.0.1 -p5301 A +short >/dev/null
 dig www.taobao.com @127.0.0.1 -p5301 A +short >/dev/null
 t5t=$(dig www.taobao.com @127.0.0.1 -p53 A +short)
 t5=$(v4check "$t5t" CN-53)
+if redis-cli -s /tmp/redis.sock info | grep -q human; then
+    tredis=y
+else
+    tredis=n
+fi
 if ps -ef | grep -v grep | grep -q mosdns.yaml; then
     t6t=$(dig www.taobao.com @127.0.0.1 -p5301 A +short)
     t6=$(v4check "$t6t" CN-5301)
@@ -67,27 +72,27 @@ if ps -ef | grep -v grep | grep -q mosdns.yaml; then
     t12t=$(dig www.google.com @127.0.0.1 -p5304 A +short)
     t12=$(v4check "$t12t" NOCN-5304)
 
-    result=$t1$t2$t3$t4$t5$t6$t7$t8$t9$t10$t11$t12
-    if echo $result | grep -q "yyyyyyyyyyyy"; then
-        echo "[INFO]" ALL TEST PASS.
+    result=$t1$t2$t3$t4$t5$t6$t7$t8$t9$t10$t11$t12$tredis
+    if echo $result | grep -q "yyyyyyyyyyyyy"; then
+        echo "[INFO]" ALL TEST PASS.✔
     else
         echo $result
-        echo "[INFO]" TEST FAIL.
+        echo "[INFO]" TEST FAIL.❌
     fi
     echo "\`\`\`"
     echo "-> test end \`$(date +%s)\`"
     echo
 else
     if [ "$CNAUTO" != "no" ]; then
-        echo "DNS NOT READY."
+        echo "DNS NOT READY.❌"
     else
         echo "UNBOUND MODE TEST."
-        result=$t1$t2$t3$t4$t5
-        if echo $result | grep -q "yyyyy"; then
-            echo "[INFO]" ALL TEST PASS.  🎉🎉🎉
+        result=$t1$t2$t3$t4$t5$tredis
+        if echo $result | grep -q "yyyyyy"; then
+            echo "[INFO]" ALL TEST PASS.✔
         else
             echo $result
-            echo "[INFO]" TEST FAIL.
+            echo "[INFO]" TEST FAIL.❌
         fi
         echo "\`\`\`"
         echo "-> test end \`$(date +%s)\`"
