@@ -189,18 +189,18 @@ www.qq.com@@@qq.03k.org
 - `Country-only-cn-private.mmdb`：CN IP数据库，自动更新将会覆盖此文件。容器版本更新将会覆盖该文件。  
 - `global_mark.dat`：`USE_MARK_DATA`功能的数据库，自动更新将会覆盖此文件。容器版本更新将会覆盖该文件。  
 - `dnscrypt.toml`：dnscrypt配置模板文件，修改它将会覆盖dnscrypt运行参数。除了调试用途，一般不修改它。容器版本更新将会覆盖该文件。   
-- `force_cn_list.txt`：强制使用本地递归服务器查询的域名列表，容器版本更新不会覆盖该文件。一行一条，语法规则如下：  
+- `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，容器版本更新不会覆盖该文件。一行一条，语法规则如下：  
 以`domain:`开头域匹配: `domain:03k.org`会匹配自身`03k.org`，以及其子域名`www.03k.org`, `blog.03k.org`等。   
 以`full:`开头，完整匹配，`full:03k.org` 只会匹配自身。完整匹配优先级更高。     
-以`regxp:`开头，正则匹配，如`regexp:.+\.03k\.org$`。[Go标准正则](https://github.com/google/re2/wiki/Syntax)。   
+以`regexp:`开头，正则匹配，如`regexp:.+\.03k\.org$`。[Go标准正则](https://github.com/google/re2/wiki/Syntax)。   
 以`keyword:`开头匹配域名关键字，如以`keyword: 03k.org`会匹配到`www.03k.org.cn`   
 尽量避免使用regxp和keyword，会消耗更多资源。域名表达式省略前缀则为`domain:`。同一文本内匹配优先级：`full > domain > regexp > keyword`     
-- `force_nocn_list.txt`：强制使用dnscrypt加密查询的域名列表，匹配规则同上。容器版本更新不会覆盖该文件。   
-- `force_forward_list.txt`： 仅在配置`CUSTOM_FORWARD`有效值时生效，强制转发到`CUSTOM_FORWARD`DNS服务器的域名列表，匹配规则同上。容器版本更新不会覆盖该文件。   
-- 修改`force_cn_list.txt`或`force_nocn_list.txt`或`force_forward_list.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_nocn_list > force_cn_list`。   
-- 注意事项：如果你想解析的域名位于境外，并且没有境内CDN，而你又想获取原始记录（与`force_forward_list.txt`区分开），那么你应该把域名加进`force_nocn_list.txt`而不是`force_cn_list.txt`，因为基于个人网络环境差异，境外域名存在递归失败的可能。    
-- `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRACKER`功能会出现，会增量自动更新，[更新数据来源](https://github.com/kkkgo/all-tracker-list) ，你也可以添加自己的trakcer到这个文件(或者向[该项目](https://github.com/kkkgo/all-tracker-list)提交)，更新的时候会自动合并。修改将实时重载生效。容器版本更新不会覆盖该文件。   
+- `force_dnscrypt_list.txt`：强制使用dnscrypt加密查询结果的域名列表，匹配规则同上。容器版本更新不会覆盖该文件。   
+- `force_recurse_list.txt`：强制使用本地递归服务器查询的域名列表，*一般不会用到该list，强制递归的域名不会被生效CNFALL功能*，匹配规则同上。容器版本更新不会覆盖该文件。   
 - `force_ttl_rules.txt`: 参见`RULES_TTL`功能。修改将实时重载生效。容器版本更新不会覆盖该文件。   
+- 修改`force_forward_list.txt`或`force_dnscrypt_list.txt`或`force_recurse_list.txt`或`force_ttl_rules.txt`将会实时重载生效。文本匹配优先级`force_forward_list > force_dnscrypt_list > force_recurse_list > force_ttl_rules`。   
+- **注意事项**：由于跨平台系统差异，不建议使用Windows自带记事本编辑。如果list出现了问题无法读取或者无法生效，可以直接删除list文件，重启容器会自动重建默认的list。如果你想解析的域名位于境外，并且没有境内CDN，而你又想获取原始记录（与`force_forward_list.txt`或者使用`AUTO_FORWARD`功能获取到的解析记录区分开），那么你应该把域名加进`force_dnscrypt_list.txt`而不是`force_recurse_list.txt`，因为基于个人网络环境差异，递归服务器位于境外的域名存在递归失败的可能。*`force_recurse_list.txt`的应用场景一般应仅限于特殊域名递归调试，大部分场景都不适用于`force_recurse_list.txt`。*         
+- `trackerslist.txt`：bt trakcer列表文件，开启`CN_TRACKER`功能会出现，会增量自动更新，[更新数据来源](https://github.com/kkkgo/all-tracker-list) ，你也可以添加自己的trakcer到这个文件(或者向[该项目](https://github.com/kkkgo/all-tracker-list)提交)，更新的时候会自动合并。修改将实时重载生效。容器版本更新不会覆盖该文件。   
 - `mosdns.yaml`：mosdns的配置模板文件，修改它将会覆盖mosdns运行参数。除了调试用途，一般强烈建议不修改它。容器版本更新将会覆盖该文件。   
 - `custom_env.ini`可以自定义环境变量，会覆盖在容器在启动时的环境变量。在容器启动后修改该文件将会导致MosDNS重载，但在容器启动后修改的环境变量不会影响已经启动的其他组件。配置的格式为`key="value"`（注意英文双引号），错误格式的环境变量将会被忽略加载。容器版本更新不会覆盖该文件。  
 - `custom_mod.yaml`可以自定义一些高级功能，参见下面的`custom_mod.yaml`文件说明。错误的配置可能导致服务运行异常。需要重启容器应用配置。容器版本更新不会覆盖该文件。   
