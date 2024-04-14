@@ -272,11 +272,11 @@ if [ "$CNAUTO" != "no" ]; then
         mkdir -p /data/dnscrypt-resolvers/
         cp /usr/sbin/dnscrypt-resolvers/* /data/dnscrypt-resolvers/
     fi
-    if [ ! -f /data/force_nocn_list.txt ]; then
-        cp /usr/sbin/force_nocn_list.txt /data/
+    if [ ! -f /data/force_dnscrypt_list.txt ]; then
+        cp /usr/sbin/force_dnscrypt_list.txt /data/
     fi
-    if [ ! -f /data/force_cn_list.txt ]; then
-        cp /usr/sbin/force_cn_list.txt /data/
+    if [ ! -f /data/force_recurse_list.txt ]; then
+        cp /usr/sbin/force_recurse_list.txt /data/
     fi
     if echo "$SOCKS5" | grep -Eoq ":[0-9]+"; then
         SOCKS5=$(echo "$SOCKS5" | sed 's/"//g')
@@ -382,11 +382,21 @@ if [ "$CNAUTO" != "no" ]; then
         sed -i "s/#serverip-enable//g" /tmp/mosdns.yaml
         sed -i "s/{SERVER_IP}/$SERVER_IP/g" /tmp/mosdns.yaml
     fi
-    if [ -f /data/force_nocn_list.txt ]; then
-        sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_nocn_list.txt
+    if [ -f /data/force_dnscrypt_list.txt ]; then
+        sed 's/\r$//' /data/force_dnscrypt_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_dnscrypt_list.txt
+        if [ -f /data/force_nocn_list.txt ]; then
+            echo "" >>/tmp/force_dnscrypt_list.txt
+            sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >>/tmp/force_dnscrypt_list.txt
+        fi
+        sort -u /tmp/force_dnscrypt_list.txt -o /tmp/force_dnscrypt_list.txt
     fi
-    if [ -f /data/force_cn_list.txt ]; then
-        sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_cn_list.txt
+    if [ -f /data/force_recurse_list.txt ]; then
+        sed 's/\r$//' /data/force_recurse_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_recurse_list.txt
+        if [ -f /data/force_cn_list.txt ]; then
+            echo "" >>/tmp/force_recurse_list.txt
+            sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >>/tmp/force_recurse_list.txt
+        fi
+        sort -u /tmp/force_recurse_list.txt -o /tmp/force_recurse_list.txt
     fi
     if [ -f /data/force_forward_list.txt ]; then
         sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt

@@ -95,8 +95,8 @@ echo IP INFO:
 mosdns curl http://ip.03k.org
 echo
 #sleep 1
-echo "[INFO]" force_cn_list
-grep whoami /data/force_cn_list.txt
+echo "[INFO]" force_recurse_list
+grep whoami /data/force_recurse_list.txt
 echo MOSDNS WHOAMI :
 echo -n "MOSDNS akahelp: "
 dig +short whoami.ds.akahelp.net @127.0.0.1 txt -p53

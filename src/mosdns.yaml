@@ -21,17 +21,17 @@ plugins:
 ##swaps_ipset_start##
 ##swaps_ipset_end##
 
-  - tag: "force_cn_list"
+  - tag: "force_recurse_list"
     type: "domain_set"
     args:
       files:
-        - "/tmp/force_cn_list.txt"
+        - "/tmp/force_recurse_list.txt"
 
-  - tag: "force_nocn_list"
+  - tag: "force_dnscrypt_list"
     type: "domain_set"
     args:
       files:
-        - "/tmp/force_nocn_list.txt"
+        - "/tmp/force_dnscrypt_list.txt"
 #cntracker-yes        - "/tmp/cn_tracker_list.txt"
 
 #ttl_rule_ok  - tag: "force_ttl_rules"
@@ -147,7 +147,7 @@ plugins:
 #CUSTOM_FORWARD_TTL#customforward-seted        - exec: ttl {CUSTOM_FORWARD_TTL}-0
 #customforward-seted        - exec: goto accept
 
-  - tag: f_force_nocn_list
+  - tag: f_force_dnscrypt_list
     type: sequence
     args:
         - exec: drop_resp
@@ -160,7 +160,7 @@ plugins:
 #addinfo        - exec: addinfo nocn forward_dnscrypt
         - matches: has_wanted_ans
           exec: goto accept
-        - exec: pongerr END by f_force_nocn_list.
+        - exec: pongerr END by f_force_dnscrypt_list.
 
   - tag: f_local_unbound
     type: sequence
@@ -212,7 +212,7 @@ plugins:
 #global_mark_yes#ipv6cn_only6          exec: prefer_ipv4
 #global_mark_yes#autoforward-yes#autoforward-check        - exec: goto try_auto_check
 #global_mark_yes#autoforward-yes#autoforward-nocheck        - exec: $force_forward
-#global_mark_yes#autoforward-no        - exec: goto f_force_nocn_list
+#global_mark_yes#autoforward-no        - exec: goto f_force_dnscrypt_list
 
 
 #usehosts-yes  - tag: accept_hosts
@@ -238,9 +238,9 @@ plugins:
 #ipv6no          exec: pong END by IPv6=no.
 
 #ipv6yes        - matches: 
-#ipv6yes          - qname $force_nocn_list
+#ipv6yes          - qname $force_dnscrypt_list
 #ipv6yes          - qtype 28
-#ipv6yes          exec: pong END by IPv6=yes, force_nocn_list block aaaa.
+#ipv6yes          exec: pong END by IPv6=yes, force_dnscrypt_list block aaaa.
 
 #ipv6only6        - exec: prefer_ipv4
 
@@ -252,9 +252,9 @@ plugins:
           exec: jump not_a_aaaa
 #customforward-seted        - matches: qname $force_forward_list
 #customforward-seted          exec: goto f_force_forward_list
-        - matches: qname $force_nocn_list
-          exec: goto f_force_nocn_list
-        - matches: qname $force_cn_list
+        - matches: qname $force_dnscrypt_list
+          exec: goto f_force_dnscrypt_list
+        - matches: qname $force_recurse_list
           exec: goto f_local_unbound
  
 #ttl_rule_ok        - matches: qname $force_ttl_rules
@@ -292,7 +292,7 @@ plugins:
 #autoforward-yes#autoforward-check        - exec: goto try_auto_check
 #autoforward-yes#autoforward-nocheck        - exec: goto f_force_forward_list
 
-#autoforward-no        - exec: goto f_force_nocn_list
+#autoforward-no        - exec: goto f_force_dnscrypt_list
 
 
   - tag: respond

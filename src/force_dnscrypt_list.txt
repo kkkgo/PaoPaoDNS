@@ -1,3 +1,5 @@
+# Read https://github.com/kkkgo/PaoPaoDNS/discussions/122
+
 domain:ip.03k.org
 domain:msftncsi.com
 domain:msftconnecttest.com

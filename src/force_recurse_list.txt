@@ -1,3 +1,5 @@
+# Read https://github.com/kkkgo/PaoPaoDNS/discussions/122
+
 domain:whoami.ds.akahelp.net
 domain:whoami.03k.org
 domain:nstool.netease.com

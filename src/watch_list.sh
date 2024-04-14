@@ -110,17 +110,28 @@ fi
 gen_hash() {
     if [ -f "$1" ]; then
         md5sum "$1" | cut -d" " -f1
+    else
+        echo -n "empty_file"
     fi
 }
 
 reload_dns() {
     if [ "$CNAUTO" != "no" ]; then
         export reload_mosdns=0
-        if [ -f /data/force_cn_list.txt ]; then
-            sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_cn_list.txt
+        if [ -f /data/force_recurse_list.txt ]; then
+            sed 's/\r$//' /data/force_recurse_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_recurse_list.txt
+            if [ -f /data/force_cn_list.txt ]; then
+                sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >>/tmp/force_recurse_list.txt
+            fi
+            sort -u /tmp/force_recurse_list.txt -o /tmp/force_recurse_list.txt
         fi
-        if [ -f /data/force_nocn_list.txt ]; then
-            sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_nocn_list.txt
+        if [ -f /data/force_dnscrypt_list.txt ]; then
+            sed 's/\r$//' /data/force_dnscrypt_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_dnscrypt_list.txt
+            if [ -f /data/force_nocn_list.txt ]; then
+                echo "" >>/tmp/force_dnscrypt_list.txt
+                sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >>/tmp/force_dnscrypt_list.txt
+            fi
+                        sort -u /tmp/force_dnscrypt_list.txt -o /tmp/force_dnscrypt_list.txt
         fi
         if [ -f /data/force_forward_list.txt ]; then
             sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
@@ -128,7 +139,13 @@ reload_dns() {
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
             /usr/sbin/data_update.sh ex_mmdb
         fi
+        if [ "$(gen_hash /data/force_recurse_list.txt)" != "$force_recurse_list" ]; then
+            export reload_mosdns=1
+        fi
         if [ "$(gen_hash /data/force_cn_list.txt)" != "$force_cn_list" ]; then
+            export reload_mosdns=1
+        fi
+        if [ "$(gen_hash /data/force_dnscrypt_list.txt)" != "$force_dnscrypt_list" ]; then
             export reload_mosdns=1
         fi
         if [ "$(gen_hash /data/force_nocn_list.txt)" != "$force_nocn_list" ]; then
@@ -211,16 +228,22 @@ reload_dns() {
 while true; do
     file_list="/etc/unbound/named.cache"
     if [ "$CNAUTO" != "no" ]; then
-        if [ ! -f /data/force_nocn_list.txt ]; then
-            cp /usr/sbin/force_nocn_list.txt /data/
+        if [ ! -f /data/force_dnscrypt_list.txt ]; then
+            cp /usr/sbin/force_dnscrypt_list.txt /data/
         fi
-        if [ ! -f /data/force_cn_list.txt ]; then
-            cp /usr/sbin/force_cn_list.txt /data/
+        if [ ! -f /data/force_recurse_list.txt ]; then
+            cp /usr/sbin/force_recurse_list.txt /data/
         fi
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
             /usr/sbin/data_update.sh ex_mmdb
         fi
-        file_list=$file_list" /data/Country-only-cn-private.mmdb /data/force_cn_list.txt /data/force_nocn_list.txt /data/custom_env.ini"
+        file_list=$file_list" /data/Country-only-cn-private.mmdb /data/force_recurse_list.txt /data/force_dnscrypt_list.txt /data/custom_env.ini"
+        if [ -f /data/force_cn_list.txt ]; then
+            file_list=$file_list" /data/force_cn_list.txt"
+        fi
+        if [ -f /data/force_nocn_list.txt ]; then
+            file_list=$file_list" /data/force_nocn_list.txt"
+        fi
         if [ "$USE_MARK_DATA" = "yes" ]; then
             if [ ! -f /data/global_mark.dat ]; then
                 touch /data/global_mark.dat
@@ -249,8 +272,12 @@ while true; do
                 touch /data/force_ttl_rules.txt
             fi
         fi
+        force_dnscrypt_list=$(gen_hash /data/force_dnscrypt_list.txt)
+        export force_dnscrypt_list
         force_nocn_list=$(gen_hash /data/force_nocn_list.txt)
         export force_nocn_list
+        force_recurse_list=$(gen_hash /data/force_recurse_list.txt)
+        export force_recurse_list
         force_cn_list=$(gen_hash /data/force_cn_list.txt)
         export force_cn_list
         force_forward_list=$(gen_hash /data/force_forward_list.txt)

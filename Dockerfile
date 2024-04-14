@@ -12,8 +12,8 @@ RUN cp /src/Country-only-cn-private.mmdb.xz /tmp/ &&\
     cp /src/dnscrypt-resolvers/relays.md /tmp/ &&\
     cp /src/dnscrypt-resolvers/relays.md.minisig /tmp/ &&\
     cp /src/dnscrypt.toml /tmp/ &&\
-    cp /src/force_cn_list.txt /tmp/ &&\
-    cp /src/force_nocn_list.txt /tmp/ &&\
+    cp /src/force_recurse_list.txt /tmp/ &&\
+    cp /src/force_dnscrypt_list.txt /tmp/ &&\
     cp /src/init.sh /tmp/ &&\
     cp /src/mosdns /tmp/ &&\
     cp /src/mosdns.yaml /tmp/ &&\
