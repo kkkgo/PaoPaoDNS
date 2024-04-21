@@ -73,7 +73,7 @@ mosdns curl http://ipsu.03k.org/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo --
 mosdns curl https://cf-ns.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
 echo CN RAW-IP URL:
-mosdns curl http://115.231.186.225/ | grep -Eo "$IPREX4" | grep -v "115.231.186.225" | tail -1
+mosdns curl http://182.242.62.199/cdn-cgi/trace | grep "ip=" | grep -Eo "$IPREX4" | tail -1
 echo ------------------
 echo Non-CN IP URL:
 mosdns curl https://www.cloudflare.com/cdn-cgi/trace | grep -Eo "$IPREX4" | tail -1
