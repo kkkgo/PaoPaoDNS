@@ -37,7 +37,7 @@ blank
 echo "[INFO]" ENV
 blank
 cat /tmp/env.conf
-ls -shan
+ls -shan /data
 blank
 #sleep 5
 echo "[INFO]" PS
@@ -52,6 +52,19 @@ else
     echo RealCore:"$(grep -c ^processor /proc/cpuinfo)"
     echo ulimit:$(ulimit -n)
 fi
+
+if [ "$CNAUTO" != "no" ]; then
+    if ps -ef | grep -v grep | grep unbound_forward; then
+        echo unbound_forward OK.
+    else
+        echo Try to run unbound_forward...
+        unbound -c /tmp/unbound_forward.conf -p -v -d &
+        grep -E "(num-threads: |outgoing-range: |outgoing-num-tcp: |incoming-num-tcp: |msg-cache-size: |msg-cache-slabs: |num-queries-per-thread: |rrset-cache-size: |rrset-cache-slabs: )" /tmp/unbound_forward.conf
+        echo RealCore:"$(grep -c ^processor /proc/cpuinfo)"
+        echo ulimit:$(ulimit -n)
+    fi
+fi
+
 blank
 echo "[INFO]" TOP
 blank
