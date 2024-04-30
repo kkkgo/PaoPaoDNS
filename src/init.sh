@@ -427,7 +427,7 @@ if [ "$CNAUTO" != "no" ]; then
     sed -i "s/{MSCACHE}/$MSCACHE/g" /tmp/mosdns.yaml
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt.toml >/dev/null 2>&1 &
     dnscrypt-proxy -config /data/dnscrypt-resolvers/dnscrypt_socks.toml >/dev/null 2>&1 &
-    unbound -c /tmp/unbound_forward.conf -p >/dev/null 2>&1 &
+    unbound -c /tmp/unbound_forward.conf -p
     # Add Mods
     touch /data/custom_mod.yaml
     mosdns AddMod
@@ -438,7 +438,7 @@ if [ "$CNAUTO" != "no" ]; then
     mosdns start -d /tmp -c /tmp/mosdns.yaml &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf | sed "s/#RAWDNS//g" >/tmp/unbound_raw.conf
-unbound -c /tmp/unbound_raw.conf -p >/dev/null 2>&1 &
+unbound -c /tmp/unbound_raw.conf -p
 #Unexpected fallback while updating data
 echo "nameserver 127.0.0.1" >/etc/resolv.conf
 echo "nameserver 223.5.5.5" >>/etc/resolv.conf
