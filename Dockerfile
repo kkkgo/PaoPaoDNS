@@ -3,7 +3,7 @@ FROM alpine:edge AS builder
 COPY --from=sliamb/prebuild-paopaodns /src/ /src/
 COPY src/ /src/
 RUN sh /src/build.sh
-# JUST CHECK
+# build file check
 RUN cp /src/Country-only-cn-private.mmdb.xz /tmp/ &&\
     cp /src/global_mark.dat /tmp/ &&\
     cp /src/data_update.sh /tmp/ &&\
@@ -29,6 +29,11 @@ RUN cp /src/Country-only-cn-private.mmdb.xz /tmp/ &&\
     cp /src/trackerslist.txt.xz /tmp/ &&\
     cp /src/watch_list.sh /tmp/ &&\
     cp /src/redis-server /tmp/
+# build binary check
+RUN apk add --no-cache hiredis libevent libgcc && apk upgrade --no-cache
+RUN if /src/mosdns version|grep kkkgo;then echo mosdns_check > /mosdns_check;else cp /mosdns_check /tmp/;fi
+RUN if /src/unbound -V|grep libhiredis;then echo unbound_check > /unbound_check;else cp /unbound_check /tmp/;fi
+RUN if /src/redis-server -v|grep build;then echo redis_check > /redis_check;else cp /redis_check /tmp/;fi
 
 FROM alpine:edge
 COPY --from=builder /src/ /usr/sbin/
