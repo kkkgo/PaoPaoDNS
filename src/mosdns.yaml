@@ -151,6 +151,9 @@ plugins:
     type: sequence
     args:
         - exec: drop_resp
+#ipv6cn_only6        - matches: 
+#ipv6cn_only6          - qtype 28
+#ipv6cn_only6          exec: prefer_ipv4
         - exec: $forward_unbound
 
 #addinfo        - exec: addinfo nocn forward_unbound
