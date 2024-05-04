@@ -20,7 +20,7 @@ body:
   - type: textarea
     id: log
     attributes:
-      label: 脚本自检日志
+      label: debug.sh脚本自检日志
       description: "在容器内执行`test.sh`和`debug.sh`，如有敏感信息可以用x代替最后一位"
       render: txt
     validations:
