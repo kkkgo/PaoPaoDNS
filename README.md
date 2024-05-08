@@ -110,7 +110,7 @@ SHUFFLE|`no`|`no`,`yes`,`lite`,`trnc`|
 QUERY_TIME|`2000ms`|`time.Duration`|
 
 用途说明：
-- CNAUTO：是否开启CN大陆智能分流，如果位于境外可配置为no
+- CNAUTO：是否开启CN大陆智能分流，如果位于境外可配置为no。当`CNAUTO=no`时，除递归以外的功能（包括规则/列表等）将不会工作。
 - DNSPORT：设置DNS服务器端口，仅在CNAUTO=no时生效
 - DNS_SERVERNAME：DNS的服务器名称，你使用windows的nslookup的时候会看到它。    
 - SERVER_IP：指定DNS服务器的外部IP。假设你的DNS容器是宿主`10.10.10.4`映射出来的端口而不是独立的IP，设置该项为`10.10.10.4`可以让你看到正确的`DNS_SERVERNAME`。同时会设定域名`paopao.dns`指向该IP地址`10.10.10.4`，可配合其他服务使用。         
