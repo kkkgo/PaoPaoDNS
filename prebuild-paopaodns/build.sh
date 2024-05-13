@@ -6,7 +6,7 @@ apk upgrade
 apk add build-base flex byacc musl-dev gcc make git python3-dev swig libevent-dev openssl-dev expat-dev hiredis-dev go grep bind-tools
 
 # build unbound
-git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound
+git clone https://github.com/NLnetLabs/unbound.git --depth 1 /unbound -b release-1.19.3
 cd /unbound || exit
 export CFLAGS="-O3"
 ./configure --with-libevent --with-pthreads --with-libhiredis --enable-cachedb \
