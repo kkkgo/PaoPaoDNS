@@ -18,7 +18,6 @@ make
 make install
 mv /usr/sbin/unbound /src/
 mv /usr/sbin/unbound-checkconf /src/
-mv /usr/sbin/unbound-host /src
 
 # build mosdns
 mkdir -p /mosdns-build
