@@ -45,7 +45,7 @@ RUN apk add --no-cache ca-certificates dcron tzdata hiredis libevent dnscrypt-pr
     mv /usr/sbin/repositories /etc/apk/repositories
 ARG DEVLOG_SW
 ENV TZ=Asia/Shanghai \
-    DEVLOG=$DEVLOG_SW \
+    # DEVLOG=$DEVLOG_SW \
     UPDATE=weekly \
     DNS_SERVERNAME=PaoPaoDNS,blog.03k.org \
     DNSPORT=53 \

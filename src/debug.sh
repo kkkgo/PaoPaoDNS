@@ -142,12 +142,14 @@ else
     echo unbound_raw FAILED.
     blank
     echo "[TEST]Run unbound trace test..."
-    dig +trace www.taobao.com
-    dig com. @192.33.4.12
-    dig taobao.com @192.31.80.30
-    dig www.taobao.com @47.241.207.15
-    dig tbcache.com @192.33.14.30
-    dig www.taobao.com.danuoyi.tbcache.com @118.178.223.202
+    # if [ "$DEVLOG" = "yes" ]; then
+    echo kill unbound and reload to debug mode...
+    unbound_id=$(ps | grep -v "grep" | grep "unbound_raw" | grep -Eo "[0-9]+" | head -1)
+    kill "$unbound_id"
+    sed -i "s/verbosity: 0/verbosity: 2/g" /tmp/unbound_raw.conf
+    unbound -c /tmp/unbound_raw.conf -p -d &
+    # fi
+    dig www.jd.com @127.0.0.1 -p5301
     blank
 fi
 #sleep 3

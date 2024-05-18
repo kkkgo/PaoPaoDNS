@@ -247,9 +247,9 @@ if ! ps -ef | grep -v grep | grep -q redis-server; then
 fi
 sleep 3
 sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{FDLIM}/$FDLIM/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
-if [ "$DEVLOG" = "yes" ]; then
-    sed -i "s/verbosity: 0/verbosity: 2/g" /tmp/unbound.conf
-fi
+# if [ "$DEVLOG" = "yes" ]; then
+#     sed -i "s/verbosity: 0/verbosity: 2/g" /tmp/unbound.conf
+# fi
 if [ "$safemem" = "no" ]; then
     sed -i "s/#safemem//g" /tmp/unbound.conf
 else
@@ -441,11 +441,8 @@ if [ "$CNAUTO" != "no" ]; then
     mosdns start -d /tmp -c /tmp/mosdns.yaml &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf | sed "s/#RAWDNS//g" >/tmp/unbound_raw.conf
-if [ "$DEVLOG" = "yes" ]; then
-    unbound -c /tmp/unbound_raw.conf -p -d &
-else
-    unbound -c /tmp/unbound_raw.conf -p
-fi
+unbound -c /tmp/unbound_raw.conf -p
+
 #Unexpected fallback while updating data
 echo "nameserver 127.0.0.1" >/etc/resolv.conf
 echo "nameserver 223.5.5.5" >>/etc/resolv.conf
