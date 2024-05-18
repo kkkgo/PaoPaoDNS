@@ -109,6 +109,7 @@ bt=$(date +"%Y-%m-%d %H:%M:%S %Z")
 sed -i "s/{bulidtime}/$bt/g" /src/init.sh
 sed -i "s/{bulidtime}/$bt/g" /src/debug.sh
 sed -i "s/{bulidtime}/$bt/g" /src/test.sh
+sed -i "s/{bulidtime}/$bt/g" /src/ub_trace.sh
 
 #clean
 chmod +x /src/*.sh
