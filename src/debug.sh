@@ -135,7 +135,21 @@ blank
 echo MOSDNS CN:
 dig +short www.taobao.com @127.0.0.1 -p53
 echo UNBOUND CN:
-dig +short www.taobao.com @127.0.0.1 -p5301
+test_unbound_raw=$(dig +short www.taobao.com @127.0.0.1 -p5301)
+if echo "$test_unbound_raw" | grep -v "refused" | grep -qEo "$IPREX4"; then
+    echo "$test_unbound_raw"
+else
+    echo unbound_raw FAILED.
+    blank
+    echo "[TEST]Run unbound trace test..."
+    dig +trace www.taobao.com
+    dig com. @192.33.4.12
+    dig taobao.com @192.31.80.30
+    dig www.taobao.com @47.241.207.15
+    dig tbcache.com @192.33.14.30
+    dig www.taobao.com.danuoyi.tbcache.com @118.178.223.202
+    blank
+fi
 #sleep 3
 echo "[TEST]" DIG-NOCN "[youtube]"
 echo MOSDNS NOCN:
