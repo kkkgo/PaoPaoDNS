@@ -247,6 +247,9 @@ if ! ps -ef | grep -v grep | grep -q redis-server; then
 fi
 sleep 3
 sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{FDLIM}/$FDLIM/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
+if [ "$DEVLOG" = "yes" ]; then
+    sed -i "s/verbosity: 0/verbosity: 5/g" /tmp/unbound.conf
+fi
 if [ "$safemem" = "no" ]; then
     sed -i "s/#safemem//g" /tmp/unbound.conf
 else
