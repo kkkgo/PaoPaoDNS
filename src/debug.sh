@@ -150,6 +150,11 @@ else
     unbound -c /tmp/unbound_raw.conf -p -d &
     # fi
     dig www.jd.com @127.0.0.1 -p5301
+    dig www.taobao.com @127.0.0.1 -p5301
+    unbound_id=$(ps | grep -v "grep" | grep "unbound_raw" | grep -Eo "[0-9]+" | head -1)
+    kill "$unbound_id"
+    sed -i "s/verbosity: 2/verbosity: 0/g" /tmp/unbound_raw.conf
+    unbound -c /tmp/unbound_raw.conf -p
     blank
 fi
 #sleep 3
