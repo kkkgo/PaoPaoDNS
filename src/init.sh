@@ -441,6 +441,11 @@ if [ "$CNAUTO" != "no" ]; then
     mosdns start -d /tmp -c /tmp/mosdns.yaml &
 fi
 sed "s/{DNSPORT}/$DNSPORT/g" /tmp/unbound.conf | sed "s/#RAWDNS//g" >/tmp/unbound_raw.conf
+if [ "$CNAUTO" = "yes" ] && [ "$CNFALL" = "yes" ]; then
+    sed -i "s/#neg_fetch//g" /tmp/unbound_raw.conf
+else
+    sed -i "s/#pos_fetch//g" /tmp/unbound_raw.conf
+fi
 unbound -c /tmp/unbound_raw.conf -p
 
 #Unexpected fallback while updating data
