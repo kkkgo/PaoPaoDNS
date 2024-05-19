@@ -13,7 +13,13 @@ domain:pool.ntp.org
 # Skip proxy...
 # https://github.com/kkkgo/PaoPaoDNS/discussions/47
 #domain:steamcontent.com
+#domain:steamserver.net
 #domain:download.epicgames.com
 #domain:xboxlive.com
 #domain:akamaihd.net
 #domain:akamaized.net
+
+# netflix hard-coded DNS
+# https://github.com/kkkgo/PaoPaoGateWay/discussions/98
+#domain:dns.google
+#domain:dns.google.com
