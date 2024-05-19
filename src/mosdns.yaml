@@ -325,5 +325,7 @@ plugins:
       entry: check_cache
       listen: :53
       idle_timeout: 5
+#flushd_un_yes  - tag: "flushd_server"
+#flushd_un_yes    type: "flushd_server"
 #http_file_yes  - tag: "httpd_server"
 #http_file_yes    type: "httpd_server"

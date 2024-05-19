@@ -48,6 +48,13 @@ if docker exec test1 mosdns curl http://127.0.0.1:7889 | grep -q Country-only-cn
 else
     exit
 fi
+docker exec test1 apk add socat
+docker exec test1 sh -c "echo 'example.com' | socat - UNIX-CONNECT:/tmp/flush.sock && echo flush_ok_flag >>/etc/os-release"
+if docker exec test1 cat /etc/os-release | grep -q flush_ok_flag; then
+    echo flush_ok_flag pass.
+else
+    exit
+fi
 docker rm -f test1
 docker run --name test2 \
     -e USE_MARK_DATA=yes \

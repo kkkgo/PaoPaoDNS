@@ -311,6 +311,7 @@ if [ "$CNAUTO" != "no" ]; then
     fi
     if [ "$CNFALL" = "yes" ]; then
         sed -i "s/#cnfall//g" /tmp/mosdns.yaml
+        sed -i "s/#flushd_un_yes//g" /tmp/mosdns.yaml
     else
         sed -i "s/#nofall//g" /tmp/mosdns.yaml
     fi
