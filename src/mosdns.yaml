@@ -84,6 +84,7 @@ plugins:
 #cnfall    type: forward
 #cnfall    args:
 #cnfall      qtime: 3
+#cnfall      flush: 1
 #cnfall      upstreams:
 #cnfall        - addr: "udp://127.0.0.1:5301"
 
