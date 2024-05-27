@@ -230,6 +230,7 @@ echo USE_MARK_DATA:-"$USE_MARK_DATA""-" >>/tmp/env.conf
 echo RULES_TTL:-"$RULES_TTL""-" >>/tmp/env.conf
 echo CUSTOM_FORWARD_TTL:-"$CUSTOM_FORWARD_TTL""-" >>/tmp/env.conf
 echo SHUFFLE:-"$SHUFFLE""-" >>/tmp/env.conf
+echo EXPIRED_FLUSH:-"$EXPIRED_FLUSH""-" >>/tmp/env.conf
 echo CN_TRACKER:-"$CN_TRACKER""-" >>/tmp/env.conf
 echo USE_HOSTS:-"$USE_HOSTS""-" >>/tmp/env.conf
 echo HTTP_FILE:-"$HTTP_FILE""-" >>/tmp/env.conf
@@ -311,7 +312,9 @@ if [ "$CNAUTO" != "no" ]; then
     fi
     if [ "$CNFALL" = "yes" ]; then
         sed -i "s/#cnfall//g" /tmp/mosdns.yaml
-        sed -i "s/#flushd_un_yes//g" /tmp/mosdns.yaml
+        if [ "$EXPIRED_FLUSH" = "yes" ]; then
+            sed -i "s/#flushd_un_yes//g" /tmp/mosdns.yaml
+        fi
     else
         sed -i "s/#nofall//g" /tmp/mosdns.yaml
     fi
