@@ -95,6 +95,7 @@ TZ|`Asia/Shanghai`|tzdata时区值|
 UPDATE|`weekly`|`no`,`daily`,`weekly`,`monthly`|
 IPV6|`no`|`no`,`yes`,`only6`,`yes_only6`,`raw`|
 CNFALL|`yes`|`no`,`yes`|
+EXPIRED_FLUSH|`yes`|`no`,`yes`|
 CUSTOM_FORWARD|空，可选功能|`IP:PORT`,如`10.10.10.3:53`|
 CUSTOM_FORWARD_TTL|`0`|`1-604800`|
 AUTO_FORWARD|`no`|`no`,`yes`|
@@ -119,6 +120,7 @@ QUERY_TIME|`2000ms`|`time.Duration`|
 - UPDATE: 检查更新根域数据和GEOIP数据的频率,no不检查,其中GEOIP更新仅在CNAUTO=yes时生效。注意：`daily`,`weekly`,`monthly`分别为alpine默认定义的每天凌晨2点、每周6凌晨3点、每月1号凌晨5点。更新数据后会瞬间完成重载。
 - IPV6： 仅在CNAUTO=yes时生效，是否返回IPv6的解析结果，默认为no，如果没有IPv6环境，选择no可以节省内存。设置为yes返回IPv6的查询（为分流优化，非大陆双栈域名仅返回A记录）。如果设置为`only6`，则只对IPv6 only的域名返回IPv6结果。如果设置为`yes_only6`，则对大陆域名返回IPv6的解析结果（相当于`yes`），对非大陆域名只对IPv6 only的域名返回IPv6结果（相当于`only6`）。如果设置为`raw`，则不对IPv6结果做任何处理，直接返回原始记录。      
 - CNFALL: 仅在CNAUTO=yes时生效，在遇到本地递归网络质量较差的时候，递归查询是否回退到转发查询，默认为yes。配置为no可以保证更实时准确的解析，但要求网络质量稳定（尽量减少nat的层数），推荐部署在具备公网IP的一级路由下的时候设置为no； 配置为yes可以兼顾解析质量和网络质量的平衡，保证长期总体的准确解析的同时兼顾短时间内网络超时的回退处理。    
+- EXPIRED_FLUSH: 该选项为`yes`，且在`CNAUTO`、`CNFALL`为`yes`时生效。该选项默认值为`yes`。当开启该选项时，将会主动监测递归结果中出现的乐观缓存，在乐观缓存返回后数秒后检查是否成功递归刷新了新的解析结果，如果递归失败（由两次ttl记录差值对比），将会主动回收清除该缓存。开启该选项可以有效避免乐观缓存因网络连接性不稳定而一直滞留过期记录的问题，提高DNS解析结果的实时性。     
 - CUSTOM_FORWARD: 仅在CNAUTO=yes时生效，将`force_forward_list.txt`内的域名列表转发到到`CUSTOM_FORWARD`DNS服务器。该功能可以配合第三方旁网关的fakeip，域名嗅探sniffing等特性完成简单的域名分流效果。    
 - CUSTOM_FORWARD_TTL：该项设置的值大于0的时候生效，设定CUSTOM_FORWARD的ttl的最小值。  
 - AUTO_FORWARD：仅在CNAUTO=yes时生效，配合`CUSTOM_FORWARD`功能使用，默认值为no，当设置为yes的时候，解析非CN大陆IP的域名将会直接转发到`CUSTOM_FORWARD`。       
