@@ -321,8 +321,13 @@ if [ "$CNAUTO" != "no" ]; then
     if echo "$CUSTOM_FORWARD" | grep -Eoq ":[0-9]+"; then
         CUSTOM_FORWARD=$(echo "$CUSTOM_FORWARD" | sed 's/"//g')
         sed -i "s/#customforward-seted//g" /tmp/mosdns.yaml
-        CUSTOM_FORWARD_SERVER=$(echo "$CUSTOM_FORWARD" | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b|[0-9a-fA-F:]+" | head -1)
-        CUSTOM_FORWARD_PORT=$(echo "$CUSTOM_FORWARD" | rev | cut -d':' -f1 | rev)
+        if echo "$CUSTOM_FORWARD" | grep -q '\['; then
+            CUSTOM_FORWARD_SERVER=$(echo "$CUSTOM_FORWARD" | sed 's/\[//' | cut -d']' -f1)
+            CUSTOM_FORWARD_PORT=$(echo "$CUSTOM_FORWARD" | sed 's/.*\]://' | sed 's/[^0-9]*//')
+        else
+            CUSTOM_FORWARD_SERVER=$(echo "$CUSTOM_FORWARD" | cut -d':' -f1)
+            CUSTOM_FORWARD_PORT=$(echo "$CUSTOM_FORWARD" | cut -d':' -f2)
+        fi
         sed -i "s/{CUSTOM_FORWARD}/$CUSTOM_FORWARD/g" /tmp/mosdns.yaml
         sed -i "s/{CUSTOM_FORWARD_SERVER}/$CUSTOM_FORWARD_SERVER/g" /tmp/mosdns.yaml
         sed -i "s/{CUSTOM_FORWARD_PORT}/$CUSTOM_FORWARD_PORT/g" /tmp/mosdns.yaml
