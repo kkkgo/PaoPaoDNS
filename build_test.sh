@@ -29,6 +29,8 @@ t2=$(docker exec test1 dig www.taobao.com @127.0.0.1 -p5301 A +short)
 v4check "$t2" CN-5301
 t3=$(docker exec test1 dig www.taobao.com @127.0.0.1 -p5302 A +short)
 v4check "$t3" CN-5302
+docker exec test1 dig www.taobao.com @127.0.0.1 -p5304 A
+sleep 5
 t4=$(docker exec test1 dig www.taobao.com @127.0.0.1 -p5304 A +short)
 v4check "$t4" CN-5304
 t5=$(docker exec test1 dig www.google.com @127.0.0.1 -p53 A +short)
