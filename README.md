@@ -43,7 +43,10 @@ sliamb/paopaodns
 ```
 ***如果你的网络端口没有冲突，也可以考虑使用docker host网络模式以获得最佳性能。***   
 *如条件允许建议使用**docker compose**部署*    
-*如果你的网络环境访问Dokcer镜像有困难，可以尝试使用[docker镜像加速](https://www.bing.com/search?q=docker%E9%95%9C%E5%83%8F%E4%BB%A3%E7%90%86)。*   
+如果你的网络环境访问Dokcer Hub镜像有困难，***可以尝试使用public.ecr.aws镜像:***    
+- 示例： `docker pull public.ecr.aws/sliamb/paopaodns`  
+- 示例： `docker run -d public.ecr.aws/sliamb/paopaodns`  
+
 
 验证你的递归DNS正常运行(假设你的容器IP是192.168.1.8)，可以执行以下命令：   
 ```cmd
