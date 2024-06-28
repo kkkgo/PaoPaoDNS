@@ -177,8 +177,8 @@ www.qq.com@@@qq.03k.org
 |-|-|
 53|提供DNS服务的端口，在CNAUTO=no时数据直接来自unbound，CNAUTO=yes时数据来自mosdns
 5301|在CNAUTO=yes时，递归unbound的端口，可用于dig调试
-5302|在CNAUTO=yes时并设置了SOCKS5时，走SOCKS5的dnscrypt服务端口，可用于dig调试
-5303|在CNAUTO=yes时，原生dnscrypt服务端口，可用于dig调试
+5302|在CNAUTO=yes时，原生dnscrypt服务端口，可用于dig调试
+5303|在CNAUTO=yes时并设置了SOCKS5时，走SOCKS5的dnscrypt服务端口，可用于dig调试
 5304|在CNAUTO=yes时，dnscrypt的底层unbound实例缓存，可用于dig调试或者fakeip网关的上游  
 7889|HTTP_FILE=yes时，http静态文件服务器端口
 

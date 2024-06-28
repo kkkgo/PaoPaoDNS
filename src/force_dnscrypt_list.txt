@@ -18,6 +18,11 @@ domain:pool.ntp.org
 #domain:akamaihd.net
 #domain:akamaized.net
 
+# xbox net test
+domain:xbox.ipv6.microsoft.com
+domain:xncsi.xboxlive.com
+domain:x1ds.xboxlive.com
+
 # netflix hard-coded DNS
 # https://github.com/kkkgo/PaoPaoGateWay/discussions/98
 #domain:dns.google
