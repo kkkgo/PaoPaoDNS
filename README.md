@@ -256,7 +256,6 @@ Swaps:
 1. 在企业内可能需要的一个功能，就是需要和AD域整合，转发指定域名到AD域服务器的方法：
 打开`/data/custom_mod.yaml`编辑：
 ```yaml
-```yaml
 #Active Directory Forward Example
 # 在这个示例中，你公司的AD域名为company.local，有几个AD域DNS服务器。
 Zones:
@@ -264,7 +263,8 @@ Zones:
    dns: 10.111.222.11,10.111.222.12,10.111.222.13
 ```
 
-2. 添加微软KMS服务器SRV记录
+2. 添加除了A/AAAA记录以外类型的本地记录解析，可以通过编辑`unbound_custom.conf`实现，具体语法可以参考unbound官方文档，例如添加微软KMS服务器SRV记录
+打开`/data/unbound_custom.conf`编辑：
 ```yaml
 #Example of setting up SRV records for KMS server VLMCS.
 #假设你的内网后缀是.lan，KMS服务器地址是192.168.1.2或者kms.ad.local
