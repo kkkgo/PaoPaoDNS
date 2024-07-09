@@ -57,6 +57,7 @@ plugins:
 #global_mark_yes    args:
 #global_mark_yes      files:
 #global_mark_yes        - "/tmp/global_mark_cn.dat"
+#global_mark_yes        - "/tmp/cn_mark.dat"
 
 #customforward-seted  - tag: "force_forward_list"
 #customforward-seted    type: "domain_set"

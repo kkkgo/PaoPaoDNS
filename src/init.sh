@@ -199,9 +199,6 @@ fi
 if [ -z "$DNSPORT" ]; then
     DNSPORT="53"
 fi
-if [ -z "$AUTO_FORWARD" ]; then
-    AUTO_FORWARD="no"
-fi
 export no_proxy=""
 export http_proxy=""
 echo ====ENV TEST==== >/tmp/env.conf
@@ -241,6 +238,12 @@ echo PLATFORM:-"$(uname -a)""-" >>/tmp/env.conf
 echo ====ENV TEST==== >>/tmp/env.conf
 echo mosdns "$(mosdns version)" >>/tmp/env.conf
 cat /tmp/env.conf
+if [ "$AUTO_FORWARD" != "yes" ] && [ "$AUTO_FORWARD" != "no" ]; then
+    if [ -n "$AUTO_FORWARD" ]; then
+        echo "Warning: AUTO_FORWARD has an invalid value: [ $AUTO_FORWARD ], Disable AUTO_FORWARD."
+    fi
+    AUTO_FORWARD="no"
+fi
 sed "s/{MEM4}/$MEM4/g" /data/redis.conf >/tmp/redis.conf
 redis-server /tmp/redis.conf
 if ! ps -ef | grep -v grep | grep -q redis-server; then
