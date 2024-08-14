@@ -9,8 +9,7 @@ load_mark_data() {
             mkdir -p /tmp/global_mark
             sp_dat="/tmp/global_mark/global_mark.dat.xz"
             sp_sha="/tmp/global_mark/global_mark.dat.sha"
-            dd if="$datfile" of="$sp_dat" bs=1 count=$((datsize - 1024))
-            dd if="$datfile" of="$sp_sha" bs=1 skip=$((datsize - 1024)) count=1024
+            /usr/sbin/mosdns eat cut
             sp_dat_hash=$(sha512sum "$sp_dat" | grep -Eo "[0-9A-Za-z]{128}" | head -1)
             sp_sha_hash=$(grep -Eo "[0-9A-Za-z]{128}" $sp_sha | head -1)
             if [ "$sp_dat_hash" = "$sp_sha_hash" ]; then
@@ -18,9 +17,7 @@ load_mark_data() {
                 cd /tmp/global_mark || exit
                 xz -df $sp_dat
                 if [ -f /tmp/global_mark/global_mark.dat ]; then
-                    grep -E "^domain:[-_.A-Za-z0-9]+$" /tmp/global_mark/global_mark.dat | grep -E "[a-z]" | grep "." | sort -u >/tmp/global_mark.dat
-                    grep -E "^##@@domain:[-_.A-Za-z0-9]+$" /tmp/global_mark/global_mark.dat | sed "s/##@@domain:/domain:/g" | grep -E "[a-z]" | grep "." | sort -u >/tmp/global_mark_cn.dat
-                    grep -E "^#@domain:[-_.A-Za-z0-9]+$" /tmp/global_mark/global_mark.dat | sed "s/#@domain:/domain:/g" | grep -E "[a-z]" | grep "." | sort -u >/tmp/cn_mark.dat
+                    /usr/sbin/mosdns eat spilt
                 fi
                 cd - || exit
             else
@@ -33,6 +30,12 @@ load_mark_data() {
     fi
     if [ ! -f /tmp/global_mark.dat ]; then
         touch /tmp/global_mark.dat
+    fi
+    if [ -f /data/custom_cn_mark.txt ]; then
+        sed 's/\r$//' /data/custom_cn_mark.txt | grep -E "^[a-zA-Z0-9]" >/tmp/custom_cn_mark.txt
+    else
+        touch /data/custom_cn_mark.txt
+        touch /tmp/custom_cn_mark.txt
     fi
 }
 
@@ -58,34 +61,7 @@ load_ttl_rules() {
     else
         echo "$force_ttl_rules_new" >/tmp/force_ttl_rules.txt.sum
     fi
-    touch /tmp/force_ttl_rules_cloaking.toml.gen
-    touch /tmp/force_ttl_rules.toml.gen
-    touch /tmp/force_ttl_rules.txt.gen
-    sed 's/\r$//' /data/force_ttl_rules.txt | grep -vE "^#" | grep . | sort -u >/tmp/force_ttl_rules.cp.gen
-    echo "" >>/tmp/force_ttl_rules.cp.gen
-    echo "" >>/tmp/force_ttl_rules.cp.gen
-    while read rule; do
-        rule_domain=$(echo "$rule" | grep -vE "^#" | grep @ | cut -d"@" -f1 | grep -Eo "[-._A-Za-z0-9]+" | grep "\." | head -1)
-        rule_adns=$(echo "$rule" | grep -vE "^#" | grep @ | cut -d"@" -f2 | grep -Eo "([0-9]+\.){3}[.,:0-9]+" | head -1)
-        rule_cloaking=$(echo "$rule" | grep -vE "^#" | grep @@ | cut -d"@" -f3 | grep -Eo "[-.:_0-9a-zA-Z]+" | head -1)
-        rule_cloaking_full=$(echo "$rule" | grep -vE "^#" | grep @@@ | cut -d"@" -f4 | grep -Eo "[-.:_0-9a-zA-Z]+" | head -1)
-        if [ -n "$rule_domain" ] && [ -n "$rule_adns" ]; then
-            echo "$rule_domain"" ""$rule_adns" >>/tmp/force_ttl_rules.toml.gen
-            echo "domain:""$rule_domain" >>/tmp/force_ttl_rules.txt.gen
-        fi
-        if [ -n "$rule_domain" ] && [ -n "$rule_cloaking" ]; then
-            echo "$rule_domain"" ""$rule_cloaking" >>/tmp/force_ttl_rules_cloaking.toml.gen
-            echo "domain:""$rule_domain" >>/tmp/force_ttl_rules.txt.gen
-        fi
-        if [ -n "$rule_domain" ] && [ -n "$rule_cloaking_full" ]; then
-            echo "=""$rule_domain"" ""$rule_cloaking_full" >>/tmp/force_ttl_rules_cloaking.toml.gen
-            echo "full:""$rule_domain" >>/tmp/force_ttl_rules.txt.gen
-        fi
-    done </tmp/force_ttl_rules.cp.gen
-    sort -u /tmp/force_ttl_rules.toml.gen >/tmp/force_ttl_rules.toml
-    sort -u /tmp/force_ttl_rules_cloaking.toml.gen >/tmp/force_ttl_rules_cloaking.toml
-    sort -u /tmp/force_ttl_rules.txt.gen >/tmp/force_ttl_rules.txt
-    rm /tmp/force_ttl_rules*.gen
+    /usr/sbin/mosdns eat ttl_rules
     return 0
 }
 
@@ -98,7 +74,7 @@ load_trackerslist() {
     if [ ! -f /data/trackerslist.txt ]; then
         /usr/sbin/data_update.sh comp_trackerslist
     fi
-    sed 's/\r$//' /data/trackerslist.txt | grep -Eo "^[a-z]+://.+" | sed -r "s/^[^/]+//g" | sed "s/\/\///g" | sed -r "s/\/.+$//g" | sed -r "s/:.+$//g" | grep -E "\.[a-z]" | grep -E "[-._0-9a-zA-Z]+" | sort -u | sed -r "s/^/full:/g" >/tmp/cn_tracker_list.txt
+    /usr/sbin/mosdns eat trackerslist
     echo "Apply trackerslist..."
 }
 
@@ -116,6 +92,12 @@ gen_hash() {
 }
 
 reload_dns() {
+    force_reload_flag=$1
+    if [ "$force_reload_flag" = "force" ]; then
+        export reload_mosdns=1
+    else
+        export reload_mosdns=0
+    fi
     if [ "$CNAUTO" != "no" ]; then
         export reload_mosdns=0
         if [ -f /data/force_recurse_list.txt ]; then
@@ -131,7 +113,7 @@ reload_dns() {
                 echo "" >>/tmp/force_dnscrypt_list.txt
                 sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >>/tmp/force_dnscrypt_list.txt
             fi
-                        sort -u /tmp/force_dnscrypt_list.txt -o /tmp/force_dnscrypt_list.txt
+            sort -u /tmp/force_dnscrypt_list.txt -o /tmp/force_dnscrypt_list.txt
         fi
         if [ -f /data/force_forward_list.txt ]; then
             sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
@@ -171,6 +153,10 @@ reload_dns() {
                     export reload_mosdns=1
                 fi
             fi
+            if [ "$(gen_hash /data/custom_cn_mark.txt)" != "$custom_cn_mark" ]; then
+                sed 's/\r$//' /data/custom_cn_mark.txt | grep -E "^[a-zA-Z0-9]" >/tmp/custom_cn_mark.txt
+                export reload_mosdns=1
+            fi
         fi
         RULES_TTL=$(echo "$RULES_TTL" | grep -Eo "[0-9]+|head -1")
         if [ -z "$RULES_TTL" ]; then
@@ -197,7 +183,7 @@ reload_dns() {
         if [ $reload_mosdns = "1" ]; then
             while ps | grep -v grep | grep -q "mosdns.yaml"; do
                 mosdns_id=$(ps | grep -v "grep" | grep "mosdns.yaml" | grep -Eo "[0-9]+" | head -1)
-                kill "$mosdns_id"
+                kill "$mosdns_id" 2>/dev/null
             done
             echo "mosdns reload..."
             touch /data/custom_env.ini
@@ -208,23 +194,29 @@ reload_dns() {
                     export "$line"
                 done <"/tmp/custom_env.ini"
             fi
-            mosdns start -d /data -c /tmp/mosdns.yaml &
+            /usr/sbin/mosdns start -d /data -c /tmp/mosdns.yaml &
             sleep 1
             ps -ef | grep -v "grep" | grep "mosdns"
         fi
     fi
+    if [ "$force_reload_flag" = "force" ]; then
+        return
+    fi
     if [ "$(gen_hash /etc/unbound/named.cache)" != "$named" ]; then
         while ps | grep -v grep | grep -q unbound_raw; do
             unbound_id=$(ps | grep -v "grep" | grep "unbound_raw" | grep -Eo "[0-9]+" | head -1)
-            kill "$unbound_id"
+            kill "$unbound_id" 2>/dev/null
         done
         echo "unbound reload..."
-        unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
+        /usr/sbin/unbound -c /tmp/unbound_raw.conf >/dev/null 2>&1 &
         sleep 1
         ps | grep -v grep | grep unbound_raw
     fi
 }
-
+if [ "$1" = "reload_dns" ]; then
+    reload_dns force
+    exit
+fi
 while true; do
     file_list="/etc/unbound/named.cache"
     if [ "$CNAUTO" != "no" ]; then
@@ -246,9 +238,16 @@ while true; do
         fi
         if [ "$USE_MARK_DATA" = "yes" ]; then
             if [ ! -f /data/global_mark.dat ]; then
-                touch /data/global_mark.dat
+                if [ -f /usr/sbin/global_mark.dat ]; then
+                    cp /usr/sbin/global_mark.dat /data/
+                else
+                    touch /data/global_mark.dat
+                fi
             fi
-            file_list=$file_list" /data/global_mark.dat"
+            if [ ! -f /data/custom_cn_mark.txt ]; then
+                touch /data/custom_cn_mark.txt
+            fi
+            file_list=$file_list" /data/global_mark.dat /data/custom_cn_mark.txt"
         fi
         if [ "$CN_TRACKER" = "yes" ]; then
             if [ ! -f /data/trackerslist.txt ]; then
@@ -286,6 +285,8 @@ while true; do
         export force_ttl_rules
         trackerslist=$(gen_hash /data/trackerslist.txt)
         export trackerslist
+        custom_cn_mark=$(gen_hash /data/custom_cn_mark.txt)
+        export custom_cn_mark
         Country=$(gen_hash /data/Country-only-cn-private.mmdb)
         export Country
         custom_env=$(gen_hash /data/custom_env.ini)
@@ -293,5 +294,5 @@ while true; do
     fi
     named=$(gen_hash /etc/unbound/named.cache)
     export named
-    inotifywait -e modify,delete $file_list && sleep 1 && reload_dns
+    inotifywait -e modify,delete $file_list && sleep 1 && reload_dns check
 done

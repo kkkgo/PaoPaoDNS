@@ -28,6 +28,7 @@ echo "[INFO]" NETWORK
 blank
 ip a | grep -E "UP|inet"
 ip r
+traceroute -m4 -w1 120.53.53.53
 ping 223.5.5.5 -c1
 ping 119.29.29.29 -c1
 nslookup www.taobao.com 223.5.5.5

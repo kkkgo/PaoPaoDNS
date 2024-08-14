@@ -1,4 +1,6 @@
 FROM alpine:edge AS builder
+RUN apk update && \
+    apk upgrade --no-cache
 #actions COPY build_test_ok /
 COPY --from=sliamb/prebuild-paopaodns /src/ /src/
 COPY src/ /src/
@@ -37,12 +39,14 @@ RUN if /src/redis-server -v|grep build;then echo redis_check > /redis_check;else
 
 FROM alpine:edge
 COPY --from=builder /src/ /usr/sbin/
-RUN apk add --no-cache ca-certificates dcron tzdata hiredis libevent dnscrypt-proxy inotify-tools bind-tools libgcc xz && \
-    apk upgrade --no-cache &&\
+RUN apk update && \
+    apk upgrade --no-cache && \
+    apk add --no-cache ca-certificates dcron tzdata hiredis libevent dnscrypt-proxy inotify-tools bind-tools libgcc xz && \
     mkdir -p /etc/unbound && \
-    mv /usr/sbin/named.cache /etc/unbound/named.cache &&           \
-    adduser -D -H unbound &&\
-    mv /usr/sbin/repositories /etc/apk/repositories
+    mv /usr/sbin/named.cache /etc/unbound/named.cache && \
+    adduser -D -H unbound && \
+    mv /usr/sbin/repositories /etc/apk/repositories && \
+    rm -rf /var/cache/apk/*
 ARG DEVLOG_SW
 ENV TZ=Asia/Shanghai \
     DEVLOG=$DEVLOG_SW \
@@ -60,7 +64,7 @@ ENV TZ=Asia/Shanghai \
     CUSTOM_FORWARD_TTL=0 \
     AUTO_FORWARD=no \
     AUTO_FORWARD_CHECK=yes \
-    USE_MARK_DATA=no \
+    USE_MARK_DATA=yes \
     RULES_TTL=0 \
     HTTP_FILE=no \
     QUERY_TIME=2000ms \

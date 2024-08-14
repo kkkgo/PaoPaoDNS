@@ -249,7 +249,10 @@ redis-server /tmp/redis.conf
 if ! ps -ef | grep -v grep | grep -q redis-server; then
     redis-server /tmp/redis.conf --ignore-warnings ARM64-COW-BUG
 fi
-sleep 3
+while ! redis-cli -s /tmp/redis.sock info | grep -q human; do
+    echo "Waiting for redis..."
+    sleep 1
+done
 sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{FDLIM}/$FDLIM/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
 # if [ "$DEVLOG" = "yes" ]; then
 #     sed -i "s/verbosity: 0/verbosity: 2/g" /tmp/unbound.conf
@@ -262,6 +265,23 @@ fi
 if echo "$SERVER_IP" | grep -Eoq "[.0-9]+"; then
     sed -i "s/{SERVER_IP}/$SERVER_IP/g" /tmp/unbound.conf
     sed -i "s/#serverip-enable//g" /tmp/unbound.conf
+fi
+if [ "$FDLIM" -gt 1 ] && [ "$SAFEMODE" != "yes" ]; then
+    calc_r=$(mosdns eat calc "$lim" "$REALCORES" "r")
+    calc_f=$(mosdns eat calc "$lim" "$REALCORES" "f")
+    r_outgoing=$(echo "$calc_r" | cut -d':' -f2)
+    f_outgoing=$(echo "$calc_f" | cut -d':' -f2)
+    r_outgoing_half=$(echo "$calc_r" | cut -d':' -f4)
+    f_outgoing_half=$(echo "$calc_f" | cut -d':' -f4)
+    r_numQueriesPerThread=$(echo "$calc_r" | cut -d':' -f6)
+    f_numQueriesPerThread=$(echo "$calc_f" | cut -d':' -f6)
+    sed -i "s/{r_outgoing}/$r_outgoing/g" /tmp/unbound.conf
+    sed -i "s/{f_outgoing}/$f_outgoing/g" /tmp/unbound.conf
+    sed -i "s/{r_outgoing_half}/$r_outgoing_half/g" /tmp/unbound.conf
+    sed -i "s/{f_outgoing_half}/$f_outgoing_half/g" /tmp/unbound.conf
+    sed -i "s/{r_numQueriesPerThread}/$r_numQueriesPerThread/g" /tmp/unbound.conf
+    sed -i "s/{f_numQueriesPerThread}/$f_numQueriesPerThread/g" /tmp/unbound.conf
+    sed -i "s/#safeoff//g" /tmp/unbound.conf
 fi
 if [ "$CNAUTO" != "no" ]; then
     DNSPORT="5301"
@@ -296,7 +316,6 @@ if [ "$CNAUTO" != "no" ]; then
         sed "s/#socksok//g" /data/dnscrypt.toml | sed "s/{SOCKS5}/$SOCKS5/g" | sed -r "s/listen_addresses.+/listen_addresses = ['0.0.0.0:5303']/g" | sed -r "s/^force_tcp.+/force_tcp = true/g" >/data/dnscrypt-resolvers/dnscrypt_socks.toml
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#socksok//g" >/tmp/unbound_forward.conf
         sed "s/#socksok//g" /data/mosdns.yaml >/tmp/mosdns.yaml
-        sleep 5
     else
         sed "s/{DNSPORT}/5304/g" /tmp/unbound.conf | sed "s/#CNAUTO//g" | sed "s/#nosocks//g" >/tmp/unbound_forward.conf
         sed "s/#nosocks//g" /data/mosdns.yaml >/tmp/mosdns.yaml
@@ -379,16 +398,7 @@ if [ "$CNAUTO" != "no" ]; then
     fi
     #convert hosts
     if [ "$USE_HOSTS" = "yes" ]; then
-        grep -vE "^#" /etc/hosts | grep . | sort -u >/tmp/hosts.cp.gen
-        echo "" >>/tmp/hosts.cp.gen
-        echo "" >>/tmp/hosts.cp.gen
-        echo "" >/tmp/hosts.txt
-        while read line; do
-            record=$(echo "$line" | grep -Eo "[.:a-f0-9]+" | head -1)
-            domain=$(echo "$line" | grep -Eo "[-_.a-zA-Z0-9]+" | tail -1)
-            echo "$domain" "$record" >>/tmp/hosts.txt
-        done </tmp/hosts.cp.gen
-        rm /tmp/hosts.cp.gen
+        mosdns eat hosts
         sed -i "s/#usehosts-yes//g" /tmp/mosdns.yaml
         sed -i "s/#usehosts-enable//g" /tmp/mosdns.yaml
     fi
@@ -445,6 +455,7 @@ if [ "$CNAUTO" != "no" ]; then
     unbound -c /tmp/unbound_forward.conf -p
     # Add Mods
     touch /data/custom_mod.yaml
+    cp /tmp/mosdns.yaml /tmp/mosdns_base.yaml
     mosdns AddMod
     if [ -f /tmp/mosdns_mod.yaml ]; then
         cat /tmp/mosdns_mod.yaml >/tmp/mosdns.yaml

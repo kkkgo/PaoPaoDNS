@@ -85,6 +85,7 @@ if ps -ef | grep -v grep | grep -q mosdns.yaml; then
 else
     if [ "$CNAUTO" != "no" ]; then
         echo "DNS NOT READY.❌"
+        echo "Please wait until the DNS server has fully started before attempting to execute test.sh."
     else
         echo "UNBOUND MODE TEST."
         result=$t1$t2$t3$t4$t5$tredis

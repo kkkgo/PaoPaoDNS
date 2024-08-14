@@ -10,8 +10,7 @@ comp_trackerslist() {
         update_file_wait="/data/trackerslist.txt"
         wait_apply
     fi
-    sort -u /tmp/trackerslist/trackerslist.txt | grep "." >/tmp/trackerslist/trackerslist.txt.gen
-    grep -Eo "^[a-z]+://.+" /tmp/trackerslist/trackerslist.txt.gen >/data/trackerslist.txt
+    sort -u /tmp/trackerslist/trackerslist.txt | grep -Eo "^[a-z]+://.+" > /data/trackerslist.txt
     rm -rf /tmp/trackerslist/
     return 0
 }
