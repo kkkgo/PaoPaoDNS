@@ -103,7 +103,7 @@ CUSTOM_FORWARD|空，可选功能|`IP:PORT`,如`10.10.10.3:53`|
 CUSTOM_FORWARD_TTL|`0`|`1-604800`|
 AUTO_FORWARD|`no`|`no`,`yes`|
 AUTO_FORWARD_CHECK|`yes`|`no`,`yes`|
-USE_MARK_DATA|`no`|`no`,`yes`|
+USE_MARK_DATA|`yes`|`no`,`yes`|
 RULES_TTL|`0`|`1-604800`|
 CN_TRACKER|`yes`|`no`,`yes`|
 USE_HOSTS|`no`|`no`,`yes`|
@@ -128,9 +128,9 @@ QUERY_TIME|`2000ms`|`time.Duration`|
 - CUSTOM_FORWARD_TTL：该项设置的值大于0的时候生效，设定CUSTOM_FORWARD的ttl的最小值。  
 - AUTO_FORWARD：仅在CNAUTO=yes时生效，配合`CUSTOM_FORWARD`功能使用，默认值为no，当设置为yes的时候，解析非CN大陆IP的域名将会直接转发到`CUSTOM_FORWARD`。       
 - AUTO_FORWARD_CHECK：在`AUTO_FORWARD=yes`时，转发前是否检查域名是否有效，避免产生无效查询。默认值为yes，设置为no则不检查。       
-- USE_MARK_DATA：该项默认值为no，当设置为yes的时候，将会自动更新下载预先标记处理的全球百万域名库，在判断大陆分流的时候优先使用该数据，该功能仅标记数据，后续如何处理取决你的设置（比如默认分流或者自动转发）。域名数据库来源于`paopao-pref`项目定期更新。该功能：  
+- USE_MARK_DATA：该项默认值为yes，当设置为yes的时候，将会自动更新下载预先标记处理的全球百万域名库，在判断大陆分流的时候优先使用该数据，该功能仅标记数据，后续如何处理取决你的设置（比如默认分流或者自动转发）。域名数据库来源于`paopao-pref`项目定期更新。该功能：  
   - 优点：可以优化DNS泄漏问题、提供更快速精准高效的分流
-  - 缺点：会占用更多内存，增加容器启动时间
+  - 缺点：会占用更多内存
 - RULES_TTL：该项设置的值大于0的时候生效，将`/data/force_ttl_rules.txt`里面指定的域名转发到指定的DNS服务器，并修改其TTL值为`RULES_TTL`。该功能仅对A记录和AAAA记录生效，其他记录请参考*进阶自定义示例*一节。该功能可以适用于多种场景，比如想实现在异地的网络访问回家的DDNS域名的结果更实时一点，你可以把`RULES_TTL`设置为一个较低的值，然后把你的DDNS域名指定转发到对应的权威DNS服务器（也就是whois信息的NS服务器对应的IP地址，注意不要CNAME嵌套）即可。`force_ttl_rules`的规则格式为域名@服务器:端口，以下都是合法的格式：
 ```yaml
 # whois info 03k.org:
