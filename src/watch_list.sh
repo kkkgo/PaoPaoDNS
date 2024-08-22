@@ -32,7 +32,7 @@ load_mark_data() {
         touch /tmp/global_mark.dat
     fi
     if [ -f /data/custom_cn_mark.txt ]; then
-        sed 's/\r$//' /data/custom_cn_mark.txt | grep -E "^[a-zA-Z0-9]" >/tmp/custom_cn_mark.txt
+        /usr/sbin/mosdns eat list /tmp/custom_cn_mark.txt /data/custom_cn_mark.txt
     else
         touch /data/custom_cn_mark.txt
         touch /tmp/custom_cn_mark.txt
@@ -101,22 +101,13 @@ reload_dns() {
     if [ "$CNAUTO" != "no" ]; then
         export reload_mosdns=0
         if [ -f /data/force_recurse_list.txt ]; then
-            sed 's/\r$//' /data/force_recurse_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_recurse_list.txt
-            if [ -f /data/force_cn_list.txt ]; then
-                sed 's/\r$//' /data/force_cn_list.txt | grep -E "^[a-zA-Z0-9]" >>/tmp/force_recurse_list.txt
-            fi
-            sort -u /tmp/force_recurse_list.txt -o /tmp/force_recurse_list.txt
+            mosdns eat list /tmp/force_recurse_list.txt /data/force_recurse_list.txt /data/force_cn_list.txt
         fi
         if [ -f /data/force_dnscrypt_list.txt ]; then
-            sed 's/\r$//' /data/force_dnscrypt_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_dnscrypt_list.txt
-            if [ -f /data/force_nocn_list.txt ]; then
-                echo "" >>/tmp/force_dnscrypt_list.txt
-                sed 's/\r$//' /data/force_nocn_list.txt | grep -E "^[a-zA-Z0-9]" >>/tmp/force_dnscrypt_list.txt
-            fi
-            sort -u /tmp/force_dnscrypt_list.txt -o /tmp/force_dnscrypt_list.txt
+            mosdns eat list /tmp/force_dnscrypt_list.txt /data/force_dnscrypt_list.txt /data/force_nocn_list.txt
         fi
         if [ -f /data/force_forward_list.txt ]; then
-            sed 's/\r$//' /data/force_forward_list.txt | grep -E "^[a-zA-Z0-9]" >/tmp/force_forward_list.txt
+            mosdns eat list /tmp/force_forward_list.txt /data/force_forward_list.txt
         fi
         if [ ! -f /data/Country-only-cn-private.mmdb ]; then
             /usr/sbin/data_update.sh ex_mmdb
@@ -154,7 +145,7 @@ reload_dns() {
                 fi
             fi
             if [ "$(gen_hash /data/custom_cn_mark.txt)" != "$custom_cn_mark" ]; then
-                sed 's/\r$//' /data/custom_cn_mark.txt | grep -E "^[a-zA-Z0-9]" >/tmp/custom_cn_mark.txt
+                /usr/sbin/mosdns eat list /tmp/custom_cn_mark.txt /data/custom_cn_mark.txt
                 export reload_mosdns=1
             fi
         fi
