@@ -249,9 +249,15 @@ redis-server /tmp/redis.conf
 if ! ps -ef | grep -v grep | grep -q redis-server; then
     redis-server /tmp/redis.conf --ignore-warnings ARM64-COW-BUG
 fi
-while ! redis-cli -s /tmp/redis.sock info | grep -q human; do
-    echo "Waiting for redis..."
-    sleep 1
+while true; do
+    loading=$(redis-cli -s /tmp/redis.sock info | grep loading | grep -oE "[0-9]" | tr -d '\n')
+    if [ "$loading" = "00" ]; then
+        echo "Redis rdb has finished loading."
+        break
+    else
+        echo "Waiting for Redis rdb to load..."
+        sleep 1
+    fi
 done
 sed "s/{CORES}/$CORES/g" /data/unbound.conf | sed "s/{POWCORES}/$POWCORES/g" | sed "s/{FDLIM}/$FDLIM/g" | sed "s/{MEM1}/$MEM1/g" | sed "s/{MEM2}/$MEM2/g" | sed "s/{MEM3}/$MEM3/g" | sed "s/{ETHIP}/$ETHIP/g" | sed "s/{DNS_SERVERNAME}/$DNS_SERVERNAME/g" >/tmp/unbound.conf
 # if [ "$DEVLOG" = "yes" ]; then
