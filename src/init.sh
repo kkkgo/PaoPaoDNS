@@ -29,7 +29,7 @@ if [ -f "/tmp/custom_env.ini" ]; then
 fi
 echo =====PaoPaoDNS docker start=====
 echo images build time : {bulidtime}
-if [ ! -f /new.lock ]; then
+if [ ! -f /data/new.lock ]; then
     echo New version install ! Try clean...
     rm -rf /data/redis.conf >/dev/null 2>&1
     rm -rf /data/unbound.conf >/dev/null 2>&1
@@ -38,7 +38,7 @@ if [ ! -f /new.lock ]; then
     rm -rf /data/Country-only-cn-private.mmdb >/dev/null 2>&1
     rm -rf /data/global_mark.dat >/dev/null 2>&1
     rm -rf /data/dnscrypt-resolvers >/dev/null 2>&1
-    touch /new.lock
+    touch /data/new.lock
 fi
 
 if [ ! -f /data/unbound.conf ]; then
